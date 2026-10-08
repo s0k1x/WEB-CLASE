@@ -2128,6 +2128,47 @@ html.light .calx-nav b,html.light .calx .dow{color:var(--accent)}
 }
 @media(max-width:380px){.cd{height:44px}.cd .cdn{width:30px;height:30px;font-size:13px}.cs-big{font-size:46px}}
 html.calm .cd .cdn{transition:none}
+
+/* ===== horario semanal L–V ===== */
+.ttv-seg{margin:0 0 12px;max-width:260px}
+.ttv{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:4px 4px;margin:0 -4px;width:calc(100% + 8px)}
+.ttv th{font-size:11px;font-weight:800;letter-spacing:.05em;color:#8f9bad;padding:2px 0 4px;text-align:center}
+.ttv thead th.tdy{color:var(--accent)}
+.ttv .ttv-h{width:42px;font-size:11px;font-weight:700;color:#8f9bad;text-align:right;padding-right:4px;vertical-align:middle;white-space:nowrap}
+.ttv td{height:54px;vertical-align:middle;border-radius:10px;padding:4px 5px;text-align:center}
+.ttv td.ttv-e{background:rgba(255,255,255,.025)}
+.ttv td.ttv-c{background:hsl(var(--h,210) 70% 55%/.20);box-shadow:inset 3px 0 0 hsl(var(--h,210) 75% 62%);cursor:pointer;text-align:left;overflow:hidden}
+.ttv td.ttv-c b{display:block;font-size:11.5px;line-height:1.2;overflow-wrap:anywhere;hyphens:auto}
+.ttv td.ttv-c small{display:block;font-size:9.5px;opacity:.75;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ttv td.tdy.ttv-e{background:rgba(var(--accent-rgb),.06)}
+.ttv td.now{outline:2px solid var(--accent);outline-offset:-2px;box-shadow:inset 3px 0 0 hsl(var(--h,210) 75% 62%),0 0 18px rgba(var(--accent-rgb),.45)}
+.ttv-empty{padding:26px 14px;text-align:center;color:#8f9bad;font-size:13px}
+.ttv-empty button{margin-top:12px}
+html.light .ttv th,html.light .ttv .ttv-h,html.light .ttv-empty{color:#5b6475}
+html.light .ttv td.ttv-e{background:rgba(15,23,42,.035)}
+html.light .ttv thead th.tdy{color:var(--accent)}
+@media(min-width:700px){.ttv td{height:64px}.ttv td.ttv-c b{font-size:13px}.ttv td.ttv-c small{font-size:11px}.ttv .ttv-h{width:56px;font-size:12px}.ttv th{font-size:12px}}
+@media(max-width:380px){.ttv .ttv-h{width:36px;font-size:10px}.ttv td.ttv-c b{font-size:10.5px}}
+/* ===== editor del horario (profesor) ===== */
+.modalbox.wide{width:min(1000px,100%)}
+.tt-scroll{overflow:auto;-webkit-overflow-scrolling:touch;margin:0 -6px;padding:0 6px 4px}
+.tt-ed{border-collapse:separate;border-spacing:6px;width:100%}
+.tt-ed th{font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--accent);padding:2px 0;text-align:center}
+.tt-ed td{vertical-align:top;padding:0}
+.tt-ed td.tt-c{min-width:118px}
+.tt-ed td.tt-h{min-width:92px;position:sticky;left:0;z-index:2;background:#0d121b}
+.tt-ed input{width:100%;min-width:0;box-sizing:border-box;margin:0;padding:9px 10px;border-radius:10px;font-size:13px}
+.tt-ed .tt-t{font-weight:700}
+.tt-ed .tt-r{margin-top:4px;padding:6px 10px;font-size:11.5px;opacity:.9}
+.tt-del{width:34px;height:34px;border-radius:50%;border:0;background:rgba(239,68,68,.16);color:#ff8a8a;font-size:18px;cursor:pointer}
+.tt-bar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 6px}
+html.light .tt-ed td.tt-h{background:#f5f7fb}
+
+.ttv td.ttv-c b .sh{display:inline}.ttv td.ttv-c b .full{display:none}
+@media(min-width:560px){.ttv td.ttv-c b .sh{display:none}.ttv td.ttv-c b .full{display:inline}}
+.ttv td.ttv-c b{overflow-wrap:normal;word-break:normal}
+.tt-ed td.tt-h{min-width:78px}.tt-ed td.tt-c{min-width:112px}
+.tt-ed .tt-time{padding:9px 6px;font-size:12.5px}
 </style>
 </head>
 <body>
@@ -2315,7 +2356,7 @@ html.calm .cd .cdn{transition:none}
 <div id="tasks" class="view"><div class="head"><div><h2>Trabajo de clase</h2><p id="workInfo"></p></div><button class="add adm-only" onclick="createMenu()">+ Crear</button></div><div class="wk-chips" id="wkChips"></div><div id="workList"></div><div class="head wk-sub"><div><h3>Mis tareas personales</h3><p id="taskInfo"></p></div><button class="add" onclick="modal('task')">+ Tarea</button></div><div class="items" id="taskList"></div></div>
 <div id="grades" class="view"><div class="head"><div><h2>Calificaciones</h2><p id="gradeInfo"></p></div><div id="gradeAct"></div></div><div id="gradeBody"></div></div>
 <div id="people" class="view"><div class="head"><div><h2>Personas</h2><p id="peopleInfo"></p></div><button class="add adm-only" onclick="modal('invite')">+ Invitar</button></div><div id="peopleBody"></div></div>
-<div id="sched" class="view"><div class="head"><div><h2>Horario</h2><p>Tu semana de clases.</p></div><button class="add adm-only" onclick="modal('sched')">+ Clase</button></div><div id="schedList"></div></div>
+<div id="sched" class="view"><div class="head"><div><h2>Horario</h2><p>Tu semana de lunes a viernes.</p></div><button class="add adm-only" onclick="openTimetable()">Editar horario</button></div><div id="schedList"></div></div>
 <div id="now" class="view"><div class="head"><div><h2>Ahora</h2><p>Fotos rápidas para exámenes y cosas del momento.</p></div><button class="add" onclick="modal('photo')">+ Foto</button></div><div class="feed" id="feed"></div></div>
 <div id="chat" class="view"><div class="wa-top"><button type="button" class="wa-back" aria-label="Volver" onclick="closeChat()"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button><div class="wa-av" id="chatAv"></div><div class="wa-ti"><b id="chatName"></b><small id="chatSub"></small></div><div class="wa-act"><div class="dl-btn dl-mini" role="button" tabindex="0" aria-label="Exportar chat" data-tooltip="Chat completo · .txt" onclick="exportChat()"><div class="dl-wrap"><div class="dl-text">Exportar</div><span class="dl-icon"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="2em" height="2em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 0 0 4.561 21h14.878a2 2 0 0 0 1.94-1.515L22 17"></path></svg></span></div></div></div></div><div class="chat" id="messages"></div>
 <div class="wa-reply hidden" id="replyBar"></div>
@@ -2452,15 +2493,52 @@ function renderTasks(){
 }
 function toggleTask(id){const t=data.tasks.find(x=>x.id===id);if(t){t.done=!t.done;saveState();renderTasks()}}
 const toMin=h=>{const m=/^(\d{1,2}):(\d{2})/.exec(h||'');return m?(+m[1])*60+(+m[2]):-1};
-function renderSched(){
+const shortSubj=t=>{t=(t||'').trim();if(t.length<=7)return t;const w=t.split(/\s+/).filter(x=>!/^(y|de|del|la|el|los|las|e)$/i.test(x));if(w.length>1)return w.map(x=>x[0].toUpperCase()).join('').slice(0,3)+(w.length>1&&w[1].length>2?'':'');return t.slice(0,6)+'.'};
+const subjHue=t=>{let h=0;const x=(t||'').toLowerCase();for(let i=0;i<x.length;i++)h=(h*31+x.charCodeAt(i))%360;return h};
+function schedDays(){
  const now=new Date(),wd=(now.getDay()+6)%7,nm=now.getHours()*60+now.getMinutes();
- const out=DIAS.map((d,i)=>{const l=data.sched.filter(x=>x.day===i&&match(x.t+' '+(x.r||''))).sort((a,b)=>a.h.localeCompare(b.h));if(!l.length)return '';
+ return DIAS.map((d,i)=>{const l=data.sched.filter(x=>x.day===i&&match(x.t+' '+(x.r||''))).sort((a,b)=>a.h.localeCompare(b.h));if(!l.length)return '';
   let nowId=null,nextId=null;
   if(i===wd){l.forEach((x,j)=>{const s0=toMin(x.h),s1=j+1<l.length?toMin(l[j+1].h):s0+60;if(s0<=nm&&nm<s1)nowId=x.id});const nx=l.find(x=>toMin(x.h)>nm);if(nx)nextId=nx.id}
   return `<div class="sday${i===wd?' today':''}"><div class="side-title">${d.toUpperCase()}${i===wd?' · HOY':''}</div><div class="items">${l.map(x=>`<div class="item${x.id===nowId?' s-now':''}"><div class="icon">🕘</div><main><b>${esc(x.t)}</b><p>${x.h}${x.r?' · '+esc(x.r):''}</p></main>${x.id===nowId?'<span class="stag">Ahora</span>':x.id===nextId?'<span class="stag next">Siguiente</span>':''}<button type="button" class="del adm-only" aria-label="Eliminar" onclick="delItem('sched','${x.id}')">×</button></div>`).join('')}</div></div>`}).join('');
- $('schedList').innerHTML=out||'<div class="empty">'+(searchQ?'Sin resultados.':'Aún no hay clases en el horario.')+'</div>';
 }
-function renderFeed(){const l=[...data.photos].sort((a,b)=>(b.fav?1:0)-(a.fav?1:0)).filter(p=>match(p.t+' '+p.s+' '+p.g));
+function schedGrid(){
+ const now=new Date(),wd=(now.getDay()+6)%7,nm=now.getHours()*60+now.getMinutes(),k5=h=>(h||'').slice(0,5);
+ const times=[...new Set(data.sched.filter(x=>x.day>=0&&x.day<5).map(x=>k5(x.h)))].sort();if(!times.length)return '';
+ const head='<tr><th class="ttv-h"></th>'+DIAS.map((d,i)=>`<th class="${i===wd?'tdy':''}">${d.slice(0,3).toUpperCase()}</th>`).join('')+'</tr>';
+ const rows=times.map((h,ri)=>{const s0=toMin(h),s1=times[ri+1]?toMin(times[ri+1]):s0+55;
+  return `<tr><th class="ttv-h">${h}</th>${[0,1,2,3,4].map(d=>{const l=data.sched.filter(x=>x.day===d&&k5(x.h)===h);
+   if(!l.length)return `<td class="ttv-e${d===wd?' tdy':''}"></td>`;
+   const t=l.map(x=>x.t).join(' / '),r=l.map(x=>x.r).filter(Boolean).join(' / '),nowC=d===wd&&s0<=nm&&nm<s1;
+   return `<td class="ttv-c${d===wd?' tdy':''}${nowC?' now':''}" style="--h:${subjHue(l[0].t)}" onclick="toast('${esc((t+(r?' · '+r:'')+' · '+DIAS[d]+' '+h).replace(/'/g,'’'))}')"><b><span class="full">${esc(t)}</span><span class="sh">${esc(l.length>1?t:shortSubj(t))}</span></b>${r?`<small>${esc(r)}</small>`:''}</td>`}).join('')}</tr>`}).join('');
+ return `<table class="ttv"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
+}
+function renderSched(){
+ const view=searchQ?'days':(settings.schedView||'week'),has=data.sched.length>0;
+ const tog=has?`<div class="seg ttv-seg" data-key="schedView"><button type="button" data-v="week" class="${view==='week'?'on':''}">Semana</button><button type="button" data-v="days" class="${view==='days'?'on':''}">Por días</button></div>`:'';
+ let body=has?(view==='week'?schedGrid():schedDays()):'';
+ if(!body)body=`<div class="${has?'empty':'ttv-empty'}">${has?(searchQ?'Sin resultados.':'Aún no hay clases en el horario.'):(isStaff()?'Todavía no hay horario.<br>Créalo de golpe, de lunes a viernes.<br><button type="button" class="add" onclick="openTimetable()">Crear el horario</button>':'Tu profesor aún no ha añadido el horario.')}</div>`;
+ $('schedList').innerHTML=tog+body;
+}
+let ttRows=[];
+function openTimetable(){
+ if(!isStaff()){toast('Solo los profesores pueden editar el horario');return}
+ const map={};
+ data.sched.forEach(x=>{const h=(x.h||'08:00').slice(0,5);const row=map[h]=map[h]||{h,c:[null,null,null,null,null]};if(x.day>=0&&x.day<5){const c=row.c[x.day];row.c[x.day]=c?{t:c.t+' / '+x.t,r:[c.r,x.r].filter(Boolean).join(' / ')}:{t:x.t,r:x.r||''}}});
+ ttRows=Object.values(map).sort((a,b)=>a.h.localeCompare(b.h));
+ if(!ttRows.length)['08:30','09:25','10:20','11:45','12:40','13:35'].forEach(h=>ttRows.push({h,c:[null,null,null,null,null]}));
+ modal('timetable');
+}
+function timetableHTML(){
+ const head='<tr><th></th>'+DIAS.map(d=>'<th>'+d.slice(0,3).toUpperCase()+'</th>').join('')+'<th></th></tr>';
+ const rows=ttRows.map((r,i)=>`<tr><td class="tt-h"><input type="time" class="tt-time" value="${esc(r.h)}" aria-label="Hora"></td>${r.c.map((c,d)=>`<td class="tt-c"><input class="tt-t" data-d="${d}" placeholder="Materia" maxlength="40" value="${esc(c?c.t:'')}" aria-label="Materia ${DIAS[d]}"><input class="tt-r" data-d="${d}" placeholder="Aula" maxlength="24" value="${esc(c?c.r:'')}" aria-label="Aula ${DIAS[d]}"></td>`).join('')}<td><button type="button" class="tt-del" onclick="ttDel(${i})" aria-label="Quitar franja">×</button></td></tr>`).join('');
+ return `<div class="tt-scroll"><table class="tt-ed"><thead>${head}</thead><tbody>${rows}</tbody></table></div><div class="tt-bar"><button type="button" class="mini-btn" onclick="ttAdd()">+ Añadir franja</button><button type="button" class="mini-btn" onclick="ttCopyMon()">Copiar el lunes a toda la semana</button></div><div class="gl-sub">Los huecos vacíos no se guardan. Los alumnos solo ven el horario, no pueden cambiarlo.</div>`;
+}
+function ttCollect(){ttRows=[...document.querySelectorAll('.tt-ed tbody tr')].map(tr=>({h:tr.querySelector('.tt-time').value||'',c:[0,1,2,3,4].map(d=>{const t=tr.querySelector('.tt-t[data-d="'+d+'"]').value.trim(),r=tr.querySelector('.tt-r[data-d="'+d+'"]').value.trim();return t||r?{t,r}:null})}))}
+function ttRefresh(){$('modalFields').innerHTML=timetableHTML()}
+function ttAdd(){ttCollect();const last=ttRows[ttRows.length-1];let h='08:30';if(last&&last.h){const p=last.h.split(':').map(Number),m=p[0]*60+p[1]+55;h=pad(Math.floor(m/60)%24)+':'+pad(m%60)}ttRows.push({h,c:[null,null,null,null,null]});ttRefresh();const ins=document.querySelectorAll('.tt-ed tbody tr:last-child .tt-t');if(ins[0])ins[0].focus()}
+function ttDel(i){ttCollect();ttRows.splice(i,1);ttRefresh()}
+function ttCopyMon(){ttCollect();let n=0;ttRows.forEach(r=>{const m=r.c[0];if(m&&m.t){for(let d=1;d<5;d++)r.c[d]={t:m.t,r:m.r};n++}});ttRefresh();toast(n?'Lunes copiado a toda la semana':'Primero escribe algo en la columna del lunes')}function renderFeed(){const l=[...data.photos].sort((a,b)=>(b.fav?1:0)-(a.fav?1:0)).filter(p=>match(p.t+' '+p.s+' '+p.g));
  $('feed').innerHTML=l.map(p=>`<div class="post"><div class="photo"${p.img?` onclick="viewPhoto('${p.id}')" style="cursor:zoom-in"`:''}>${p.img?`<img src="${p.img}" alt="">`:p.i}</div><div style="flex:1"><b>${p.fav?'⭐ ':''}${esc(p.t)}</b><p>${esc(p.s)}</p><span class="tag">${esc(p.g)}</span></div><button type="button" class="del" aria-label="Opciones" onclick="photoMenu('${p.id}')">⋯</button></div>`).join('')||'<div class="empty">'+(searchQ?'Sin resultados.':'Aún no hay fotos.')+'</div>'}
 /* Chat tipo WhatsApp: texto, emojis, stickers, notas de voz, fotos, respuestas y borrado */
 const STK=['😂','🤣','😍','🥳','😎','🤯','😭','🙏','👍','👏','🔥','💯','❤️','🎉','🤔','😴','🥲','😡','🤝','🫶','🧠','📚','✏️','🎓','☕','🍕','😅','🤩','🫡','💪','🙌','😬'];
@@ -3143,7 +3221,7 @@ const seg=(key,list,val)=>`<div class="seg" data-key="${key}">${list.map(([v,l])
 const row=(l,id)=>`<div class="gl-row"><span>${l}</span>${SW(id)}</div>`;
 document.addEventListener('click',e=>{
  const b=e.target.closest&&e.target.closest('.seg button');
- if(b){const g=b.parentElement,k=g.dataset.key;let v=b.dataset.v;if(/^-?\d+(\.\d+)?$/.test(v))v=+v;settings[k]=v;g.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));applyTheme();saveState();if(['weekStart','sortPosts','showPast','remDays','startTab'].includes(k))renderAll();return}
+ if(b){const g=b.parentElement,k=g.dataset.key;let v=b.dataset.v;if(/^-?\d+(\.\d+)?$/.test(v))v=+v;settings[k]=v;g.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));applyTheme();saveState();if(['weekStart','sortPosts','showPast','remDays','startTab','schedView'].includes(k))renderAll();return}
  const c=e.target.closest&&e.target.closest('.pks[data-for="stgAccent"] .cb-item');
  if(c){settings.accent=c.dataset.v;applyTheme();saveState()}
 });
@@ -3262,6 +3340,7 @@ function modal(t){
   class:['Crear clase','Personalízala a tu gusto; el código se genera solo.',classForm()],
   editclass:['Personalizar clase','Cambia el nombre, el icono, el color y la descripción.',classForm(classes[cur])],
   admin:['Administrar clase',role==='Administrador'?'Gestiona los miembros de la clase.':'Miembros de la clase.',classes.length?adminHTML():''],
+  timetable:['Editar horario','Escribe la materia de cada hora. Se repite cada semana.',t==='timetable'?timetableHTML():''],
   settings:['Ajustes','',stgMenu()]
  }[t];
  $('modalTitle').textContent=c[0];$('modalDesc').textContent=c[1];$('modalFields').innerHTML=c[2];
@@ -3271,8 +3350,8 @@ function modal(t){
  $('f5')?.addEventListener('change',e=>{$('fname').textContent=e.target.files[0]?.name||''});
  if(t==='class'){IMG.icon='';IMG.banner=''}if(t==='editclass'&&classes[cur]){IMG.icon=classes[cur].icon||'';IMG.banner=classes[cur].banner||''}bindImgs();
  document.querySelector('#modal .primary').style.display=['add','admin','settings','workview','archived','invite','notifs'].includes(t)?'none':'';if(t==='role')document.querySelector('#modal .primary').textContent='Guardar rol';else document.querySelector('#modal .primary').textContent='Guardar';
- $('modal').classList.toggle('glass',t==='settings');if(t==='settings')settingsPage('menu');
- $('modal').classList.add('show');if(!['admin','settings','add','workview','archived'].includes(t))$('f1')?.focus();
+ $('modal').classList.toggle('glass',t==='settings');document.querySelector('#modal .modalbox').classList.toggle('wide',t==='timetable');if(t==='settings')settingsPage('menu');
+ $('modal').classList.add('show');if(!['admin','settings','add','workview','archived','timetable'].includes(t))$('f1')?.focus();
 }
 function closeModal(){$('modal').classList.remove('show')}
 $('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});
@@ -3290,6 +3369,13 @@ function saveModal(){
  }else if(mType==='sched'){
   if(!v('f1')){alert('Escribe la asignatura.');return}
   data.sched.push({id:uid(),t:v('f1'),day:+v('f2'),h:v('f3')||'08:00',r:v('f4')});renderAll();goTab('Horario');
+ }else if(mType==='timetable'){
+  if(!isStaff()){toast('Solo los profesores pueden editar el horario');return}
+  ttCollect();
+  for(const r of ttRows){if(r.c.some(c=>c&&c.t)&&!r.h){alert('Pon la hora en todas las franjas que tengan clases.');return}}
+  const old={};data.sched.forEach(x=>{old[x.day+'|'+(x.h||'').slice(0,5)]=x});
+  const out=[];ttRows.forEach(r=>r.c.forEach((c,d)=>{if(c&&c.t){const o=old[d+'|'+r.h];out.push({id:o?o.id:uid(),t:c.t,day:d,h:r.h,r:c.r||''})}}));
+  data.sched=out;renderAll();goTab('Horario');toast('Horario guardado');
  }else if(mType==='photo'){
   const f=$('f5')?.files[0];
   if(!f&&!v('f1')){alert('Añade una foto o una descripción.');return}
