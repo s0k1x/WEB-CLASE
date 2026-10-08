@@ -1869,9 +1869,44 @@ html.chat-l .msg{font-size:17px}
 .gl-group:has(.seg,.pks){flex-direction:column;align-items:stretch}
 .gl-group:has(.seg,.pks)>.gl-label{width:auto;max-width:none;margin:0 0 6px 2px}
 .gl-box .pks.cb-row{flex-wrap:wrap;gap:8px;overflow:visible}
+
+/* ===== pantalla de carga y capas completas: cubren también bajo la barra de Safari ===== */
+.splash-under{position:fixed;left:0;right:0;bottom:-300px;height:340px;z-index:49;background:#000;transition:opacity .3s ease;pointer-events:none}
+html.light .splash-under{background:#eceff4}
+.modal{bottom:-300px;padding-bottom:318px}
+.pc,.lb{bottom:-300px;padding-bottom:316px}
+.tour{bottom:-300px;padding-bottom:320px}
+.am-back,.rv-back,.ck-back{bottom:-300px}
+/* ===== cambiar de rol ===== */
+.rl-who{display:flex;align-items:center;gap:12px;padding:6px 2px 10px}
+.rl-who b{display:block;font-size:15px}.rl-who small{color:#8f9bad;font-size:12px}
+.rl-card{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;margin:8px 0;padding:12px 14px;border-radius:16px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:inherit;cursor:pointer;transition:border-color .2s,background .2s,transform .15s}
+.rl-card:active{transform:scale(.985)}
+.rl-card.on{border-color:var(--accent);background:rgba(var(--accent-rgb),.12)}
+.rl-ic{font-size:24px;line-height:1.1}
+.rl-t{flex:1;min-width:0}.rl-t b{display:block;font-size:14.5px;margin-bottom:3px}.rl-t small{display:block;font-size:12px;line-height:1.45;color:#8f9bad}
+.rl-chk{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:grid;place-items:center;font-size:12px;color:transparent;flex:none;margin-top:2px;transition:all .2s}
+.rl-card.on .rl-chk{background:var(--accent);border-color:var(--accent);color:#fff}
+.rl-warn{display:none;margin-top:8px;padding:10px 12px;border-radius:12px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);color:#f5b342;font-size:12.5px;line-height:1.45}
+.rl-warn.show{display:block}
+.rbadge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(255,255,255,.08);color:#cfd6e4}
+.rbadge.r-administrador{background:rgba(250,183,35,.16);color:#f7c04a}
+.rbadge.r-profesor{background:rgba(var(--accent-rgb),.16);color:#7cc4ff}
+.rbadge.r-delegado{background:rgba(16,185,129,.16);color:#34d399}
+.pc-rolebtn{margin:14px 18px 0;width:calc(100% - 36px)}
+html.light .rl-card{border-color:rgba(15,23,42,.14);background:rgba(15,23,42,.03)}
+html.light .rl-card.on{border-color:var(--accent);background:rgba(var(--accent-rgb),.10)}
+html.light .rl-t small,html.light .rl-who small{color:#5b6475}
+html.light .rl-chk{border-color:rgba(15,23,42,.25)}
+html.light .rl-warn{color:#9a5b00;background:rgba(245,158,11,.14)}
+html.light .rbadge{background:rgba(15,23,42,.07);color:#334155}
+html.light .rbadge.r-administrador{background:rgba(217,119,6,.14);color:#9a5b00}
+html.light .rbadge.r-profesor{background:rgba(var(--accent-rgb),.12);color:#0b5fb4}
+html.light .rbadge.r-delegado{background:rgba(5,150,105,.13);color:#047857}
 </style>
 </head>
 <body>
+<div id="splashUnder" class="splash-under"></div>
 <div id="splash" class="splash">
 <!-- From Uiverse.io by anand_4957 -->
 <div class="spd-box"><div class="spd">
@@ -2120,7 +2155,7 @@ function setCur(i){cur=i;const c=classes[i];data=Object.assign(blank(),c.data);c
  $('className').textContent=c.name;$('classCode').textContent=c.code;$('classEmoji').innerHTML=okImg(c.icon)?`<img src="${c.icon}" alt="">`:esc(c.emoji);$('classDesc').textContent=c.desc||'Todo el curso, organizado en un solo lugar.';$('classView').style.setProperty('--ccol',c.color);$('chat').style.setProperty('--ccol',c.color);document.body.style.setProperty('--ccol',c.color);applyRole();const hr=document.querySelector('#classView .hero');hr.classList.toggle('hasbanner',okImg(c.banner));(okImg(c.banner)?hr.style.setProperty('--bn',`url(${c.banner})`):hr.style.removeProperty('--bn'))}
 function addClass(c){classes.push(c);setCur(classes.length-1);renderAll();confetti();if(!settings.toured)setTimeout(showTour,700)}
 const t0=Date.now();let splashDone=false;
-function hideSplash(){if(splashDone)return;splashDone=true;const sp=$('splash');setTimeout(()=>$('themeSlot')&&$('themeSlot').classList.add('show'),sp?250:0);if(!sp)return;sp.style.transition='opacity .45s ease';sp.style.opacity='0';setTimeout(()=>{sp.remove();showCookies()},500)}
+function hideSplash(){if(splashDone)return;splashDone=true;const sp=$('splash');const su=$('splashUnder');if(su){su.style.opacity='0';setTimeout(()=>su.remove(),600)}setTimeout(()=>$('themeSlot')&&$('themeSlot').classList.add('show'),sp?250:0);if(!sp)return;sp.style.transition='opacity .45s ease';sp.style.opacity='0';setTimeout(()=>{sp.remove();showCookies()},500)}
 function pageReady(){const rest=Math.max(0,2550-(Date.now()-t0));setTimeout(hideSplash,rest)}
 Promise.all([new Promise(r=>document.readyState==='complete'?r():window.addEventListener('load',r)),document.fonts?document.fonts.ready:Promise.resolve()]).then(pageReady,pageReady);
 setTimeout(hideSplash,8000);
@@ -2323,13 +2358,13 @@ const FILE_ICON='<svg viewBox="0 0 24 24"><path d="M12 5a1 1 0 0 1 1 1v5h5a1 1 0
 const SW=id=>`<label class="switch"><input type="checkbox" id="${id}"><div class="slider"><div class="circle"><svg class="cross" viewBox="0 0 10 10"><path d="M1 1l8 8M9 1L1 9" stroke="currentColor" stroke-width="2" fill="none"/></svg><svg class="checkmark" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6" stroke="currentColor" stroke-width="2" fill="none"/></svg></div></div></label>`;
 function adminHTML(){
  const adm=isStaff();
- return data.members.map((m,i)=>`<div class="member">${mAv(m)}<div style="flex:1">${esc(m.n)}<small>${esc(m.r)}${m.b?' · '+esc(m.b):''}</small></div>${adm&&i>0?`<button type="button" class="mini-btn" aria-label="Opciones" onclick="memberMenu(${i})">⋯</button>`:''}</div>`).join('')
+ return data.members.map((m,i)=>`<div class="member">${mAv(m)}<div style="flex:1">${esc(m.n)}<small>${rbadge(m.r)}${m.b?' · '+esc(m.b):''}</small></div>${adm&&i>0?`<button type="button" class="mini-btn" aria-label="Opciones" onclick="memberMenu(${i})">⋯</button>`:''}</div>`).join('')
  +(adm?`<button type="button" class="secondary" onclick="modal('editclass')">🎨 Personalizar clase</button>${DL('Exportar clase','Copia en .json','exportClass()')}${permHTML()}<div class="cp-row"><span>Código de clase · <b>${esc(classes[cur].code)}</b></span>${CP('classes[cur].code','Copiar código')}</div><button type="button" class="secondary" onclick="archiveClass()">📦 Archivar clase</button><button type="button" class="secondary danger" onclick="deleteClass()">Eliminar clase</button>`:`<button type="button" class="secondary danger" onclick="deleteClass()">Salir de la clase</button>`);
 }
 function refreshAdmin(){$('modalFields').innerHTML=adminHTML();bindPerm();saveState();renderAll()}
 function addMember(){const n=$('newMember').value.trim();if(!n)return;data.members.push({n,r:'Alumno'});refreshAdmin()}
-function rmMember(i){data.members.splice(i,1);refreshAdmin()}
-function cycleRole(i){const R=['Alumno','Delegado','Profesor'],m=data.members[i];m.r=R[(R.indexOf(m.r)+1)%3];refreshAdmin()}
+function rmMember(i){const m=data.members[i];if(!m)return;if(m.u&&m.u===(classes[cur]||{}).owner){toast('No se puede quitar a quien creó la clase');return}if(m.u&&m.u===authUid){toast('Para salir de la clase usa «Salir de la clase»');return}if(role!=='Administrador'&&STAFFR.includes(m.r)){toast('Solo un administrador puede quitar a un profesor');return}data.members.splice(i,1);if($('modal').classList.contains('show')&&mType==='admin')refreshAdmin();else{saveState();renderAll()}toast(m.n+' ya no está en la clase')}
+function cycleRoleOld(i){const R=['Alumno','Delegado','Profesor'],m=data.members[i];m.r=R[(R.indexOf(m.r)+1)%3];refreshAdmin()}
 function shareClass(){const c=classes[cur],o={n:c.name,c:c.code,ic:c.emoji,co:c.color,d:c.desc,e:data.events,t:data.tasks,s:data.sched,m:data.members};
  const tk='MTX:'+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
  copyText(tk).then(ok=>{if(ok)toast('Código copiado. Pásalo a tu clase para que lo pegue en "Unirme con código"');else prompt('Copia este código:',tk)})}
@@ -2466,13 +2501,41 @@ function userMenu(a){
   {k:'hold',label:'Borrar mis datos',icon:'trash',fn:wipeNow}
  ],a||$('topAvatar'));
 }
+const ROLES=[
+ {r:'Administrador',ic:'👑',d:'Gestiona la clase: personaliza, permisos, archivar y eliminar. Cambia los roles de los demás. Puede hacer todo lo de un profesor.'},
+ {r:'Profesor',ic:'🎓',d:'Publica anuncios, crea tareas, preguntas y materiales, califica entregas y gestiona eventos y horario.'},
+ {r:'Delegado',ic:'⭐',d:'Es como un alumno, pero con una insignia para que la clase sepa quién ayuda al profesor. No tiene permisos de gestión.'},
+ {r:'Alumno',ic:'🎒',d:'Entrega trabajos, ve sus notas y participa en el tablón y el chat según los permisos de la clase.'}];
+const RBADGE={Administrador:'👑',Profesor:'🎓',Delegado:'⭐',Alumno:''};
+const rbadge=r=>RBADGE[r]?`<span class="rbadge r-${esc(r.toLowerCase())}">${RBADGE[r]} ${esc(r)}</span>`:esc(r);
+let roleSel='';
+function roleBlock(m){
+ const c=classes[cur]||{};
+ if(role!=='Administrador')return 'Solo un administrador puede cambiar roles.';
+ if(m.u&&m.u===authUid)return 'No puedes cambiar tu propio rol. Si quieres dejar de ser administrador, pídeselo a otro administrador.';
+ if(m.u&&m.u===c.owner)return 'No se puede cambiar el rol de quien creó la clase.';
+ return '';
+}
+function roleOpen(i){const m=data.members[i];if(!m)return;const why=roleBlock(m);if(why){toast(why);return}modalArg=i;roleSel=m.r;modal('role')}
+function roleHTML(){
+ const m=data.members[modalArg];if(!m)return '';
+ return `<div class="rl-who">${mAv(m)}<div><b>${esc(m.n)}</b><small>Ahora es ${esc(m.r)}</small></div></div>`
+  +ROLES.map(x=>`<button type="button" class="rl-card${x.r===roleSel?' on':''}" data-role="${x.r}" onclick="pickRole('${x.r}')"><span class="rl-ic">${x.ic}</span><span class="rl-t"><b>${x.r}</b><small>${x.d}</small></span><span class="rl-chk">✓</span></button>`).join('')
+  +`<div class="rl-warn" id="rlWarn"></div>`;
+}
+function pickRole(r){
+ roleSel=r;const m=data.members[modalArg];
+ document.querySelectorAll('.rl-card').forEach(b=>b.classList.toggle('on',b.dataset.role===r));
+ const w=$('rlWarn');if(!w)return;
+ w.textContent=r==='Administrador'?'Un administrador tendrá control total de la clase, incluido cambiar roles y eliminarla para todos.':(m&&m.r==='Administrador'&&r!==m.r?'Dejará de ser administrador y perderá esos permisos.':'');
+ w.classList.toggle('show',!!w.textContent);
+}
 function memberMenu(i){
- const m=data.members[i];if(!m)return;
- openMenu([
-  {k:'act',label:'Rol: '+m.r,icon:'swap',fn:()=>cycleRole(i)},
-  {k:'sep'},
-  {k:'hold',label:'Quitar de la clase',icon:'trash',fn:()=>rmMember(i)}
- ]);
+ const m=data.members[i];if(!m)return;const items=[];
+ if(role==='Administrador'&&!roleBlock(m))items.push({k:'act',label:'Cambiar rol…',icon:'swap',fn:()=>roleOpen(i)});
+ items.push({k:'act',label:'Ver perfil',icon:'eye',fn:()=>{closeModal();showProfile(i)}});
+ if(role==='Administrador'||(role==='Profesor'&&!STAFFR.includes(m.r)))items.push({k:'sep'},{k:'hold',label:'Quitar de la clase',icon:'trash',fn:()=>rmMember(i)});
+ openMenu(items);
 }
 /* Personalización de clases y perfiles */
 const EMO=['📚','🎓','🧪','💻','🎨','⚽','🌍','🎵','🧮','🚀'],COL=['#008cff','#e11d48','#f472b6','#fb923c','#facc15','#84cc16','#10b981','#0ea5e9','#8b5cf6','#a78bfa'];
@@ -2488,7 +2551,7 @@ function bindImgs(){['icon','banner','pIcon','pBanner'].forEach(k=>{const e=$('i
 function showProfile(x){
  const m=typeof x==='number'?data.members[x]:x;if(!m)return;
  const me=m.n===user,col=okCol(m.c)?m.c:'#008cff',ph=me&&okImg(settings.photo)?settings.photo:(okImg(m.ph)?m.ph:''),bn=me&&okImg(settings.banner)?settings.banner:'';
- $('pcBody').innerHTML=`<div class="pc-banner" style="${bn?`background-image:url(${bn})`:`background:linear-gradient(135deg,${col},var(--pcb,#0b1220))`}"></div><div class="pc-av" style="${ph?`background-image:url(${ph})`:`background:${col}`}">${ph?'':esc(m.e||(m.n||'?')[0].toUpperCase())}</div><div class="pc-name">${esc(m.n)}</div><div class="pc-role">${esc(m.r||'')}</div>${m.b?`<div class="pc-bio">${esc(m.b)}</div>`:''}<div class="pc-pad"></div>`;
+ $('pcBody').innerHTML=`<div class="pc-banner" style="${bn?`background-image:url(${bn})`:`background:linear-gradient(135deg,${col},var(--pcb,#0b1220))`}"></div><div class="pc-av" style="${ph?`background-image:url(${ph})`:`background:${col}`}">${ph?'':esc(m.e||(m.n||'?')[0].toUpperCase())}</div><div class="pc-name">${esc(m.n)}</div><div class="pc-role">${rbadge(m.r||'')}</div>${m.b?`<div class="pc-bio">${esc(m.b)}</div>`:''}${(typeof x==='number'&&role==='Administrador'&&!roleBlock(m))?`<button type="button" class="gl-btn pc-rolebtn" onclick="$('pc').classList.add('hidden');roleOpen(${x})">Cambiar rol</button>`:''}<div class="pc-pad"></div>`;
  $('pc').classList.remove('hidden');
 }
 function pk(id,list,val,kind){
@@ -2683,7 +2746,7 @@ function renderPeople(){
  const el=$('peopleBody');if(!el||!classes[cur])return;
  const all=data.members.map((m,i)=>({m,i})).filter(o=>match(o.m.n)),st=all.filter(o=>STAFFR.includes(o.m.r)),sd=all.filter(o=>!STAFFR.includes(o.m.r));
  $('peopleInfo').textContent=data.members.length+(data.members.length===1?' persona':' personas');
- const row=o=>`<div class="pp-row" onclick="showProfile(${o.i})">${mAv(o.m)}<div class="pp-b"><b>${esc(o.m.n)}</b><small>${esc(o.m.r)}${o.m.b?' · '+esc(o.m.b):''}</small></div>${isStaff()&&o.m.n!==user?`<button type="button" class="del" aria-label="Opciones" onclick="event.stopPropagation();memberMenu(${o.i})">⋯</button>`:''}</div>`;
+ const row=o=>`<div class="pp-row" onclick="showProfile(${o.i})">${mAv(o.m)}<div class="pp-b"><b>${esc(o.m.n)}</b><small>${rbadge(o.m.r)}${o.m.b?' · '+esc(o.m.b):''}</small></div>${isStaff()&&o.m.n!==user?`<button type="button" class="del" aria-label="Opciones" onclick="event.stopPropagation();memberMenu(${o.i})">⋯</button>`:''}</div>`;
  const sec=(t,l)=>`<div class="pp-sec"><h3>${t}</h3><span>${l.length}</span></div>`+(l.length?l.map(row).join(''):'<div class="empty">Nadie por aquí.</div>');
  el.innerHTML=`<div class="cp-row pp-code"><span>Código de clase · <b>${esc(classes[cur].code)}</b></span>${CP('classes[cur].code','Copiar código')}</div>`+sec('Profesores',st)+sec('Alumnos',sd);
 }
@@ -2908,6 +2971,7 @@ function modal(t){
   work:[(workEditId?'Editar ':'Nueva ')+{tarea:'tarea',material:'material',pregunta:'pregunta'}[workType],'Visible para toda la clase.',workForm()],
   topic:['Nuevo tema','Agrupa el trabajo por temas.','<input id="f1" placeholder="Nombre del tema" maxlength="40">'],
   invite:['Invitar a la clase','Pásale este código para que se una desde “Añadir o unirse → Unirme con código”.','<div class="cp-row pp-code"><span>Código · <b>'+esc((classes[cur]||{}).code||'')+'</b></span>'+CP('classes[cur].code','Copiar código')+'</div>'],
+  role:['Cambiar rol','Elige qué puede hacer en esta clase.',roleHTML()],
   workview:['Trabajo','',''],
   archived:['Clases archivadas','Restáuralas cuando quieras.',''],
   add:['Añadir o unirse a clase','¿Qué quieres hacer?','<div class="ib-bar ib-add"><button class="ib-btn" type="button" onclick="modal(\'class\')"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg><span>Crear clase</span></button><button class="ib-btn" type="button" onclick="modal(\'join\')"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"></path></svg><span>Unirme con código</span></button></div>'],
@@ -2923,7 +2987,7 @@ function modal(t){
  if(t==='admin')bindPerm();
  $('f5')?.addEventListener('change',e=>{$('fname').textContent=e.target.files[0]?.name||''});
  if(t==='class'){IMG.icon='';IMG.banner=''}if(t==='editclass'&&classes[cur]){IMG.icon=classes[cur].icon||'';IMG.banner=classes[cur].banner||''}bindImgs();
- document.querySelector('#modal .primary').style.display=['add','admin','settings','workview','archived','invite'].includes(t)?'none':'';
+ document.querySelector('#modal .primary').style.display=['add','admin','settings','workview','archived','invite'].includes(t)?'none':'';if(t==='role')document.querySelector('#modal .primary').textContent='Guardar rol';else document.querySelector('#modal .primary').textContent='Guardar';
  $('modal').classList.toggle('glass',t==='settings');if(t==='settings')settingsPage('menu');
  $('modal').classList.add('show');if(!['admin','settings','add','workview','archived'].includes(t))$('f1')?.focus();
 }
@@ -2952,6 +3016,12 @@ function saveModal(){
  }else if(mType==='join'){
   const raw=$('f1').value.trim();if(!raw){alert('Escribe el código de la clase.');return}
   cloudJoin(raw);return;
+ }else if(mType==='role'){
+  const m=data.members[modalArg];if(!m)return;
+  if(role!=='Administrador'){toast('Solo un administrador puede cambiar roles');return}
+  const why=roleBlock(m);if(why){toast(why);return}
+  if(roleSel===m.r){closeModal();return}
+  m.r=roleSel;renderAll();toast(m.n+' ahora es '+roleSel);
  }else if(['event','sched','work','topic','invite','editclass'].includes(mType)&&!isStaff()){
   toast('Solo los profesores pueden hacer esto');return;
  }else if(mType==='post'){
