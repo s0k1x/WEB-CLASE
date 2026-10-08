@@ -1006,6 +1006,19 @@ div.classsel .burger{background:rgba(255,255,255,.08)}
 /* Banner con transparencia real en los bordes (sin máscaras CSS) */
 #classView .hero.hasbanner::before{inset:-14px -8px -10px -8px;background:var(--bnf) 0 0/100% 100% no-repeat;filter:none;-webkit-mask-image:none;mask-image:none}
 #classView .hero.hasbanner::after{display:none}
+/* El banner es el fondo de toda la clase: se ve a través del cristal de las tarjetas */
+.class-bg{position:absolute;top:0;left:0;width:100%;z-index:-1;pointer-events:none;background-repeat:no-repeat;background-size:100% 100%;display:none}
+#classView .hero.hasbanner{padding:8px 4px 16px;background:none!important}
+#classView .hero.hasbanner::before,#classView .hero.hasbanner::after{display:none!important}
+/* Campos de fecha y hora: en iOS se salían de la caja y se hacían más altos */
+.modalbox input,.modalbox select,.modalbox textarea{width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+input[type=date],input[type=time],input[type=datetime-local]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;max-width:100%;height:46px;min-height:46px;line-height:normal;text-align:left;margin-inline:0}
+input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and-time-value{text-align:left;min-height:1.2em;margin:0}
+input[type=date]::-webkit-calendar-picker-indicator,input[type=time]::-webkit-calendar-picker-indicator{opacity:.6;margin-left:auto}
+.modalbox .bsel{margin:2px 0 14px}
+/* Refuerzo: los campos de fecha/hora nunca pueden pasarse de su ventana */
+#modalFields{max-width:100%;overflow-x:clip}
+#modalFields input[type=date],#modalFields input[type=time],#modalFields input[type=datetime-local]{width:100%!important;max-width:100%!important;min-width:0!important;-webkit-appearance:none!important;appearance:none!important;box-sizing:border-box!important;display:block!important;height:46px!important;min-height:46px!important;padding:0 14px!important;margin:0 0 12px!important;text-align:left!important;background-clip:padding-box}
 </style>
 </head>
 <body>
@@ -1028,14 +1041,15 @@ div.classsel .burger{background:rgba(255,255,255,.08)}
 <div id="ckCard" class="ck-card" role="dialog" aria-label="Cookies">
  <svg xml:space="preserve" viewBox="0 0 122.88 122.25" y="0px" x="0px" id="cookieSvg" version="1.1"><g><path d="M101.77,49.38c2.09,3.1,4.37,5.11,6.86,5.78c2.45,0.66,5.32,0.06,8.7-2.01c1.36-0.84,3.14-0.41,3.97,0.95 c0.28,0.46,0.42,0.96,0.43,1.47c0.13,1.4,0.21,2.82,0.24,4.26c0.03,1.46,0.02,2.91-0.05,4.35h0v0c0,0.13-0.01,0.26-0.03,0.38 c-0.91,16.72-8.47,31.51-20,41.93c-11.55,10.44-27.06,16.49-43.82,15.69v0.01h0c-0.13,0-0.26-0.01-0.38-0.03 c-16.72-0.91-31.51-8.47-41.93-20C5.31,90.61-0.73,75.1,0.07,58.34H0.07v0c0-0.13,0.01-0.26,0.03-0.38 C1,41.22,8.81,26.35,20.57,15.87C32.34,5.37,48.09-0.73,64.85,0.07V0.07h0c1.6,0,2.89,1.29,2.89,2.89c0,0.4-0.08,0.78-0.23,1.12 c-1.17,3.81-1.25,7.34-0.27,10.14c0.89,2.54,2.7,4.51,5.41,5.52c1.44,0.54,2.2,2.1,1.74,3.55l0.01,0 c-1.83,5.89-1.87,11.08-0.52,15.26c0.82,2.53,2.14,4.69,3.88,6.4c1.74,1.72,3.9,3,6.39,3.78c4.04,1.26,8.94,1.18,14.31-0.55 C99.73,47.78,101.08,48.3,101.77,49.38L101.77,49.38z M59.28,57.86c2.77,0,5.01,2.24,5.01,5.01c0,2.77-2.24,5.01-5.01,5.01 c-2.77,0-5.01-2.24-5.01-5.01C54.27,60.1,56.52,57.86,59.28,57.86L59.28,57.86z M37.56,78.49c3.37,0,6.11,2.73,6.11,6.11 s-2.73,6.11-6.11,6.11s-6.11-2.73-6.11-6.11S34.18,78.49,37.56,78.49L37.56,78.49z M50.72,31.75c2.65,0,4.79,2.14,4.79,4.79 c0,2.65-2.14,4.79-4.79,4.79c-2.65,0-4.79-2.14-4.79-4.79C45.93,33.89,48.08,31.75,50.72,31.75L50.72,31.75z M119.3,32.4 c1.98,0,3.58,1.6,3.58,3.58c0,1.98-1.6,3.58-3.58,3.58s-3.58-1.6-3.58-3.58C115.71,34.01,117.32,32.4,119.3,32.4L119.3,32.4z M93.62,22.91c2.98,0,5.39,2.41,5.39,5.39c0,2.98-2.41,5.39-5.39,5.39c-2.98,0-5.39-2.41-5.39-5.39 C88.23,25.33,90.64,22.91,93.62,22.91L93.62,22.91z M97.79,0.59c3.19,0,5.78,2.59,5.78,5.78c0,3.19-2.59,5.78-5.78,5.78 c-3.19,0-5.78-2.59-5.78-5.78C92.02,3.17,94.6,0.59,97.79,0.59L97.79,0.59z M76.73,80.63c4.43,0,8.03,3.59,8.03,8.03 c0,4.43-3.59,8.03-8.03,8.03s-8.03-3.59-8.03-8.03C68.7,84.22,72.29,80.63,76.73,80.63L76.73,80.63z M31.91,46.78 c4.8,0,8.69,3.89,8.69,8.69c0,4.8-3.89,8.69-8.69,8.69s-8.69-3.89-8.69-8.69C23.22,50.68,27.11,46.78,31.91,46.78L31.91,46.78z M107.13,60.74c-3.39-0.91-6.35-3.14-8.95-6.48c-5.78,1.52-11.16,1.41-15.76-0.02c-3.37-1.05-6.32-2.81-8.71-5.18 c-2.39-2.37-4.21-5.32-5.32-8.75c-1.51-4.66-1.69-10.2-0.18-16.32c-3.1-1.8-5.25-4.53-6.42-7.88c-1.06-3.05-1.28-6.59-0.61-10.35 C47.27,5.95,34.3,11.36,24.41,20.18C13.74,29.69,6.66,43.15,5.84,58.29l0,0.05v0h0l-0.01,0.13v0C5.07,73.72,10.55,87.82,20.02,98.3 c9.44,10.44,22.84,17.29,38,18.1l0.05,0h0v0l0.13,0.01h0c15.24,0.77,29.35-4.71,39.83-14.19c10.44-9.44,17.29-22.84,18.1-38l0-0.05 v0h0l0.01-0.13v0c0.07-1.34,0.09-2.64,0.06-3.91C112.98,61.34,109.96,61.51,107.13,60.74L107.13,60.74z M116.15,64.04L116.15,64.04 L116.15,64.04L116.15,64.04z M58.21,116.42L58.21,116.42L58.21,116.42L58.21,116.42z"></path></g></svg>
  <p class="ck-title">Cookies 100 % necesarias</p>
- <p class="ck-desc">Solo guardamos lo imprescindible para que la web funcione: tu sesión y tus reseñas. Sin publicidad ni rastreo.</p>
- <div class="ck-btns"><button type="button" class="ck-accept" onclick="acceptCookies()">Aceptar</button><button type="button" class="ck-decline" onclick="declineCookies()">Rechazar</button></div>
+ <p class="ck-desc">Para usar MarioTools es obligatorio aceptarlas. Guardamos en este dispositivo solo los datos necesarios: tu sesión, tus clases, tu perfil y tus reseñas. Sin publicidad ni rastreo.</p>
+ <div class="ck-btns"><button type="button" class="ck-accept" onclick="acceptCookies()">Aceptar</button></div>
 </div>
 <div id="errorScreen" class="errorscreen hidden" role="alert"><div class="errbox">
 <div class="my-custom-face-container"><svg class="face" viewBox="0 0 320 380"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="25"><g class="face__eyes" transform="translate(0,112.5)"><g transform="translate(15,0)"><polyline class="face__eye-lid" points="37,0 0,120 75,120"></polyline><polyline class="face__pupil" points="55,120 55,155" stroke-dasharray="35 35"></polyline></g><g transform="translate(230,0)"><polyline class="face__eye-lid" points="37,0 0,120 75,120"></polyline><polyline class="face__pupil" points="55,120 55,155" stroke-dasharray="35 35"></polyline></g></g><rect class="face__nose" x="132.5" y="112.5" width="55" height="155" rx="4" ry="4"></rect><g transform="translate(65,334)" stroke-dasharray="102 102"><path class="face__mouth-left" d="M 0 30 C 0 30 40 0 95 0"></path><path class="face__mouth-right" d="M 95 0 C 150 0 190 30 190 30"></path></g></g></svg></div>
 <h2>Algo ha salido mal</h2><p>La página ha tenido un problema. Prueba a recargarla.</p><button class="primary" type="button" onclick="location.reload()">Recargar página</button></div></div>
 
 <div id="app" class="app">
+<div id="classBg" class="class-bg"></div>
 <header class="container top"><div class="brand">Mario<span>Tools</span>.xyz</div><div class="profile" id="profile"><div id="classSel" class="classsel"></div><span id="topName" class="clickable" onclick="userMenu()"></span><div class="avatar clickable" id="topAvatar" role="button" aria-label="Mi perfil" onclick="userMenu()"></div><div class="ib-bar ib-mini"><button class="ib-btn" type="button" aria-label="Ajustes" title="Ajustes" onclick="modal('settings')"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></button><button class="ib-btn" type="button" aria-label="Salir" title="Salir" onclick="logout()"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg></button></div></div></header>
 
 <section id="welcome" class="container welcome">
@@ -1281,26 +1295,31 @@ function renderClass(){
 }
 /* Banner difuminado "horneado": se dibuja en un canvas con transparencia real en los bordes */
 function paintBanner(){
- const hr=document.querySelector('#classView .hero'),c=classes[cur];
- if(!hr)return;
- if(!c||!okImg(c.banner)){hr.style.removeProperty('--bnf');hr.style.paddingTop='';paintBanner.k='';return}
- const r=hr.getBoundingClientRect();if(!r.width)return;
- const sc=Math.min(2,window.devicePixelRatio||1),W=Math.round((r.width+16)*sc),tag=cur+'|'+c.banner.length+c.banner.slice(-24)+'|'+W;
+ const bg=$('classBg'),hr=document.querySelector('#classView .hero'),c=classes[cur];
+ if(!bg||!hr)return;
+ const show=!!(c&&okImg(c.banner)&&$('classShell').classList.contains('visible'));
+ if(!show){bg.style.backgroundImage='';bg.style.display='none';hr.style.paddingTop='';paintBanner.k='';return}
+ const vw=document.documentElement.clientWidth,sc=Math.min(2,window.devicePixelRatio||1),W=Math.round(vw*sc),maxH=Math.round(Math.min(520,Math.max(300,vw*.82))*sc);
+ const tag=cur+'|'+c.banner.length+c.banner.slice(-24)+'|'+W+'v4';
  const im=new Image();
  im.onload=()=>{
-  /* la imagen se ajusta al ANCHO completo (sin recortar los lados); solo se limita la altura si es muy vertical */
-  const hFull=im.height*W/im.width,imgH=Math.min(hFull,380*sc);
-  hr.style.paddingTop=Math.max(96,Math.round(imgH/sc-110))+'px';
-  const r2=hr.getBoundingClientRect(),H=Math.max(Math.round((r2.height+24)*sc),Math.round(imgH)+4),key=tag+'|'+Math.round(r2.height);
-  if(paintBanner.k===key)return;
+  /* la imagen CUBRE todo el ancho; si es muy alta se recorta por abajo (nunca por los lados) */
+  const k=W/im.width,H=Math.round(Math.min(im.height*k,maxH));
+  hr.style.paddingTop='0px';
+  const top=hr.getBoundingClientRect().top+window.scrollY;
+  hr.style.paddingTop=Math.max(8,Math.round(H/sc-96-top))+'px';
+  const key=tag+'|'+H;
+  if(paintBanner.k===key){bg.style.display='block';return}
   const cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
-  const srcH=imgH*im.width/W,sy=Math.max(0,(im.height-srcH)*.25);
-  x.drawImage(im,0,sy,im.width,srcH,0,0,W,imgH);
-  x.globalCompositeOperation='source-atop';x.fillStyle='rgba(0,0,0,.22)';x.fillRect(0,0,W,H);
+  const srcH=H/k,sy=Math.max(0,(im.height-srcH)*.22);
+  x.drawImage(im,0,sy,im.width,srcH,0,0,W,H);
+  /* un poco de oscuridad, más abajo para que el texto se lea */
+  x.globalCompositeOperation='source-atop';
+  let g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(0,0,0,.12)');g.addColorStop(.55,'rgba(0,0,0,.14)');g.addColorStop(1,'rgba(0,0,0,.62)');x.fillStyle=g;x.fillRect(0,0,W,H);
+  /* difuminado suave: solo el borde inferior se funde con el fondo */
   x.globalCompositeOperation='destination-in';
-  let g=x.createLinearGradient(0,0,0,imgH);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(.14,'rgba(0,0,0,1)');g.addColorStop(.55,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,W,H);
-  g=x.createLinearGradient(0,0,W,0);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(.08,'rgba(0,0,0,1)');g.addColorStop(.92,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,W,H);
-  hr.style.setProperty('--bnf','url('+cv.toDataURL('image/png')+')');paintBanner.k=key;
+  g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#000');g.addColorStop(.74,'#000');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,W,H);
+  bg.style.backgroundImage='url('+cv.toDataURL('image/png')+')';bg.style.height=Math.round(H/sc)+'px';bg.style.display='block';paintBanner.k=key;
  };
  im.src=c.banner;
 }
@@ -1309,6 +1328,7 @@ function renderAll(){renderEvents();renderTasks();renderSched();renderFeed();ren
 function switchClass(v){if(v==='new'){renderClass();modal('add');return}setCur(+v);renderAll();saveState()}
 function showLogin(){$('welcome').classList.add('hidden');$('login').classList.remove('hidden');window.scrollTo(0,0);$('emailInput')?.focus()}
 function launchApp(b){
+ if(!canStore()){showCookies();return}
  b.classList.add('go');const r=b.getBoundingClientRect(),fx=document.createElement('div');fx.className='fx';
  fx.style.left=(r.left+r.width/2)+'px';fx.style.top=(r.top+r.height/2)+'px';fx.innerHTML='<b></b><i></i><i></i><i></i>';document.body.appendChild(fx);
  document.querySelector('.welcome-box').classList.add('out');setTimeout(showLogin,950);setTimeout(()=>fx.remove(),2400);
@@ -1776,15 +1796,15 @@ function sendReview(){
 }
 /* Cookies necesarias */
 const CKEY='mariotools_cookies';
-function canStore(){try{return localStorage.getItem(CKEY)==='ok'}catch(e){return false}}
+let ckOK=false;function canStore(){if(ckOK)return true;try{return localStorage.getItem(CKEY)==='ok'}catch(e){return false}}
 function showCookies(){if(!canStore())setTimeout(()=>{$('ckBack')?.classList.add('show');$('ckCard')?.classList.add('show')},300)}
 function acceptCookies(){
- try{localStorage.setItem(CKEY,'ok')}catch(e){}
+ ckOK=true;try{localStorage.setItem(CKEY,'ok')}catch(e){}
  $('ckCard').classList.remove('show');$('ckBack').classList.remove('show');
  if($('classShell').classList.contains('visible'))saveState();
  try{localStorage.setItem(RKEY,JSON.stringify(rvMem))}catch(e){}
 }
-function declineCookies(){$('ckCard').classList.remove('show');$('ckBack').classList.remove('show')}
+function declineCookies(){}
 renderReviews();
 restoreSession();
 </script>
