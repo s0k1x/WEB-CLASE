@@ -942,6 +942,67 @@ div.classsel:hover,div.classsel:has(.popup input:checked),.gl-pick:hover,.gl-pic
 .country-box:hover,.country-box:has(.popup input:checked),.country-box:focus-within{border-color:rgba(255,255,255,.14);box-shadow:none}
 .country-pop .bsel,.country-pop .bsel:hover,.country-pop .bsel:has(.popup input:checked){background:transparent!important;border:0!important;box-shadow:none!important;min-height:0!important;padding:0!important;width:auto!important}
 .country-box.menu-open{border-bottom-left-radius:0!important;border-bottom-right-radius:0!important}
+/* Personalización: iconos, colores y perfiles */
+.fl{font-size:11px;color:#8f9bad;letter-spacing:.1em;text-transform:uppercase;margin:12px 0 6px}
+.pks{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pk{width:38px;height:38px;border-radius:11px;border:2px solid transparent;background:rgba(255,255,255,.07);font-size:17px;display:grid;place-items:center;transition:all .15s ease;color:#c9d1de;padding:0}
+.pk.col{background:var(--c);border-radius:50%;width:28px;height:28px}
+.pk.on{border-color:#fff;transform:scale(1.1)}
+.pk.emo.on{background:rgba(0,140,255,.25);border-color:var(--accent)}
+.cemoji{display:inline-grid;place-items:center;width:1.3em;height:1.3em;margin-right:.3em;border-radius:.32em;font-size:.78em;vertical-align:.08em;background:color-mix(in srgb,var(--ccol,#008cff) 28%,transparent)}
+#classView .hero h1{text-shadow:0 0 44px color-mix(in srgb,var(--ccol,#008cff) 60%,transparent)}
+#classView .code{border-left:3px solid var(--ccol,#008cff)}
+.ib-tabs .ib-btn.active{color:var(--ccol,var(--accent))}.ib-tabs .ib-btn::after{background:var(--ccol,var(--accent))}
+.ma{font-size:14px;overflow:hidden}
+/* Fotos de icono y banner */
+input[type=file][hidden]{display:none!important}
+.imgrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.imgprev{flex:none;background:rgba(255,255,255,.07) center/cover no-repeat;border-radius:12px;border:1px dashed rgba(255,255,255,.2)}
+.imgprev.sq{width:56px;height:56px}.imgprev.wide{width:132px;height:56px}
+.imgbtn{padding:9px 14px;border-radius:10px;background:rgba(255,255,255,.08);color:#dfe3eb;font-size:13px;cursor:pointer;transition:background .2s}.imgbtn:hover{background:var(--accent)}
+.imgx{border:0;background:none;color:#ff8a8a;font-size:12px;padding:6px}
+.cemoji{overflow:hidden}.cemoji img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block}
+#classView .hero.hasbanner{background-size:cover;background-position:center;border-radius:20px;padding:84px 20px 18px;box-shadow:0 18px 40px rgba(0,0,0,.4);align-items:flex-end}
+.member.clickable{cursor:pointer;border-radius:10px;transition:background .2s}.member.clickable:hover{background:rgba(255,255,255,.05)}
+.pc{position:fixed;inset:0;z-index:84;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:grid;place-items:center;padding:16px}
+.pc-card{width:min(340px,100%);border-radius:20px;overflow:hidden;background:rgba(18,23,33,.98);box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.pc-banner{height:112px;background-size:cover;background-position:center}
+.pc-av{width:84px;height:84px;border-radius:50%;margin:-42px 0 0 20px;border:4px solid #12171f;display:grid;place-items:center;font-size:34px;font-weight:700;background-size:cover;background-position:center;color:#fff}
+.pc-name{font-size:20px;font-weight:800;margin:10px 20px 0;color:#f5f7fb}.pc-role{color:#8f9bad;font-size:11px;margin:4px 20px 0;letter-spacing:.1em;text-transform:uppercase}
+.pc-bio{margin:12px 20px 0;color:#c9d1de;font-size:14px;line-height:1.5}.pc-pad{height:20px}
+/* Cabecera con banner, integrada con el resto */
+#classView .hero.hasbanner{align-items:flex-start;border:1px solid rgba(255,255,255,.07);padding:92px 18px 16px;gap:14px}
+@media(min-width:801px){#classView .hero.hasbanner{flex-direction:row;align-items:flex-end;justify-content:space-between}}
+#classView .hero.hasbanner>div:first-child{min-width:0}
+#classView .hero.hasbanner h1{text-shadow:0 2px 24px rgba(0,0,0,.7)}
+#classView .hero.hasbanner p{color:#d3d9e4;text-shadow:0 1px 10px rgba(0,0,0,.7)}
+#classView .hero.hasbanner div.classsel{background:rgba(10,13,19,.5);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+#classView .hero.hasbanner .cls-name{color:#e6e9ef}
+#classView .hero.hasbanner .code{background:rgba(10,13,19,.55)!important;border:0!important;border-left:3px solid var(--ccol,#008cff)!important;box-shadow:none!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);width:100%}
+@media(min-width:801px){#classView .hero.hasbanner .code{width:auto;min-width:260px}}
+/* Banner difuminado: la foto se funde con la página por abajo y por los lados */
+#classView .hero.hasbanner{position:relative;isolation:isolate;background:none!important;border:0;border-radius:0;box-shadow:none;padding:100px 4px 16px}
+#classView .hero.hasbanner::before,#classView .hero.hasbanner::after{content:"";position:absolute;pointer-events:none}
+#classView .hero.hasbanner::before{inset:-12px -6px 0 -6px;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.4)),var(--bn) center/cover no-repeat;filter:brightness(.85);-webkit-mask-image:linear-gradient(180deg,#000 28%,transparent 100%),linear-gradient(90deg,transparent 0,#000 16%,#000 84%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(180deg,#000 28%,transparent 100%),linear-gradient(90deg,transparent 0,#000 16%,#000 84%,transparent 100%);mask-composite:intersect}
+#classView .hero.hasbanner::after{inset:-34px -14px -46px -14px;z-index:-2;background:var(--bn) center/cover no-repeat;filter:blur(34px) saturate(1.4) brightness(.7);opacity:.55;-webkit-mask-image:linear-gradient(180deg,#000 40%,transparent 100%);mask-image:linear-gradient(180deg,#000 40%,transparent 100%)}
+/* Últimos detalles: código de clase y selector de clases */
+#classView .code{display:flex;align-items:center;justify-content:space-between;gap:14px;border:0!important;border-radius:16px;padding:10px 10px 10px 16px;background:rgba(12,16,24,.62)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)!important}
+#classView .code small{display:flex;align-items:center;gap:7px;font-size:10px;letter-spacing:.14em;color:#8f9bad;margin-bottom:3px}
+#classView .code small::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ccol,#008cff);box-shadow:0 0 10px var(--ccol,#008cff)}
+#classView .code b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px;letter-spacing:.2em;color:#fff}
+#classView .code .copy{border:0;border-radius:999px;padding:9px 16px;background:rgba(255,255,255,.1);color:#fff;font-size:12px;font-weight:600;transition:background .2s ease}
+#classView .code .copy:hover{background:var(--ccol,#008cff)}
+#classView .hero.hasbanner .code{border-left:0!important;border-radius:16px}
+div.classsel{margin-bottom:12px;padding:3px 16px 3px 3px;background:rgba(12,16,24,.55);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+div.classsel .burger{background:rgba(255,255,255,.08)}
+.cls-name{font-size:11.5px;letter-spacing:.14em}
+/* Selector de clases en la cabecera (ya no va sobre el banner) */
+.profile div.classsel{margin:0;padding:2px 12px 2px 2px;max-width:150px}
+.profile div.classsel:empty{display:none}
+@media(max-width:520px){.profile .cls-name{display:none}.profile div.classsel{padding:2px}}
+/* Banner difuminado sin máscaras (compatible con iOS): degradados que se funden con el negro de la página */
+#classView .hero.hasbanner::before{inset:-14px -8px -6px -8px;background:linear-gradient(180deg,#000 0%,rgba(0,0,0,0) 20%,rgba(0,0,0,.1) 42%,rgba(0,0,0,.72) 76%,#000 100%),linear-gradient(90deg,#000 0%,rgba(0,0,0,0) 16%,rgba(0,0,0,0) 84%,#000 100%),var(--bn) center/cover no-repeat;filter:none;-webkit-mask-image:none;mask-image:none;-webkit-mask-composite:initial;mask-composite:initial}
+#classView .hero.hasbanner::after{inset:-30px -14px -40px -14px;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,#000 100%),var(--bn) center/cover no-repeat;filter:blur(32px) saturate(1.4) brightness(.7);opacity:.5;-webkit-mask-image:none;mask-image:none}
 </style>
 </head>
 <body>
@@ -958,6 +1019,7 @@ div.classsel:hover,div.classsel:has(.popup input:checked),.gl-pick:hover,.gl-pic
 <div id="amBack" class="am-back"></div>
 <div id="amCard" class="nz-card am-card" role="menu"></div>
 <div id="lb" class="lb hidden" onclick="this.classList.add('hidden')"><img id="lbImg" alt=""></div>
+<div id="pc" class="pc hidden" onclick="if(event.target===this)this.classList.add('hidden')"><div class="pc-card" id="pcBody"></div></div>
 <div id="toast" class="toast" role="status"></div>
 <div id="ckBack" class="ck-back"></div>
 <div id="ckCard" class="ck-card" role="dialog" aria-label="Cookies">
@@ -971,7 +1033,7 @@ div.classsel:hover,div.classsel:has(.popup input:checked),.gl-pick:hover,.gl-pic
 <h2>Algo ha salido mal</h2><p>La página ha tenido un problema. Prueba a recargarla.</p><button class="primary" type="button" onclick="location.reload()">Recargar página</button></div></div>
 
 <div id="app" class="app">
-<header class="container top"><div class="brand">Mario<span>Tools</span>.xyz</div><div class="profile" id="profile"><span id="topName" class="clickable" onclick="userMenu()"></span><div class="avatar clickable" id="topAvatar" role="button" aria-label="Mi perfil" onclick="userMenu()"></div><div class="ib-bar ib-mini"><button class="ib-btn" type="button" aria-label="Ajustes" title="Ajustes" onclick="modal('settings')"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></button><button class="ib-btn" type="button" aria-label="Salir" title="Salir" onclick="logout()"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg></button></div></div></header>
+<header class="container top"><div class="brand">Mario<span>Tools</span>.xyz</div><div class="profile" id="profile"><div id="classSel" class="classsel"></div><span id="topName" class="clickable" onclick="userMenu()"></span><div class="avatar clickable" id="topAvatar" role="button" aria-label="Mi perfil" onclick="userMenu()"></div><div class="ib-bar ib-mini"><button class="ib-btn" type="button" aria-label="Ajustes" title="Ajustes" onclick="modal('settings')"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></button><button class="ib-btn" type="button" aria-label="Salir" title="Salir" onclick="logout()"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg></button></div></div></header>
 
 <section id="welcome" class="container welcome">
   <div class="welcome-box">
@@ -1109,7 +1171,7 @@ div.classsel:hover,div.classsel:has(.popup input:checked),.gl-pick:hover,.gl-pic
 <section id="classShell" class="container shell">
 <div id="noClass" class="noclass"><div class="noclass-icon">🎓</div><h2>Aún no tienes ninguna clase</h2><p>Crea tu primera clase para empezar a compartir calendario, fotos y chat.</p><button class="primary" type="button" onclick="modal('add')">Añadir o unirse a clase</button></div>
 <div id="classView" class="hidden">
-<div class="hero"><div><div id="classSel" class="classsel"></div><h1 id="className">2º FPB</h1><p>Todo el curso, organizado en un solo lugar.</p></div><div class="code"><div><small>CÓDIGO DE CLASE</small><b id="classCode">MT-4827</b></div><button class="copy" onclick="copyCode()">Copiar</button></div></div>
+<div class="hero"><div><h1><span id="classEmoji" class="cemoji"></span><span id="className">2º FPB</span></h1><p id="classDesc">Todo el curso, organizado en un solo lugar.</p></div><div class="code"><div><small>CÓDIGO DE CLASE</small><b id="classCode">MT-4827</b></div><button class="copy" onclick="copyCode()">Copiar</button></div></div>
 <div class="layout">
 <main>
 <input id="searchBox" class="searchbox" type="search" placeholder="Buscar en esta clase…" oninput="doSearch(this.value)" autocomplete="off">
@@ -1160,7 +1222,8 @@ let data=blank(),role='Administrador';
 const match=t=>!searchQ||String(t).toLowerCase().includes(searchQ);
 function setCur(i){cur=i;const c=classes[i];data=Object.assign(blank(),c.data);c.data=data;role=c.role||'Administrador';
  Object.values(data).forEach(a=>a.forEach(x=>{if(x&&typeof x==='object'&&!x.id)x.id=uid()}));
- $('className').textContent=c.name;$('classCode').textContent=c.code}
+ c.emoji=c.emoji||'📚';c.color=/^#[0-9a-f]{3,8}$/i.test(c.color||'')?c.color:'#008cff';
+ $('className').textContent=c.name;$('classCode').textContent=c.code;$('classEmoji').innerHTML=okImg(c.icon)?`<img src="${c.icon}" alt="">`:esc(c.emoji);$('classDesc').textContent=c.desc||'Todo el curso, organizado en un solo lugar.';$('classView').style.setProperty('--ccol',c.color);const hr=document.querySelector('#classView .hero');hr.classList.toggle('hasbanner',okImg(c.banner));(okImg(c.banner)?hr.style.setProperty('--bn',`url(${c.banner})`):hr.style.removeProperty('--bn'))}
 function addClass(c){classes.push(c);setCur(classes.length-1);renderAll()}
 const t0=Date.now();let splashDone=false;
 function hideSplash(){if(splashDone)return;splashDone=true;const sp=$('splash');if(!sp)return;sp.style.transition='opacity .45s ease';sp.style.opacity='0';setTimeout(()=>{sp.remove();showCookies()},500)}
@@ -1209,9 +1272,9 @@ function renderClass(){
  const has=classes.length>0;
  $('noClass').classList.toggle('hidden',has);$('classView').classList.toggle('hidden',!has);
  if(!has)return;
- const items=classes.map((c,i)=>({l:c.name,cur:i===cur,fn:()=>switchClass(String(i))})).concat([{sep:1},{l:'＋ Añadir o unirse…',fn:()=>modal('add')}]);
- BM.cls={items};$('classSel').innerHTML=popupHTML(items,'Mis clases','cls','1.9em')+`<span class="cls-name">${esc(classes[cur].name)}</span>`;
- $('memberList').innerHTML=data.members.map(m=>`<div class="member"><div class="ma">${esc((m.n||'?')[0].toUpperCase())}</div><div>${esc(m.n)}<small>${esc(m.r)}</small></div></div>`).join('');
+ const items=classes.map((c,i)=>({l:(c.emoji?c.emoji+' ':'')+c.name,cur:i===cur,fn:()=>switchClass(String(i))})).concat([{sep:1},{l:'＋ Añadir o unirse…',fn:()=>modal('add')}]);
+ BM.cls={items};$('classSel').innerHTML=popupHTML(items,'Mis clases','cls','1.9em')+`<span class="cls-name">${esc((classes[cur].emoji||"")+" "+classes[cur].name)}</span>`;
+ $('memberList').innerHTML=data.members.map((m,i)=>`<div class="member clickable" onclick="showProfile(${i})">${mAv(m)}<div>${esc(m.n)}<small>${esc(m.r)}${m.b?' · '+esc(m.b):''}</small></div></div>`).join('');
 }
 function renderAll(){renderEvents();renderTasks();renderSched();renderFeed();renderChat();renderClass()}
 function switchClass(v){if(v==='new'){renderClass();modal('add');return}setCur(+v);renderAll();saveState()}
@@ -1226,8 +1289,8 @@ function dueCount(){const today=iso(new Date()),tom=iso(new Date(Date.now()+864e
 function enter(name){
  user=(name||'Alumno').trim()||'Alumno';user=user[0].toUpperCase()+user.slice(1);
  $('welcome').classList.add('hidden');$('login').classList.add('hidden');$('classShell').classList.add('visible');
- $('profile').classList.add('on');$('topName').textContent=user;$('topAvatar').textContent=user[0].toUpperCase();
- if(classes.length){if(!classes[cur])cur=0;setCur(cur)}
+ $('profile').classList.add('on');$('topName').textContent=user;paintAvatar();
+ if(classes.length){if(!classes[cur])cur=0;setCur(cur)}syncMe();
  renderAll();window.scrollTo(0,0);saveState();
  const n=dueCount();if(n)setTimeout(()=>toast('Tienes '+n+(n===1?' cosa':' cosas')+' para hoy o mañana'),600);
 }
@@ -1242,14 +1305,14 @@ const FILE_ICON='<svg viewBox="0 0 24 24"><path d="M12 5a1 1 0 0 1 1 1v5h5a1 1 0
 const SW=id=>`<label class="switch"><input type="checkbox" id="${id}"><div class="slider"><div class="circle"><svg class="cross" viewBox="0 0 10 10"><path d="M1 1l8 8M9 1L1 9" stroke="currentColor" stroke-width="2" fill="none"/></svg><svg class="checkmark" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6" stroke="currentColor" stroke-width="2" fill="none"/></svg></div></div></label>`;
 function adminHTML(){
  const adm=role==='Administrador';
- return data.members.map((m,i)=>`<div class="member"><div class="ma">${esc((m.n||'?')[0].toUpperCase())}</div><div style="flex:1">${esc(m.n)}<small>${esc(m.r)}</small></div>${adm&&i>0?`<button type="button" class="mini-btn" aria-label="Opciones" onclick="memberMenu(${i})">⋯</button>`:''}</div>`).join('')
- +(adm?`<input id="newMember" placeholder="Añadir miembro por nombre"><button type="button" class="secondary" onclick="addMember()">Añadir miembro</button><button type="button" class="secondary" onclick="shareClass()">📋 Compartir clase (copiar código)</button><button type="button" class="secondary danger" onclick="deleteClass()">Eliminar clase</button>`:`<button type="button" class="secondary danger" onclick="deleteClass()">Salir de la clase</button>`);
+ return data.members.map((m,i)=>`<div class="member">${mAv(m)}<div style="flex:1">${esc(m.n)}<small>${esc(m.r)}${m.b?' · '+esc(m.b):''}</small></div>${adm&&i>0?`<button type="button" class="mini-btn" aria-label="Opciones" onclick="memberMenu(${i})">⋯</button>`:''}</div>`).join('')
+ +(adm?`<button type="button" class="secondary" onclick="modal('editclass')">🎨 Personalizar clase</button><input id="newMember" placeholder="Añadir miembro por nombre"><button type="button" class="secondary" onclick="addMember()">Añadir miembro</button><button type="button" class="secondary" onclick="shareClass()">📋 Compartir clase (copiar código)</button><button type="button" class="secondary danger" onclick="deleteClass()">Eliminar clase</button>`:`<button type="button" class="secondary danger" onclick="deleteClass()">Salir de la clase</button>`);
 }
 function refreshAdmin(){$('modalFields').innerHTML=adminHTML();saveState();renderClass()}
 function addMember(){const n=$('newMember').value.trim();if(!n)return;data.members.push({n,r:'Alumno'});refreshAdmin()}
 function rmMember(i){data.members.splice(i,1);refreshAdmin()}
 function cycleRole(i){const m=data.members[i];m.r=m.r==='Alumno'?'Delegado':'Alumno';refreshAdmin()}
-function shareClass(){const c=classes[cur],o={n:c.name,c:c.code,e:data.events,t:data.tasks,s:data.sched,m:data.members};
+function shareClass(){const c=classes[cur],o={n:c.name,c:c.code,ic:c.emoji,co:c.color,d:c.desc,e:data.events,t:data.tasks,s:data.sched,m:data.members};
  const tk='MTX:'+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
  copyText(tk).then(ok=>{if(ok)toast('Código copiado. Pásalo a tu clase para que lo pegue en "Unirme con código"');else prompt('Copia este código:',tk)})}
 function deleteClass(){if(!confirm('¿Seguro? Se borrarán los datos de esta clase en este dispositivo.'))return;
@@ -1369,7 +1432,8 @@ const AVC=['#008cff','#8b5cf6','#10b981','#f59e0b','#ef4444','#ec4899'];
 function userMenu(){
  openMenu([
   {k:'rename',label:'Editar nombre',value:user,icon:'pencil',fn:v=>setName(v)},
-  {k:'act',label:'Color del avatar',icon:'palette',fn:()=>{settings.avatar=AVC[(AVC.indexOf(settings.avatar)+1)%AVC.length];applyTheme();saveState()}},
+  {k:'act',label:'Ver mi perfil',icon:'eye',fn:()=>showProfile({n:user,r:'Mi perfil',e:settings.emoji,c:settings.avatar,b:settings.bio})},
+  {k:'act',label:'Personalizar perfil',icon:'palette',fn:()=>{modal('settings');settingsPage('profile')}},
   {k:'act',label:'Ajustes',icon:'settings',fn:()=>modal('settings')},
   {k:'sep'},
   {k:'act',label:'Cerrar sesión',icon:'logout',fn:logout},
@@ -1384,6 +1448,33 @@ function memberMenu(i){
   {k:'sep'},
   {k:'hold',label:'Quitar de la clase',icon:'trash',fn:()=>rmMember(i)}
  ]);
+}
+/* Personalización de clases y perfiles */
+const EMO=['📚','🎓','🧪','💻','🎨','⚽','🌍','🎵','🧮','🚀'],COL=['#008cff','#8b5cf6','#10b981','#f59e0b','#ef4444','#ec4899'];
+const okCol=c=>/^#[0-9a-f]{3,8}$/i.test(c||'');
+const meM=r=>({n:user,r,e:settings.emoji||'',c:settings.avatar,b:settings.bio||''});
+const okImg=u=>typeof u==='string'&&u.startsWith('data:image/');
+const mAv=m=>{const ph=(m.n===user&&okImg(settings.photo))?settings.photo:'';return `<div class="ma"${ph?` style="background:center/cover no-repeat url(${ph})!important"`:okCol(m.c)?` style="background:${m.c}!important;color:#fff"`:''}>${ph?'':esc(m.e||(m.n||'?')[0].toUpperCase())}</div>`};
+const IMG={icon:'',banner:'',pIcon:'',pBanner:''};
+const imgPick=(k,u,shape)=>`<div class="imgrow"><div class="imgprev ${shape}" id="prev_${k}"${okImg(u)?` style="background-image:url(${u})"`:''}></div><label class="imgbtn" for="in_${k}">Elegir foto</label><input type="file" id="in_${k}" accept="image/*" hidden><button type="button" class="imgx" onclick="clearImg('${k}')">Quitar</button></div>`;
+function paintPrev(k){const e=$('prev_'+k);if(e)e.style.backgroundImage=IMG[k]?`url(${IMG[k]})`:''}
+function clearImg(k){IMG[k]='';paintPrev(k)}
+function bindImgs(){['icon','banner','pIcon','pBanner'].forEach(k=>{const e=$('in_'+k);if(e)e.onchange=()=>{const f=e.files[0];if(!f)return;shrink(f,/anner/.test(k)?900:220,.6).then(u=>{IMG[k]=u;paintPrev(k)},()=>toast('No se pudo leer la imagen'))}})}
+function showProfile(x){
+ const m=typeof x==='number'?data.members[x]:x;if(!m)return;
+ const me=m.n===user,col=okCol(m.c)?m.c:'#008cff',ph=me&&okImg(settings.photo)?settings.photo:'',bn=me&&okImg(settings.banner)?settings.banner:'';
+ $('pcBody').innerHTML=`<div class="pc-banner" style="${bn?`background-image:url(${bn})`:`background:linear-gradient(135deg,${col},#0b1220)`}"></div><div class="pc-av" style="${ph?`background-image:url(${ph})`:`background:${col}`}">${ph?'':esc(m.e||(m.n||'?')[0].toUpperCase())}</div><div class="pc-name">${esc(m.n)}</div><div class="pc-role">${esc(m.r||'')}</div>${m.b?`<div class="pc-bio">${esc(m.b)}</div>`:''}<div class="pc-pad"></div>`;
+ $('pc').classList.remove('hidden');
+}
+function pk(id,list,val,kind){return `<input type="hidden" id="${id}" value="${esc(val)}"><div class="pks" data-for="${id}">${list.map(v=>`<button type="button" class="pk ${kind}${v===val?' on':''}" data-v="${esc(v)}"${kind==='col'?` style="--c:${v}"`:''} aria-label="${esc(v||'Inicial')}">${kind==='emo'?(v||'Aa'):''}</button>`).join('')}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.pk');if(!b)return;const g=b.parentElement;g.querySelectorAll('.pk').forEach(x=>x.classList.toggle('on',x===b));$(g.dataset.for).value=b.dataset.v});
+function classForm(c){c=c||{};return '<input id="f1" placeholder="Nombre de la clase" maxlength="40" value="'+esc(c.name||'')+'"><div class="fl">Foto de icono</div>'+imgPick('icon',c.icon,'sq')+'<div class="fl">Icono (si no hay foto)</div>'+pk('f2',EMO,c.emoji||'📚','emo')+'<div class="fl">Banner</div>'+imgPick('banner',c.banner,'wide')+'<div class="fl">Color</div>'+pk('f3',COL,okCol(c.color)?c.color:'#008cff','col')+'<div class="fl">Descripción</div><input id="f4" placeholder="Opcional" maxlength="80" value="'+esc(c.desc||'')+'">'}
+function paintAvatar(){const a=$('topAvatar');if(a)a.textContent=okImg(settings.photo)?'':(settings.emoji||user[0].toUpperCase())}
+function syncMe(){classes.forEach(c=>(c.data.members||[]).forEach(m=>{if(m.n===user){m.e=settings.emoji||'';m.c=settings.avatar;m.b=settings.bio||''}}))}
+function saveProfile(){
+ const n=$('stgName').value.trim();if(!n){alert('Escribe un nombre.');return}
+ settings.photo=IMG.pIcon;settings.banner=IMG.pBanner;settings.emoji=$('stgEmoji').value;settings.avatar=$('stgColor').value;settings.bio=$('stgBio').value.trim().slice(0,60);
+ setName(n);syncMe();paintAvatar();applyTheme();saveState();renderAll();toast('Perfil actualizado');settingsPage('menu');
 }
 function wipeNow(){
  try{[SKEY,RKEY,CKEY].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}
@@ -1404,15 +1495,16 @@ function glassWrap(cur,body){
  return `<div class="gl-head"><span class="gl-pick">${popupHTML(items,'Ajustes','gl','1.9em')}<span class="gl-title">${name}</span></span><div class="gl-beta">Beta</div><button type="button" class="gl-close" aria-label="Cerrar" onclick="closeModal()">✕</button></div><hr class="gl-div">${body}`;
 }
 function settingsPage(k){
+ IMG.pIcon=settings.photo||'';IMG.pBanner=settings.banner||'';
  const B={
   menu:stgMenu(),
-  profile:glGrp('Nombre','<input id="stgName" class="gl-input" maxlength="24" value="'+esc(user)+'" placeholder="Tu nombre">')+'<button type="button" class="gl-btn" onclick="saveName()">Guardar nombre</button>',
+  profile:glGrp('Nombre','<input id="stgName" class="gl-input" maxlength="24" value="'+esc(user)+'" placeholder="Tu nombre">')+glGrp('Foto',imgPick('pIcon',settings.photo,'sq'))+glGrp('Banner',imgPick('pBanner',settings.banner,'wide'))+glGrp('Icono',pk('stgEmoji',['',...EMO],settings.emoji||'','emo'))+glGrp('Color',pk('stgColor',COL,settings.avatar,'col'))+glGrp('Estado','<input id="stgBio" class="gl-input" maxlength="60" value="'+esc(settings.bio||'')+'" placeholder="Ej: delegado, me gusta dibujar">')+'<button type="button" class="gl-btn" onclick="saveProfile()">Guardar perfil</button>',
   account:glGrp('Sesión','<div class="gl-text">Iniciada como <b>'+esc(user)+'</b></div>')+'<button type="button" class="gl-btn" onclick="logout()">Cerrar sesión</button><button type="button" class="gl-btn danger" onclick="wipeData()">Borrar todos mis datos</button>',
   appearance:glGrp('Tema','<div class="gl-row"><span>Modo claro</span>'+SW('optLight')+'</div>')+'<hr class="gl-div">'+glSld('Cuadrícula','slGrid',0,40,settings.grid,'%'),
   access:glSld('Texto','slText',100,140,settings.text,'%')+'<hr class="gl-div">'+glGrp('Movimiento','<div class="gl-row"><span>Reducir animaciones</span>'+SW('optCalm')+'</div>')+glGrp('Zoom','<div class="gl-row"><span>Zoom con los dedos</span>'+SW('optZoom')+'</div>'),
   notif:glGrp('Avisos','<div class="gl-row"><span>Avisos del sistema</span>'+SW('optNotif')+'</div>')+'<div class="gl-text gl-note">Te avisamos de lo que vence hoy o mañana, con la página abierta.</div>'
  }[k];
- $('modalFields').innerHTML=glassWrap(k,B);
+ $('modalFields').innerHTML=glassWrap(k,B);bindImgs();
  const on=(id,key)=>{const e=$(id);if(!e)return;e.checked=!!settings[key];e.onchange=ev=>{settings[key]=ev.target.checked;applyTheme();saveState()}};
  on('optLight','light');on('optCalm','calm');on('optZoom','zoom');
  if($('optNotif')){$('optNotif').checked=settings.notif;$('optNotif').onchange=toggleNotif}
@@ -1423,13 +1515,13 @@ function setName(n){
  n=(n||'').trim().slice(0,24);if(!n){toast('Escribe un nombre');return}
  const old=user;user=n[0].toUpperCase()+n.slice(1);
  classes.forEach(c=>c.data.members.forEach(m=>{if(m.n===old)m.n=user}));
- $('topName').textContent=user;$('topAvatar').textContent=user[0].toUpperCase();
+ $('topName').textContent=user;paintAvatar();
  saveState();renderAll();toast('Nombre actualizado');
 }
 function saveName(){const n=$('stgName').value.trim();if(!n){alert('Escribe un nombre.');return}setName(n);modal('settings')}
 function applyTheme(){
  const h=document.documentElement;h.classList.toggle('light',!!settings.light);h.classList.toggle('calm',!!settings.calm);
- const av=$('topAvatar');if(av&&settings.avatar)av.style.setProperty('background',settings.avatar,'important');
+ const av=$('topAvatar');if(av)av.style.setProperty('background',okImg(settings.photo)?`center/cover no-repeat url(${settings.photo})`:(settings.avatar||'#008cff'),'important');
  h.style.zoom=settings.text>100?settings.text/100:'';h.style.setProperty('--gridA',(settings.grid==null?20:settings.grid)/100);
  const m=document.querySelector('meta[name=viewport]');
  if(m)m.content=settings.zoom?'width=device-width,initial-scale=1,viewport-fit=cover':'width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover';
@@ -1450,7 +1542,7 @@ function checkReminders(){
   c.data.tasks.forEach(t=>{if(!t.done&&(t.d===today||t.d===tom))fire('t'+t.id+t.d,'Tarea '+(t.d===today?'para hoy: ':'para mañana: ')+t.t)})});
 }
 setInterval(checkReminders,60000);
-function shrink(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,520/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.6))};im.onerror=rej;im.src=r.result};r.onerror=rej;r.readAsDataURL(f)})}
+function shrink(f,mx=520,q=.6){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,mx/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',q))};im.onerror=rej;im.src=r.result};r.onerror=rej;r.readAsDataURL(f)})}
 function modal(t){
  mType=t;
  const c={
@@ -1460,12 +1552,14 @@ function modal(t){
   photo:['Foto rápida','Comparte una foto con la clase.','<input id="f1" placeholder="Descripción (pizarra, examen…)">'+bsel('f4','Etiqueta',[{v:'CLASE',l:'CLASE'},{v:'EXAMEN',l:'EXAMEN'},{v:'OTRO',l:'OTRO'}])+'<label class="custum-file-upload" for="f5"><span class="icon">'+FILE_ICON+'</span><span class="text"><span>Elegir foto</span></span><input type="file" id="f5" accept="image/*"></label><div class="file-upload-name" id="fname"></div>'],
   add:['Añadir o unirse a clase','¿Qué quieres hacer?','<div class="ib-bar ib-add"><button class="ib-btn" type="button" onclick="modal(\'class\')"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg><span>Crear clase</span></button><button class="ib-btn" type="button" onclick="modal(\'join\')"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"></path></svg><span>Unirme con código</span></button></div>'],
   join:['Unirse a una clase','Pega el código de importación que te pasó el administrador, o un código MT-0000 de una clase de este dispositivo.','<input id="f1" placeholder="MT-0000 o código de importación" autocapitalize="none">'],
-  class:['Crear clase','Se generará un código para invitar a tus compañeros.','<input id="f1" placeholder="Nombre de la clase">'],
+  class:['Crear clase','Personalízala a tu gusto; el código se genera solo.',classForm()],
+  editclass:['Personalizar clase','Cambia el nombre, el icono, el color y la descripción.',classForm(classes[cur])],
   admin:['Administrar clase',role==='Administrador'?'Gestiona los miembros de la clase.':'Miembros de la clase.',classes.length?adminHTML():''],
   settings:['Ajustes','',stgMenu()]
  }[t];
  $('modalTitle').textContent=c[0];$('modalDesc').textContent=c[1];$('modalFields').innerHTML=c[2];
  $('f5')?.addEventListener('change',e=>{$('fname').textContent=e.target.files[0]?.name||''});
+ if(t==='class'){IMG.icon='';IMG.banner=''}if(t==='editclass'&&classes[cur]){IMG.icon=classes[cur].icon||'';IMG.banner=classes[cur].banner||''}bindImgs();
  document.querySelector('#modal .primary').style.display=['add','admin','settings'].includes(t)?'none':'';
  $('modal').classList.toggle('glass',t==='settings');if(t==='settings')settingsPage('menu');
  $('modal').classList.add('show');if(!['admin','settings','add'].includes(t))$('f1')?.focus();
@@ -1498,16 +1592,19 @@ function saveModal(){
    try{const o=JSON.parse(decodeURIComponent(escape(atob(raw.slice(4)))));
     const ex=classes.findIndex(c=>c.code===o.c);
     if(ex>=0){setCur(ex);renderAll()}
-    else addClass({name:o.n||'Clase',code:o.c||newCode(),role:'Alumno',data:Object.assign(blank(),{events:o.e||[],tasks:o.t||[],sched:o.s||[],members:[...(o.m||[]),{n:user,r:'Alumno'}]})});
+    else addClass({name:o.n||'Clase',code:o.c||newCode(),role:'Alumno',emoji:o.ic,color:o.co,desc:o.d,data:Object.assign(blank(),{events:o.e||[],tasks:o.t||[],sched:o.s||[],members:[...(o.m||[]),meM('Alumno')]})});
    }catch(e){alert('Código de importación no válido.');return}
   }else{
    const i=classes.findIndex(c=>c.code===raw.toUpperCase());
    if(i<0){alert('No encontramos esa clase en este dispositivo. Pídele al administrador el código de importación (Administrar → Compartir clase).');return}
    setCur(i);renderAll();
   }
+ }else if(mType==='editclass'){
+  const c=classes[cur];if(!c)return;if(!v('f1')){alert('Escribe el nombre de la clase.');return}
+  c.name=v('f1');c.emoji=v('f2')||'📚';c.color=v('f3')||'#008cff';c.desc=v('f4');c.icon=IMG.icon;c.banner=IMG.banner;setCur(cur);renderAll();
  }else if(mType==='class'){
   if(!v('f1')){alert('Escribe el nombre de la clase.');return}
-  addClass({name:v('f1'),code:newCode(),role:'Administrador',data:Object.assign(blank(),{members:[{n:user,r:'Administrador'}]})});
+  addClass({name:v('f1'),code:newCode(),role:'Administrador',emoji:v('f2')||'📚',color:v('f3')||'#008cff',desc:v('f4'),icon:IMG.icon,banner:IMG.banner,data:Object.assign(blank(),{members:[meM('Administrador')]})});
  }
  saveState();closeModal();
 }
@@ -1623,7 +1720,7 @@ $('localLoginButton')?.addEventListener('click',()=>{
 document.querySelectorAll('input[name="loginMode"]').forEach(r=>r.addEventListener('change',()=>{$('otpBox').classList.add('hidden')}));
 $('authForm').addEventListener('submit',e=>{e.preventDefault();document.querySelector('.login-method-panel.active .button-submit')?.click()});
 /* Sesión guardada: una vez iniciada, no vuelve a salir inicio ni login */
-const SKEY='mariotools_session';let settings={notif:false,light:false,calm:false,zoom:false,grid:20,text:100,avatar:'#008cff'};
+const SKEY='mariotools_session';let settings={notif:false,light:false,calm:false,zoom:false,grid:20,text:100,avatar:'#008cff',emoji:'',bio:'',photo:'',banner:''};
 function saveState(){if(!canStore())return;try{localStorage.setItem(SKEY,JSON.stringify({v:2,user,cur,classes,settings}))}catch(e){toast('No hay espacio para guardar todo (borra fotos antiguas)')}}
 function restoreSession(){try{const r=localStorage.getItem(SKEY);if(!r)return;const st=JSON.parse(r);if(!st||!st.user)return;
  if(st.v===2){classes=st.classes||[];cur=st.cur||0;settings=Object.assign(settings,st.settings||{})}
