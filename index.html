@@ -2315,8 +2315,8 @@ function otpErrorMsg(e){const m=((e&&e.message)||'').toLowerCase();
  if(e&&e.status===429||m.includes('rate')||m.includes('seconds'))return 'Has pedido demasiados códigos. Espera un minuto e inténtalo de nuevo.';
  if(m.includes('invalid')&&m.includes('email'))return 'Ese correo no es válido.';
  if(m.includes('expired')||m.includes('invalid')||m.includes('token'))return 'El código no es correcto o ha caducado. Pide uno nuevo.';
- if(m.includes('fetch')||m.includes('network'))return 'No hay conexión. Revisa internet e inténtalo otra vez.';
- return 'No se pudo completar. Inténtalo de nuevo.'}
+ if(m.includes('fetch')||m.includes('network')||m.includes('load failed'))return 'No se pudo conectar con el servidor ('+((e&&e.message)||'sin detalle')+'). Si abriste el archivo suelto desde el móvil, tiene que estar publicado en una dirección web.';
+ return 'No se pudo completar. Detalle: '+((e&&e.status)||'')+' '+((e&&e.code)||'')+' '+((e&&e.message)||'sin detalle')}
 async function sendOtp(type){
   if(type==='mobile'){alert('El acceso por móvil no está disponible. Usa tu correo.');return}
   if(!sb){alert('No se pudo cargar el servicio de acceso. Recarga la página.');return}
