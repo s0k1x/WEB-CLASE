@@ -1003,6 +1003,9 @@ div.classsel .burger{background:rgba(255,255,255,.08)}
 /* Banner difuminado sin máscaras (compatible con iOS): degradados que se funden con el negro de la página */
 #classView .hero.hasbanner::before{inset:-14px -8px -6px -8px;background:linear-gradient(180deg,#000 0%,rgba(0,0,0,0) 20%,rgba(0,0,0,.1) 42%,rgba(0,0,0,.72) 76%,#000 100%),linear-gradient(90deg,#000 0%,rgba(0,0,0,0) 16%,rgba(0,0,0,0) 84%,#000 100%),var(--bn) center/cover no-repeat;filter:none;-webkit-mask-image:none;mask-image:none;-webkit-mask-composite:initial;mask-composite:initial}
 #classView .hero.hasbanner::after{inset:-30px -14px -40px -14px;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,#000 100%),var(--bn) center/cover no-repeat;filter:blur(32px) saturate(1.4) brightness(.7);opacity:.5;-webkit-mask-image:none;mask-image:none}
+/* Banner con transparencia real en los bordes (sin máscaras CSS) */
+#classView .hero.hasbanner::before{inset:-14px -8px -10px -8px;background:var(--bnf) 0 0/100% 100% no-repeat;filter:none;-webkit-mask-image:none;mask-image:none}
+#classView .hero.hasbanner::after{display:none}
 </style>
 </head>
 <body>
@@ -1276,7 +1279,33 @@ function renderClass(){
  BM.cls={items};$('classSel').innerHTML=popupHTML(items,'Mis clases','cls','1.9em')+`<span class="cls-name">${esc((classes[cur].emoji||"")+" "+classes[cur].name)}</span>`;
  $('memberList').innerHTML=data.members.map((m,i)=>`<div class="member clickable" onclick="showProfile(${i})">${mAv(m)}<div>${esc(m.n)}<small>${esc(m.r)}${m.b?' · '+esc(m.b):''}</small></div></div>`).join('');
 }
-function renderAll(){renderEvents();renderTasks();renderSched();renderFeed();renderChat();renderClass()}
+/* Banner difuminado "horneado": se dibuja en un canvas con transparencia real en los bordes */
+function paintBanner(){
+ const hr=document.querySelector('#classView .hero'),c=classes[cur];
+ if(!hr)return;
+ if(!c||!okImg(c.banner)){hr.style.removeProperty('--bnf');hr.style.paddingTop='';paintBanner.k='';return}
+ const r=hr.getBoundingClientRect();if(!r.width)return;
+ const sc=Math.min(2,window.devicePixelRatio||1),W=Math.round((r.width+16)*sc),tag=cur+'|'+c.banner.length+c.banner.slice(-24)+'|'+W;
+ const im=new Image();
+ im.onload=()=>{
+  /* la imagen se ajusta al ANCHO completo (sin recortar los lados); solo se limita la altura si es muy vertical */
+  const hFull=im.height*W/im.width,imgH=Math.min(hFull,380*sc);
+  hr.style.paddingTop=Math.max(96,Math.round(imgH/sc-110))+'px';
+  const r2=hr.getBoundingClientRect(),H=Math.max(Math.round((r2.height+24)*sc),Math.round(imgH)+4),key=tag+'|'+Math.round(r2.height);
+  if(paintBanner.k===key)return;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+  const srcH=imgH*im.width/W,sy=Math.max(0,(im.height-srcH)*.25);
+  x.drawImage(im,0,sy,im.width,srcH,0,0,W,imgH);
+  x.globalCompositeOperation='source-atop';x.fillStyle='rgba(0,0,0,.22)';x.fillRect(0,0,W,H);
+  x.globalCompositeOperation='destination-in';
+  let g=x.createLinearGradient(0,0,0,imgH);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(.14,'rgba(0,0,0,1)');g.addColorStop(.55,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,W,H);
+  g=x.createLinearGradient(0,0,W,0);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(.08,'rgba(0,0,0,1)');g.addColorStop(.92,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,W,H);
+  hr.style.setProperty('--bnf','url('+cv.toDataURL('image/png')+')');paintBanner.k=key;
+ };
+ im.src=c.banner;
+}
+window.addEventListener('resize',()=>{clearTimeout(paintBanner.t);paintBanner.t=setTimeout(paintBanner,250)});
+function renderAll(){renderEvents();renderTasks();renderSched();renderFeed();renderChat();renderClass();requestAnimationFrame(paintBanner)}
 function switchClass(v){if(v==='new'){renderClass();modal('add');return}setCur(+v);renderAll();saveState()}
 function showLogin(){$('welcome').classList.add('hidden');$('login').classList.remove('hidden');window.scrollTo(0,0);$('emailInput')?.focus()}
 function launchApp(b){
