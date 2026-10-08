@@ -1957,7 +1957,8 @@ html.light .np-head,html.light .np-l small{color:#5b6475}
 /* ===== márgenes seguros (notch, barra de estado, barra inferior) y capas que cubren TODA la pantalla ===== */
 :root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)}
 body{padding-top:var(--sat)}
-.container{padding-bottom:calc(50px + var(--sab))}
+body.in-app .container{padding-bottom:calc(50px + var(--sab))}
+body:not(.in-app) .container{padding-bottom:calc(10px + var(--sab))}
 .splash-over{position:fixed;left:0;right:0;top:-320px;height:360px;z-index:49;background:#000;transition:opacity .3s ease;pointer-events:none}
 html.light .splash-over{background:#eceff4}
 .modal{top:-300px;padding-top:318px}
@@ -1969,6 +1970,21 @@ html.light .splash-over{background:#eceff4}
 .toast{bottom:calc(22px + var(--sab))}
 .ck-card{bottom:calc(16px + var(--sab))}
 #chat.view{padding-top:var(--sat);padding-bottom:var(--sab);box-sizing:border-box}
+
+/* ===== que inicio y login NUNCA se desplacen (altura real de la pantalla, sin pasarse) ===== */
+body{min-height:100vh;min-height:100dvh}
+.welcome,.login{min-height:calc(100vh - 76px - var(--sat) - var(--sab) - 8px);min-height:calc(100dvh - 76px - var(--sat) - var(--sab) - 8px)}
+.noclass{min-height:calc(100vh - 150px - var(--sat));min-height:calc(100dvh - 150px - var(--sat))}
+/* fondo: la cuadrícula y las luces siguen por debajo y por encima de la zona visible (barra de Safari) */
+body::before{top:-320px;bottom:-320px}
+.aurora{overflow:visible}
+#bgFill::before,#bgFill::after{content:"";position:absolute;left:0;right:0;height:320px;background:#eef1f6}
+#bgFill::before{bottom:100%;background:linear-gradient(0deg,rgba(var(--accent-rgb),.10),#eef1f6)}
+#bgFill::after{top:100%;background:linear-gradient(180deg,rgba(20,200,190,.10),#eef1f6)}
+/* reseñas largas: nunca se salen de la pantalla */
+.rv-list,.rv-list>*{min-width:0;max-width:100%}
+.rv-item{min-width:0;box-sizing:border-box;width:100%}
+.rv-text{min-width:0;flex:0 1 auto}
 </style>
 </head>
 <body>
