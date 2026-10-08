@@ -2079,6 +2079,55 @@ html.light .stag.next{color:#a15c00}
 .sdock-i.dc{background:linear-gradient(135deg,#4f46e5,#3730a3);border-color:rgba(99,102,241,.5)}
 html.light .sdock-bg{background:rgba(255,255,255,.35);border-color:rgba(15,23,42,.1)}
 html.calm .sdock-i:hover,html.calm .sdock-i:active{transform:none}
+
+/* ===== calendario de dos zonas: panel del día + mes ===== */
+.calx{display:grid;grid-template-columns:1fr;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.025);margin-top:4px}
+.calx-side{position:relative;padding:20px 18px 18px;color:#fff;background:linear-gradient(165deg,rgba(var(--accent-rgb),1) 0%,rgba(var(--accent-rgb),.62) 52%,rgba(139,92,246,.78) 100%),#0b1220;overflow:hidden}
+.calx-side::after{content:"";position:absolute;right:-60px;top:-60px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.22),transparent 70%);pointer-events:none}
+.cs-top{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.cs-big{font-size:54px;font-weight:800;line-height:1;letter-spacing:-2px;min-width:64px}
+.cs-dt b{display:block;font-size:18px}.cs-dt span{display:block;font-size:12.5px;opacity:.85;margin-top:2px}
+.cs-dt em{display:inline-block;font-style:normal;margin-top:7px;padding:2px 10px;border-radius:999px;background:rgba(255,255,255,.2);font-size:11px;font-weight:700}
+.cs-h{margin:18px 0 8px;font-size:12px;opacity:.9;position:relative;z-index:1}
+.cs-list{list-style:none;margin:0;padding:0;display:grid;gap:8px;position:relative;z-index:1}
+.cs-it{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.14);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);cursor:default}
+.cs-it.tap{cursor:pointer}
+.cs-pill{flex:none;min-width:54px;text-align:center;font-size:11px;font-weight:800;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.92);color:#2a2f6b;letter-spacing:.02em}
+.cs-it.k-entrega .cs-pill{background:#fde68a;color:#7a4b00}.cs-it.k-tarea .cs-pill{background:#ddd6fe;color:#3b2a8f}.cs-it.k-evento .cs-pill{background:#bfdbfe;color:#0b3c8a}
+.cs-t{min-width:0}.cs-t b{display:block;font-size:13px;line-height:1.25;word-break:break-word}.cs-t small{display:block;font-size:11px;opacity:.8;margin-top:1px}
+.cs-it.past,.cs-it.done{opacity:.5}.cs-it.done .cs-t b{text-decoration:line-through}
+.cs-empty{padding:12px;border-radius:12px;background:rgba(255,255,255,.12);font-size:12.5px;position:relative;z-index:1}
+.cs-foot{margin-top:14px;position:relative;z-index:1}
+.cs-foot button{width:100%;padding:10px;border-radius:12px;border:1px dashed rgba(255,255,255,.55);background:transparent;color:#fff;font-weight:700;font-size:13px;cursor:pointer}
+.calx-main{padding:16px 14px 14px}
+.calx-nav{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.calx-nav b{flex:1;min-width:0;text-align:center;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.calx-nav button:not(.cal-today){width:34px;height:34px;border-radius:50%;border:0;background:rgba(var(--accent-rgb),.14);color:var(--accent);font-size:20px;line-height:1;cursor:pointer}
+.calx-nav .cal-today{flex:none;margin:0 0 0 2px;padding:7px 14px;border-radius:999px;border:1px solid rgba(var(--accent-rgb),.5);background:rgba(var(--accent-rgb),.14);color:var(--accent);font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
+.calx .calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0;row-gap:2px}
+.calx .dow{text-align:center;font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--accent);padding:6px 0 8px}
+.cd{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;height:48px;padding:3px 0 0;border:0;background:none;color:inherit;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.cd .cdn{position:relative;z-index:1;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;font-size:14px;font-weight:600;transition:background .2s,transform .15s}
+.cd:active .cdn{transform:scale(.9)}
+.cd.out{opacity:.35}.cd.we .cdn{opacity:.65}
+.cd.today .cdn{background:var(--accent);color:#fff;opacity:1;font-weight:800;box-shadow:0 6px 16px rgba(var(--accent-rgb),.45)}
+.cd.sel:not(.today) .cdn{box-shadow:inset 0 0 0 2px var(--accent);opacity:1}
+.cd .cdd{display:flex;gap:3px;height:5px;position:relative;z-index:1}
+.cd .cdd i{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.cd .cdd i.w{background:#f59e0b}.cd .cdd i.v{background:#a78bfa}
+.cd.rng::before{content:"";position:absolute;left:0;right:0;top:5px;height:32px;background:rgba(245,158,11,.18)}
+.cd.rng.cl::before{left:5px;border-radius:999px 0 0 999px}.cd.rng.cr::before{right:5px;border-radius:0 999px 999px 0}.cd.rng.cl.cr::before{border-radius:999px}
+.cal-legend .v{background:#a78bfa}
+html.light .calx{border-color:rgba(15,23,42,.1);background:rgba(255,255,255,.55)}
+html.light .calx-nav b,html.light .calx .dow{color:var(--accent)}
+@media(min-width:700px) and (max-width:800px),(min-width:1030px){
+ .calx{grid-template-columns:minmax(220px,33%) 1fr}
+ .calx-side{padding:24px 20px}
+ .calx-main{padding:20px 20px 16px}
+ .cd{height:54px}
+}
+@media(max-width:380px){.cd{height:44px}.cd .cdn{width:30px;height:30px;font-size:13px}.cs-big{font-size:46px}}
+html.calm .cd .cdn{transition:none}
 </style>
 </head>
 <body>
@@ -2262,7 +2311,7 @@ html.calm .sdock-i:hover,html.calm .sdock-i:active{transform:none}
 <div class="ib-bar ib-tabs" role="tablist"><button class="ib-btn active" type="button" title="Inicio" aria-label="Inicio" onclick="showView('home',this)"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" fill="currentColor" aria-hidden="true"><path d="M946.5 505L560.1 118.8l-25.9-25.9a31.5 31.5 0 0 0-44.4 0L77.5 505a63.9 63.9 0 0 0-18.8 46c.4 35.2 29.7 63.3 64.9 63.3h42.5V940h691.8V614.3h43.4c17.1 0 33.2-6.7 45.3-18.8a63.6 63.6 0 0 0 18.7-45.3c0-17-6.7-33.1-18.8-45.2zM568 868H456V664h112v204zm217.9-325.7V868H632V640c0-22.1-17.9-40-40-40H432c-22.1 0-40 17.9-40 40v228H238.1V542.3h-96l370-369.7 23.1 23.1L882 542.3h-96.1z"></path></svg><span>Inicio</span></button><button class="ib-btn" type="button" title="Calendario" aria-label="Calendario" onclick="showView('calendar',this)"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg><span>Calendario</span></button><button class="ib-btn" type="button" title="Trabajo" aria-label="Trabajo" onclick="showView('tasks',this)"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 11 3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg><span>Trabajo</span></button><button class="ib-btn" type="button" title="Horario" aria-label="Horario" onclick="showView('sched',this)"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg><span>Horario</span></button><button class="ib-btn" type="button" title="Ahora" aria-label="Ahora" onclick="showView('now',this)"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg><span>Ahora</span></button><button class="ib-btn" type="button" title="Notas" aria-label="Notas" onclick="showView('grades',this)"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"></circle><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"></path></svg><span>Notas</span></button><button class="ib-btn" type="button" title="Personas" aria-label="Personas" onclick="showView('people',this)"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg><span>Personas</span></button><button class="ib-btn" type="button" title="Chat" aria-label="Chat" onclick="showView('chat',this)"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span>Chat</span></button></div>
 <div class="card content">
 <div id="home" class="view active"><div class="head"><div><h2>Próximamente</h2><p>Lo que tienes pendiente.</p></div><button class="add adm-only" onclick="modal('event')">+ Añadir</button></div><div class="items" id="items"></div><div class="stream" id="stream"></div></div>
-<div id="calendar" class="view"><div class="head"><div><h2>Calendario</h2><p>Las fichas y PDFs están vinculados a sus fechas.</p></div><button class="add adm-only" onclick="modal('event')">+ Evento</button></div><div class="cal-nav"><button type="button" onclick="moveCal(-1)" aria-label="Mes anterior">‹</button><b id="calTitle" style="font-size:13px;min-width:130px;text-align:center"></b><button type="button" onclick="moveCal(1)" aria-label="Mes siguiente">›</button><button type="button" class="cal-today" onclick="calToday()">Hoy</button></div><div class="calendar" id="calendarGrid"></div><div class="cal-legend"><span><i></i>Eventos</span><span><i class="w"></i>Entregas</span></div><div class="cal-day" id="calDay"></div></div>
+<div id="calendar" class="view"><div class="head"><div><h2>Calendario</h2><p>Las fichas y PDFs están vinculados a sus fechas.</p></div><button class="add adm-only" onclick="modal('event')">+ Evento</button></div><div class="calx"><aside class="calx-side" id="calSide"></aside><section class="calx-main"><div class="calx-nav"><button type="button" onclick="moveCal(-1)" aria-label="Mes anterior">‹</button><b id="calTitle"></b><button type="button" onclick="moveCal(1)" aria-label="Mes siguiente">›</button><button type="button" class="cal-today" onclick="calToday()">Hoy</button></div><div class="calendar" id="calendarGrid"></div><div class="cal-legend"><span><i></i>Eventos</span><span><i class="w"></i>Entregas</span><span><i class="v"></i>Tareas</span></div></section></div></div>
 <div id="tasks" class="view"><div class="head"><div><h2>Trabajo de clase</h2><p id="workInfo"></p></div><button class="add adm-only" onclick="createMenu()">+ Crear</button></div><div class="wk-chips" id="wkChips"></div><div id="workList"></div><div class="head wk-sub"><div><h3>Mis tareas personales</h3><p id="taskInfo"></p></div><button class="add" onclick="modal('task')">+ Tarea</button></div><div class="items" id="taskList"></div></div>
 <div id="grades" class="view"><div class="head"><div><h2>Calificaciones</h2><p id="gradeInfo"></p></div><div id="gradeAct"></div></div><div id="gradeBody"></div></div>
 <div id="people" class="view"><div class="head"><div><h2>Personas</h2><p id="peopleInfo"></p></div><button class="add adm-only" onclick="modal('invite')">+ Invitar</button></div><div id="peopleBody"></div></div>
@@ -2352,22 +2401,44 @@ const cap1=t=>t?t[0].toUpperCase()+t.slice(1):t;
 function relDay(k){const t=new Date(iso(new Date())+'T12:00:00'),d=new Date(k+'T12:00:00'),n=Math.round((d-t)/864e5);return n===0?'Hoy':n===1?'Mañana':n===-1?'Ayer':n>1&&n<7?'En '+n+' días':n<0&&n>-7?'Hace '+(-n)+' días':''}
 function relBadge(k){const r=relDay(k);return (r&&!/^Hace|Ayer/.test(r))?r:fmt(k)}
 function relClass(k){const r=relDay(k);return r==='Hoy'?' b-hoy':(r==='Mañana'||/^En [2-3] /.test(r))?' b-pronto':''}
+function dayItems(k){
+ const wd=(new Date(k+'T12:00:00').getDay()+6)%7,out=[];
+ data.sched.filter(x=>x.day===wd).sort((a,b)=>a.h.localeCompare(b.h)).forEach(x=>out.push({k:'clase',pill:x.h,t:x.t,s:x.r||'Clase',min:toMin(x.h)}));
+ data.events.filter(e=>e.d===k).forEach(e=>out.push({k:'evento',pill:'Evento',t:e.t,s:e.s||'',min:9998}));
+ data.work.filter(w=>w.due===k&&w.type!=='material').forEach(w=>{const m=isStaff()?null:subOf(w,user);out.push({k:'entrega',pill:'Entrega',t:w.title,s:WN[w.type]||'',min:9999,done:!!(m&&m.st!=='pendiente')})});
+ data.tasks.filter(t=>t.d===k).forEach(t=>out.push({k:'tarea',pill:'Tarea',t:t.t,s:'',min:9999,done:!!t.done,id:t.id}));
+ return out;
+}
+function activeRanges(){
+ const td=iso(new Date());
+ return data.work.filter(w=>w.type!=='material'&&w.due&&w.ts&&w.due>=td&&!(isStaff()?false:(subOf(w,user)&&subOf(w,user).st!=='pendiente'))).map(w=>[iso(new Date(w.ts)),w.due]).filter(r=>r[0]<r[1]).sort((a,b)=>a[1].localeCompare(b[1])).slice(0,3);
+}
 function renderCal(){
- const dim=new Date(calY,calM+1,0).getDate(),sun=settings.weekStart==='sun',off=sun?new Date(calY,calM,1).getDay():(new Date(calY,calM,1).getDay()+6)%7,today=iso(new Date()),ym=calY+'-'+pad(calM+1);
+ const sun=settings.weekStart==='sun',dim=new Date(calY,calM+1,0).getDate(),off=sun?new Date(calY,calM,1).getDay():(new Date(calY,calM,1).getDay()+6)%7,today=iso(new Date()),ym=calY+'-'+pad(calM+1);
  if(!calSel||calSel.slice(0,7)!==ym)calSel=today.slice(0,7)===ym?today:ym+'-01';
- const all=[...data.events,...workEv()],by={};all.forEach(e=>{(by[e.d]=by[e.d]||[]).push(e)});
- let h=(sun?['D','L','M','X','J','V','S']:['L','M','X','J','V','S','D']).map(d=>`<div class="dow">${d}</div>`).join('')+'<div></div>'.repeat(off);
- for(let d=1;d<=dim;d++){const k=ym+'-'+pad(d),ev=by[k]||[],wd=(off+d-1)%7,we=sun?(wd===0||wd===6):(wd>=5);
-  h+=`<button type="button" class="day${k===today?' today':''}${k===calSel?' sel':''}${we?' we':''}" onclick="pickDay('${k}')" aria-label="${d}${ev.length?', '+ev.length+(ev.length===1?' cosa':' cosas'):''}"><span class="dn">${d}</span>${ev.slice(0,2).map(e=>`<span class="event" title="${esc(e.t)}">${e.i} ${esc(e.t)}</span>`).join('')}${ev.length>2?`<span class="more">+${ev.length-2} más</span>`:''}<span class="dots">${ev.slice(0,4).map(e=>`<i class="${data.events.includes(e)?'':'w'}"></i>`).join('')}</span></button>`}
+ const evs=data.events,wk=data.work.filter(w=>w.due&&w.type!=='material'),tk=data.tasks;
+ const rg=activeRanges(),inR=k=>rg.some(r=>k>=r[0]&&k<=r[1]);
+ const cells=[];
+ const pm=new Date(calY,calM,0),pmDays=pm.getDate();
+ for(let i=off;i>0;i--){const d=pmDays-i+1;cells.push({k:pm.getFullYear()+'-'+pad(pm.getMonth()+1)+'-'+pad(d),d,out:1})}
+ for(let d=1;d<=dim;d++)cells.push({k:ym+'-'+pad(d),d,out:0});
+ const nm=new Date(calY,calM+1,1);let nd=1;while(cells.length%7)cells.push({k:nm.getFullYear()+'-'+pad(nm.getMonth()+1)+'-'+pad(nd),d:nd++,out:1});
+ let h=(sun?['D','L','M','X','J','V','S']:['L','M','X','J','V','S','D']).map(d=>`<div class="dow">${d}</div>`).join('');
+ cells.forEach((c,i)=>{
+  const col=i%7,we=sun?(col===0||col===6):(col>=5),a=evs.some(e=>e.d===c.k),b=wk.some(w=>w.due===c.k),v=tk.some(t=>t.d===c.k&&!t.done),r=inR(c.k);
+  const cl=r&&!(col>0&&inR(cells[i-1].k)),cr=r&&!(col<6&&cells[i+1]&&inR(cells[i+1].k));
+  h+=`<button type="button" class="cd${c.out?' out':''}${c.k===today?' today':''}${c.k===calSel?' sel':''}${we?' we':''}${r?' rng':''}${cl?' cl':''}${cr?' cr':''}" onclick="pickDay('${c.k}')" aria-label="${c.d}"><span class="cdn">${c.d}</span><span class="cdd">${a?'<i></i>':''}${b?'<i class="w"></i>':''}${v?'<i class="v"></i>':''}</span></button>`;
+ });
  $('calendarGrid').innerHTML=h;$('calTitle').textContent=MESL[calM]+' '+calY;renderDayPanel();
 }
 function renderDayPanel(){
- const el=$('calDay');if(!el||!calSel)return;
- const ev=[...data.events,...workEv()].filter(e=>e.d===calSel),lab=cap1(new Date(calSel+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})),r=relDay(calSel);
- el.innerHTML=`<div class="cd-head"><div><b>${esc(lab)}</b>${r?`<small>${r}</small>`:''}</div>${isStaff()?`<button type="button" class="mini-btn" onclick="newEventOn('${calSel}')">+ Evento</button>`:''}</div>`
-  +(ev.length?ev.map(e=>`<div class="item"><div class="icon">${e.i}</div><main><b>${esc(e.t)}</b><p>${esc(e.s||'')}</p></main>${data.events.includes(e)?'':'<span class="due-b b-pronto">Entrega</span>'}</div>`).join(''):'<div class="cd-empty">Nada para este día.</div>');
+ const el=$('calSide');if(!el||!calSel)return;
+ const D=new Date(calSel+'T12:00:00'),today=iso(new Date()),isT=calSel===today,items=dayItems(calSel),now=new Date(),nowMin=now.getHours()*60+now.getMinutes(),r=relDay(calSel);
+ const wdn=cap1(D.toLocaleDateString('es-ES',{weekday:'long'})),mon=cap1(D.toLocaleDateString('es-ES',{month:'long',year:'numeric'}));
+ const li=items.map(x=>{const past=isT&&x.k==='clase'&&x.min+60<=nowMin;return `<li class="cs-it k-${x.k}${x.done?' done':''}${past?' past':''}${x.id?' tap':''}"${x.id?` onclick="toggleTask('${x.id}');renderCal()"`:''}><span class="cs-pill">${esc(x.pill)}</span><span class="cs-t"><b>${esc(x.t)}</b>${x.s?`<small>${esc(x.s)}</small>`:''}</span></li>`}).join('');
+ el.innerHTML=`<div class="cs-top"><div class="cs-big">${D.getDate()}</div><div class="cs-dt"><b>${esc(wdn)}</b><span>${esc(mon)}</span>${r?`<em>${r}</em>`:''}</div></div><div class="cs-h">${isT?'Tus tareas de hoy:':'Para este día:'}</div>${items.length?`<ul class="cs-list">${li}</ul>`:`<div class="cs-empty">${isT?'Nada para hoy. ¡Día libre! 🎉':'No hay nada este día.'}</div>`}${isStaff()?`<div class="cs-foot"><button type="button" onclick="newEventOn('${calSel}')">+ Añadir evento</button></div>`:''}`;
 }
-function pickDay(k){calSel=k;renderCal()}
+function pickDay(k){const y=+k.slice(0,4),m=+k.slice(5,7)-1;if(y!==calY||m!==calM){calY=y;calM=m}calSel=k;renderCal()}
 function calToday(){const n=new Date();calY=n.getFullYear();calM=n.getMonth();calSel=iso(n);renderCal()}
 function newEventOn(k){modal('event');setTimeout(()=>{const f=$('f2');if(f)f.value=k},0)}
 (function(){let x0=null,y0=null;const g=()=>$('calendarGrid');document.addEventListener('touchstart',e=>{const t=e.target.closest&&e.target.closest('#calendarGrid');if(!t){x0=null;return}x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
