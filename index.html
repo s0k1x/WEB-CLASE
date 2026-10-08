@@ -1025,6 +1025,17 @@ html.light body{background:transparent!important}
 #bgFill{display:none;position:fixed;inset:0;z-index:-3;background:#000;pointer-events:none}
 html.light #bgFill{display:block}
 html,body{overscroll-behavior:none}
+/* Ajustes: cabecera con flecha atrás, sin desplegable */
+.modal.glass .modalbox{background:rgba(12,16,24,.84)!important;border:1px solid rgba(255,255,255,.08)!important}
+.gl-head{gap:10px}
+.gl-back{flex:none;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.08);color:#e6e9ef;display:grid;place-items:center;cursor:pointer;transition:all .2s ease}
+.gl-back:hover{background:var(--accent);color:#fff;transform:translateX(-2px)}
+.gl-title{font-size:17px;font-weight:700;letter-spacing:.2px;color:#f5f7fb}
+.modal.glass .stg{background:rgba(255,255,255,.04);padding:6px;gap:2px}
+.modal.glass .stg-item{border-radius:12px;padding:15px 14px}
+.modal.glass .stg-item::after{content:"›";margin-left:auto;font-size:22px;line-height:1;color:#657084;transition:transform .2s ease,color .2s ease}
+.modal.glass .stg-item:hover{background:rgba(0,140,255,.14)}
+.modal.glass .stg-item:hover::after{color:#fff;transform:translateX(3px)}
 html.light #classBg,html.light .pc-banner,html.light .pc-av,html.light .ma,html.light #topAvatar,html.light .imgprev{filter:invert(1) hue-rotate(180deg)}
 html.light body.hasbn .brand,html.light body.hasbn #classView .hero h1,html.light body.hasbn #classView .hero p{color:#000}
 html.light body.hasbn #classView .hero h1,html.light body.hasbn #classView .hero p{text-shadow:0 2px 18px rgba(255,255,255,.55)}
@@ -1548,10 +1559,9 @@ const glGrp=(l,h)=>`<div class="gl-group"><label class="gl-label">${l}</label><d
 const glSld=(l,id,min,max,val,u)=>`<div class="gl-srow"><label>${l}</label><div class="gl-scontent"><div class="gl-swrap"><input type="range" class="gl-slider" id="${id}" min="${min}" max="${max}" value="${val}"></div><div class="gl-sdiv"></div><span class="gl-sval" id="${id}V">${val}${u}</span></div></div>`;
 /* Tarjeta de cristal — From Uiverse.io by byllzz */
 function glassWrap(cur,body){
- const items=SEC.map(([k,l])=>({l,cur:k===cur,fn:()=>settingsPage(k)}));
- BM.gl={items};
  const name=SEC.find(x=>x[0]===cur)[1];
- return `<div class="gl-head"><span class="gl-pick">${popupHTML(items,'Ajustes','gl','1.9em')}<span class="gl-title">${name}</span></span><div class="gl-beta">Beta</div><button type="button" class="gl-close" aria-label="Cerrar" onclick="closeModal()">✕</button></div><hr class="gl-div">${body}`;
+ const back=cur==='menu'?'':`<button type="button" class="gl-back" aria-label="Volver a Ajustes" onclick="settingsPage('menu')"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>`;
+ return `<div class="gl-head">${back}<span class="gl-title">${name}</span><button type="button" class="gl-close" aria-label="Cerrar" onclick="closeModal()">✕</button></div><hr class="gl-div">${body}`;
 }
 function settingsPage(k){
  IMG.pIcon=settings.photo||'';IMG.pBanner=settings.banner||'';
