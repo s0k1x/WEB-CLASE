@@ -2003,6 +2003,14 @@ body::before{top:-320px;bottom:-320px}
  .container{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
 }
 @media(min-width:900px){.profile div.classsel{max-width:230px}}
+
+/* ===== cabecera: entre difuminado y nada (blur ligero que se desvanece hacia abajo) ===== */
+header.container.top{position:relative;z-index:2;-webkit-backdrop-filter:none;backdrop-filter:none;background:none}
+header.container.top::before{content:"";position:absolute;left:0;right:0;top:0;bottom:-22px;z-index:-1;pointer-events:none;
+ -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+ background:linear-gradient(180deg,rgba(0,0,0,.34),rgba(0,0,0,.12) 55%,rgba(0,0,0,0));
+ -webkit-mask-image:linear-gradient(180deg,#000 50%,transparent);mask-image:linear-gradient(180deg,#000 50%,transparent)}
+html.light header.container.top::before{background:linear-gradient(180deg,rgba(255,255,255,.40),rgba(255,255,255,.14) 55%,rgba(255,255,255,0))}
 </style>
 </head>
 <body>
@@ -2037,7 +2045,7 @@ body::before{top:-320px;bottom:-320px}
 <div id="bgFill"></div>
 <div id="classBg" class="class-bg"></div>
 <header class="container top"><div class="brand"><svg class="ulm brand-ic" viewBox="0 0 474 542" aria-hidden="true"><use href="#ul-mark" width="474" height="542"/></svg>Unu<span>via</span>.es</div><!-- Interruptor claro/oscuro — From Uiverse.io by 00Kubi -->
-<div class="theme-slot" id="themeSlot"></div><div class="profile" id="profile"><div id="classSel" class="classsel"></div><span id="topName" class="clickable" onclick="userMenu(this)"></span><button type="button" class="bell" id="bellBtn" onclick="openNotifs()" aria-label="Avisos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bdot" id="bellDot"></span></button><div class="avatar clickable" id="topAvatar" role="button" aria-label="Mi perfil" onclick="userMenu(this)"></div><!-- From Uiverse.io by vinodjangid07 --><button class="lg-btn" type="button" aria-label="Cerrar sesión" title="Cerrar sesión" onclick="logoutAnim(this)"><div class="lg-sign"><svg viewBox="0 0 512 512"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path></svg></div><div class="lg-text">Salir</div></button></div></header>
+<div class="theme-slot" id="themeSlot"></div><div class="profile" id="profile"><div id="classSel" class="classsel"></div><span id="topName" class="clickable" onclick="userMenu(this)"></span><div class="avatar clickable" id="topAvatar" role="button" aria-label="Mi perfil" onclick="userMenu(this)"></div><!-- From Uiverse.io by vinodjangid07 --><button class="lg-btn" type="button" aria-label="Cerrar sesión" title="Cerrar sesión" onclick="logoutAnim(this)"><div class="lg-sign"><svg viewBox="0 0 512 512"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path></svg></div><div class="lg-text">Salir</div></button></div></header>
 
 <section id="welcome" class="container welcome">
   <div class="aurora" aria-hidden="true"><i></i><b></b><b></b><b></b></div>
@@ -2595,7 +2603,6 @@ function userMenu(a){
   {k:'rename',label:'Editar nombre',value:user,icon:'pencil',fn:v=>setName(v)},
   {k:'act',label:'Ver mi perfil',icon:'eye',fn:()=>showProfile({n:user,r:'Mi perfil',e:settings.emoji,c:settings.avatar,b:settings.bio})},
   {k:'act',label:'Personalizar perfil',icon:'palette',fn:()=>{modal('settings');settingsPage('profile')}},
-  {k:'act',label:'Avisos'+(unreadN()?' ('+unreadN()+')':''),icon:'bell',fn:openNotifs},
   {k:'act',label:'Ajustes',icon:'settings',fn:()=>modal('settings')},
   {k:'sep'},
   {k:'act',label:'Cerrar sesión',icon:'logout',fn:logout},
