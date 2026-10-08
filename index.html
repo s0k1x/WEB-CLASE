@@ -1021,6 +1021,10 @@ input[type=date]::-webkit-calendar-picker-indicator,input[type=time]::-webkit-ca
 #modalFields input[type=date],#modalFields input[type=time],#modalFields input[type=datetime-local]{width:100%!important;max-width:100%!important;min-width:0!important;-webkit-appearance:none!important;appearance:none!important;box-sizing:border-box!important;display:block!important;height:46px!important;min-height:46px!important;padding:0 14px!important;margin:0 0 12px!important;text-align:left!important;background-clip:padding-box}
 /* Modo claro: las fotos no se invierten y el texto sobre el banner sigue viéndose blanco */
 html.light{background:#f3f5f9}
+html.light body{background:transparent!important}
+#bgFill{display:none;position:fixed;inset:0;z-index:-3;background:#000;pointer-events:none}
+html.light #bgFill{display:block}
+html,body{overscroll-behavior:none}
 html.light #classBg,html.light .pc-banner,html.light .pc-av,html.light .ma,html.light #topAvatar,html.light .imgprev{filter:invert(1) hue-rotate(180deg)}
 html.light body.hasbn .brand,html.light body.hasbn #classView .hero h1,html.light body.hasbn #classView .hero p{color:#000}
 html.light body.hasbn #classView .hero h1,html.light body.hasbn #classView .hero p{text-shadow:0 2px 18px rgba(255,255,255,.55)}
@@ -1054,6 +1058,7 @@ html.light body.hasbn #classView .hero h1,html.light body.hasbn #classView .hero
 <h2>Algo ha salido mal</h2><p>La página ha tenido un problema. Prueba a recargarla.</p><button class="primary" type="button" onclick="location.reload()">Recargar página</button></div></div>
 
 <div id="app" class="app">
+<div id="bgFill"></div>
 <div id="classBg" class="class-bg"></div>
 <header class="container top"><div class="brand">Mario<span>Tools</span>.xyz</div><div class="profile" id="profile"><div id="classSel" class="classsel"></div><span id="topName" class="clickable" onclick="userMenu()"></span><div class="avatar clickable" id="topAvatar" role="button" aria-label="Mi perfil" onclick="userMenu()"></div><div class="ib-bar ib-mini"><button class="ib-btn" type="button" aria-label="Ajustes" title="Ajustes" onclick="modal('settings')"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></button><button class="ib-btn" type="button" aria-label="Salir" title="Salir" onclick="logout()"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg></button></div></div></header>
 
