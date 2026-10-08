@@ -2004,13 +2004,17 @@ body::before{top:-320px;bottom:-320px}
 }
 @media(min-width:900px){.profile div.classsel{max-width:230px}}
 
-/* ===== cabecera: entre difuminado y nada (blur ligero que se desvanece hacia abajo) ===== */
+/* ===== cabecera: sin bordes duros, el difuminado entra y sale suave ===== */
 header.container.top{position:relative;z-index:2;-webkit-backdrop-filter:none;backdrop-filter:none;background:none}
-header.container.top::before{content:"";position:absolute;left:0;right:0;top:0;bottom:-22px;z-index:-1;pointer-events:none;
- -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
- background:linear-gradient(180deg,rgba(0,0,0,.34),rgba(0,0,0,.12) 55%,rgba(0,0,0,0));
- -webkit-mask-image:linear-gradient(180deg,#000 50%,transparent);mask-image:linear-gradient(180deg,#000 50%,transparent)}
-html.light header.container.top::before{background:linear-gradient(180deg,rgba(255,255,255,.40),rgba(255,255,255,.14) 55%,rgba(255,255,255,0))}
+header.container.top::before{content:"";position:absolute;left:0;right:0;top:-70px;bottom:-30px;z-index:-1;pointer-events:none;
+ -webkit-backdrop-filter:blur(2.5px);backdrop-filter:blur(2.5px);
+ background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.20) 38%,rgba(0,0,0,.16) 62%,rgba(0,0,0,0));
+ -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 38%,#000 62%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 38%,#000 62%,transparent 100%)}
+html.light header.container.top::before{background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.30) 38%,rgba(255,255,255,.22) 62%,rgba(255,255,255,0))}
+/* ===== título de la clase: icono y nombre siempre alineados, sea cual sea el texto o el interlineado ===== */
+#classView .hero h1{display:flex;align-items:center;gap:.3em;line-height:1.12;margin:4px 0 7px}
+#classView .hero h1 .cemoji{flex:none;margin:0;vertical-align:baseline}
+#classView .hero h1 #className{min-width:0;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
