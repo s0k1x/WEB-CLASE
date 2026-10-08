@@ -1019,6 +1019,11 @@ input[type=date]::-webkit-calendar-picker-indicator,input[type=time]::-webkit-ca
 /* Refuerzo: los campos de fecha/hora nunca pueden pasarse de su ventana */
 #modalFields{max-width:100%;overflow-x:clip}
 #modalFields input[type=date],#modalFields input[type=time],#modalFields input[type=datetime-local]{width:100%!important;max-width:100%!important;min-width:0!important;-webkit-appearance:none!important;appearance:none!important;box-sizing:border-box!important;display:block!important;height:46px!important;min-height:46px!important;padding:0 14px!important;margin:0 0 12px!important;text-align:left!important;background-clip:padding-box}
+/* Modo claro: las fotos no se invierten y el texto sobre el banner sigue viéndose blanco */
+html.light{background:#f3f5f9}
+html.light #classBg,html.light .pc-banner,html.light .pc-av,html.light .ma,html.light #topAvatar,html.light .imgprev{filter:invert(1) hue-rotate(180deg)}
+html.light body.hasbn .brand,html.light body.hasbn #classView .hero h1,html.light body.hasbn #classView .hero p{color:#000}
+html.light body.hasbn #classView .hero h1,html.light body.hasbn #classView .hero p{text-shadow:0 2px 18px rgba(255,255,255,.55)}
 </style>
 </head>
 <body>
@@ -1297,7 +1302,7 @@ function renderClass(){
 function paintBanner(){
  const bg=$('classBg'),hr=document.querySelector('#classView .hero'),c=classes[cur];
  if(!bg||!hr)return;
- const show=!!(c&&okImg(c.banner)&&$('classShell').classList.contains('visible'));
+ const show=!!(c&&okImg(c.banner)&&$('classShell').classList.contains('visible'));document.body.classList.toggle('hasbn',show);
  if(!show){bg.style.backgroundImage='';bg.style.display='none';hr.style.paddingTop='';paintBanner.k='';return}
  const vw=document.documentElement.clientWidth,sc=Math.min(2,window.devicePixelRatio||1),W=Math.round(vw*sc),maxH=Math.round(Math.min(520,Math.max(300,vw*.82))*sc);
  const tag=cur+'|'+c.banner.length+c.banner.slice(-24)+'|'+W+'v4';
