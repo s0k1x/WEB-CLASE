@@ -899,13 +899,52 @@ const bad=[];data.members.forEach((m,i)=>{const g=$('g_'+i);if(!g)return;g.class
 function editWork(id){const w=data.work.find(x=>x.id===id);if(!w)return;workEditId=id;workType=w.type;workDraft={id,files:[...(w.files||[])],orig:(w.files||[]).map(f=>f.p)};modal('work')}
 async function delWork(id){if(!await ask({icon:'🗑️',title:'¿Eliminar este elemento?',text:'Se borrarán también todas sus entregas.',ok:'Eliminar',danger:true}))return;data.work=data.work.filter(x=>x.id!==id);saveState();closeModal();renderAll()}
 /* --- Personas --- */
+/* ===================== ASISTENCIA (SQL 15) ===================== */
+let ATT_OK=null,ATT={cid:null,rows:[],loading:false},ATTD={},attDay='';
+const ATT_ST=[['presente','P','Presente'],['ausente','A','Ausente'],['retraso','R','Retraso'],['justificada','J','Justificada']];
+async function checkAtt(){try{const {error}=await sb.from('attendance').select('id').limit(1);ATT_OK=!error}catch(e){ATT_OK=false}}
+async function attLoad(force){const c=classes[cur];if(!c||!ATT_OK||!sb)return;if(!force&&(ATT.cid===c.id||ATT.loading))return;ATT.loading=true;ATT.cid=c.id;
+ try{const {data:d,error}=await sb.from('attendance').select('student_id,day,status,note').eq('class_id',c.id).order('day',{ascending:false}).limit(5000);if(!error&&classes[cur]&&classes[cur].id===c.id)ATT.rows=d||[]}catch(e){}
+ ATT.loading=false;try{renderPeople()}catch(e){}}
+function attStats(uid){const r=ATT.rows.filter(x=>x.student_id===uid),n=r.length,c=k=>r.filter(x=>x.status===k).length;const ok=c('presente')+c('retraso')+c('justificada');return {n,p:c('presente'),a:c('ausente'),r:c('retraso'),j:c('justificada'),pct:n?Math.round(ok/n*100):null,last:r.filter(x=>x.status!=='presente').slice(0,4)}}
+const attDays=()=>[...new Set(ATT.rows.map(x=>x.day))].sort().reverse();
+function attCardHTML(){
+ if(ATT_OK===false)return isStaff()?'<div class="att-card"><div class="att-h"><b>Asistencia</b><small>Se activa ejecutando el SQL 15 en Supabase.</small></div></div>':'';
+ if(ATT_OK!==true)return '';
+ const td=iso(new Date());
+ if(isStaff()){const days=attDays(),today=ATT.rows.filter(x=>x.day===td),st=students(),ab=today.filter(x=>x.status==='ausente').length,rt=today.filter(x=>x.status==='retraso').length;
+  const all=st.map(m=>attStats(m.u)).filter(s=>s.pct!=null),avg=all.length?Math.round(all.reduce((a,s)=>a+s.pct,0)/all.length):null;
+  return `<div class="att-card"><div class="att-h"><b>Asistencia</b><small>${today.length?`Hoy: ${today.length-ab} de ${today.length} en clase${ab?' · '+ab+(ab===1?' ausencia':' ausencias'):''}${rt?' · '+rt+(rt===1?' retraso':' retrasos'):''}`:'Aún no has pasado lista hoy.'}</small></div>
+   ${days.length?`<div class="att-kpi"><span><b>${avg==null?'—':avg+'%'}</b><small>asistencia media</small></span><span><b>${days.length}</b><small>${days.length===1?'día registrado':'días registrados'}</small></span></div>`:''}
+   <div class="att-b"><button type="button" class="add" onclick="attOpen('${td}')">${today.length?'Revisar la lista de hoy':'Pasar lista'}</button>${days.length?'<button type="button" class="mini-btn" onclick="modal(\'atth\')">Historial</button>':''}</div></div>`}
+ const s=attStats(authUid);if(!s.n)return '<div class="att-card"><div class="att-h"><b>Mi asistencia</b><small>Tu profesor aún no ha pasado lista.</small></div></div>';
+ const lbl={ausente:'Ausente',retraso:'Retraso',justificada:'Justificada'};
+ return `<div class="att-card"><div class="att-h"><b>Mi asistencia</b><small>${s.n} ${s.n===1?'día registrado':'días registrados'}</small></div><div class="att-kpi"><span><b>${s.pct}%</b><small>asistencia</small></span><span><b>${s.a}</b><small>${s.a===1?'ausencia':'ausencias'}</small></span><span><b>${s.r}</b><small>${s.r===1?'retraso':'retrasos'}</small></span><span><b>${s.j}</b><small>${s.j===1?'justificada':'justificadas'}</small></span></div>${s.last.length?'<div class="att-last">'+s.last.map(x=>`<span class="ac-${x.status}">${fmt(x.day)} · ${lbl[x.status]}</span>`).join('')+'</div>':''}</div>`;
+}
+function attOpen(day){attDay=day||iso(new Date());ATTD={};const ex=ATT.rows.filter(x=>x.day===attDay);students().forEach(m=>{const r=ex.find(x=>x.student_id===m.u);ATTD[m.u]=r?r.status:'presente'});modal('att')}
+function attHTML(){const st=students();if(!st.length)return '<div class="empty">Aún no hay alumnos en la clase.</div>';
+ const c=k=>st.filter(m=>ATTD[m.u]===k).length,done=ATT.rows.some(x=>x.day===attDay);
+ return `<div class="att-top"><input id="attDayIn" type="date" value="${attDay}" max="${iso(new Date())}" aria-label="Día" onchange="attOpen(this.value)"><button type="button" class="mini-btn" onclick="students().forEach(m=>ATTD[m.u]='presente');$('modalFields').innerHTML=attHTML()">Todos presentes</button></div>
+  <div class="att-sum">${done?'Ya pasaste lista este día: puedes cambiarla. · ':''}<b>${c('presente')}</b> presentes · <b>${c('ausente')}</b> ausentes · <b>${c('retraso')}</b> retrasos · <b>${c('justificada')}</b> justificadas</div>
+  <div class="att-list">${st.map(m=>`<div class="att-row">${mAv(m)}<span class="att-n">${esc(m.n)}</span><span class="att-chips" role="radiogroup" aria-label="Asistencia de ${esc(m.n)}">${ATT_ST.map(([k,s,l])=>`<button type="button" role="radio" aria-checked="${ATTD[m.u]===k}" aria-label="${l}" title="${l}" class="ac ac-${k}${ATTD[m.u]===k?' on':''}" onclick="ATTD['${m.u}']='${k}';$('modalFields').innerHTML=attHTML()">${s}</button>`).join('')}</span></div>`).join('')}</div>
+  <div class="att-legend">P presente · A ausente · R retraso · J justificada</div>`}
+async function attSave(){const c=classes[cur];if(!c||!isStaff())return;const rows=students().map(m=>({class_id:c.id,student_id:m.u,day:attDay,status:ATTD[m.u]||'presente'}));if(!rows.length)return;
+ try{const {error}=await sb.from('attendance').upsert(rows,{onConflict:'class_id,student_id,day'});if(error)throw error;
+  await attLoad(true);closeModal();const a=rows.filter(r=>r.status==='ausente').length;toast(a?`Lista guardada · ${a} ${a===1?'ausencia':'ausencias'}`:'Lista guardada · todos presentes','ok')}
+ catch(e){toastErr(navigator.onLine?'No se pudo guardar la lista. Inténtalo de nuevo.':'Sin conexión: guarda la lista cuando vuelva internet.')}}
+function attHistHTML(){const st=students(),days=attDays();if(!days.length)return '<div class="empty">Aún no hay días registrados.</div>';
+ const rows=st.map(m=>({m,s:attStats(m.u)})).sort((a,b)=>(a.s.pct??101)-(b.s.pct??101));
+ return `<div class="fl">Por alumno</div><div class="att-hist">${rows.map(({m,s})=>`<div class="ah-row">${mAv(m)}<span class="att-n">${esc(m.n)}</span><span class="ah-bar"><i style="width:${s.pct??0}%" class="${(s.pct??100)<80?'low':''}"></i></span><b>${s.pct==null?'—':s.pct+'%'}</b><small>${s.a}A · ${s.r}R · ${s.j}J</small></div>`).join('')}</div>
+  <div class="fl">Días</div><div class="att-days">${days.slice(0,30).map(d=>{const r=ATT.rows.filter(x=>x.day===d),a=r.filter(x=>x.status==='ausente').length;return `<button type="button" class="ad-day" onclick="attOpen('${d}')"><b>${fmt(d)}</b><small>${a?a+(a===1?' ausencia':' ausencias'):'Todos'}</small></button>`}).join('')}</div>`}
+
 function renderPeople(){
  const el=$('peopleBody');if(!el||!classes[cur])return;
  const all=data.members.map((m,i)=>({m,i})).filter(o=>match(o.m.n)),st=all.filter(o=>STAFFR.includes(o.m.r)),sd=all.filter(o=>!STAFFR.includes(o.m.r));
  $('peopleInfo').textContent=data.members.length+(data.members.length===1?' persona':' personas');
  const row=o=>`<div class="pp-row" onclick="showProfile(${o.i})">${mAv(o.m)}<div class="pp-b"><b>${esc(o.m.n)}</b><small>${o.m.mu?'<span class="rbadge r-mute">Silenciado</span> ':''}${rbadge(o.m.r)}${o.m.b?' · '+esc(o.m.b):''}</small></div>${isStaff()&&o.m.n!==user?`<button type="button" class="del" aria-label="Opciones" onclick="event.stopPropagation();memberMenu(${o.i})">⋯</button>`:''}</div>`;
  const sec=(t,l)=>`<div class="pp-sec"><h3>${t}</h3><span>${l.length}</span></div>`+(l.length?l.map(row).join(''):'<div class="empty">Nadie por aquí.</div>');
- el.innerHTML=`<div class="cp-row pp-code"><span>Código de clase · <b>${esc(classes[cur].code)}</b></span>${CP('classes[cur].code','Copiar código')}</div>`+sec('Profesores',st)+sec('Alumnos',sd);
+ if(ATT_OK&&ATT.cid!==classes[cur].id)attLoad();
+ el.innerHTML=attCardHTML()+`<div class="cp-row pp-code"><span>Código de clase · <b>${esc(classes[cur].code)}</b></span>${CP('classes[cur].code','Copiar código')}</div>`+sec('Profesores',st)+sec('Alumnos',sd);
 }
 /* --- Calificaciones --- */
 function stBadge(w,s){const td=iso(new Date());if(s&&s.grade!=null&&(isStaff()||s.ret!==false))return '<span class="due-b b-ok">Calificada</span> ';if(s&&s.st==='tarde')return '<span class="due-b b-pronto">Con retraso</span> ';if(s&&s.st!=='pendiente')return '<span class="due-b">Entregada · sin nota</span> ';if(isPastDue(w))return '<span class="due-b b-late">Vencida</span> ';return '<span class="due-b">Pendiente</span> '}
@@ -1262,6 +1301,8 @@ function modal(t){
   invite:['Invitar a la clase','Comparte el enlace: al abrirlo e iniciar sesión, entran directamente a la clase. También vale el código.','<div class="cp-row pp-code"><span>Código · <b>'+esc((classes[cur]||{}).code||'')+'</b></span>'+CP('classes[cur].code','Copiar código')+'</div><div class="inv-link"><span>'+esc(inviteUrl())+'</span></div><button type="button" class="gl-btn" onclick="shareInvite()">📤 Compartir enlace de invitación</button>'],
   role:['Cambiar rol','Elige qué puede hacer en esta clase.',roleHTML()],
   notifs:['Avisos','Lo último de tus clases.',notifsHTML()],
+  att:['Pasar lista','Marca a quien falte, llegue tarde o tenga la falta justificada.',t==='att'?attHTML():''],
+  atth:['Historial de asistencia','Porcentaje de asistencia de cada alumno y días registrados.',t==='atth'?attHistHTML():''],
   postedit:['Editar anuncio','Los cambios los verá toda la clase.',t==='postedit'?(()=>{const p=data.posts.find(x=>x.id===modalArg);return p?'<textarea id="f1" rows="5" maxlength="1500">'+esc(p.t)+'</textarea>':''})():''],
   todo:['Pendientes','De todas tus clases.',t==='todo'?todoHTML():''],
   grade1:['Calificar','Al guardar se devuelve al alumno. Solo la verá él.',t==='grade1'?grade1HTML():''],
@@ -1281,7 +1322,7 @@ function modal(t){
  if(t==='admin')bindPerm();
  $('f5')?.addEventListener('change',e=>{$('fname').textContent=e.target.files[0]?.name||''});
  if(t==='class'){IMG.icon='';IMG.banner=''}if(t==='editclass'&&classes[cur]){IMG.icon=classes[cur].icon||'';IMG.banner=classes[cur].banner||''}bindImgs();
- document.querySelector('#modal .primary').style.display=['add','admin','settings','workview','archived','invite','notifs','todo'].includes(t)?'none':'';if(t==='role')document.querySelector('#modal .primary').textContent='Guardar rol';else document.querySelector('#modal .primary').textContent='Guardar';
+ document.querySelector('#modal .primary').style.display=['add','admin','settings','workview','archived','invite','notifs','todo','atth'].includes(t)?'none':'';if(t==='role')document.querySelector('#modal .primary').textContent='Guardar rol';else document.querySelector('#modal .primary').textContent='Guardar';
  $('modal').classList.toggle('glass',t==='settings');document.querySelector('#modal .modalbox').classList.toggle('wide',t==='timetable');if(t==='settings')settingsPage('menu');
  $('modal').classList.add('show');if(!['admin','settings','add','workview','archived','timetable'].includes(t))$('f1')?.focus();
 }
@@ -1301,6 +1342,8 @@ function saveModal(){
  }else if(mType==='sched'){
   if(!v('f1')){toastErr('Escribe la asignatura.');return}
   data.sched.push({id:uid(),t:v('f1'),day:+v('f2'),h:v('f3')||'08:00',r:v('f4')});renderAll();goTab('Horario');
+ }else if(mType==='att'){
+  attSave();return;
  }else if(mType==='postedit'){
   const p=data.posts.find(x=>x.id===modalArg);if(!p)return;
   if(!(isStaff()||p.au===authUid||p.n===user)){toastErr('Solo el autor o un profesor puede editarlo');return}
@@ -1795,7 +1838,7 @@ async function afterLogin(u){
   settings.photo=urlOf(AV,p.photo_path);settings._pp=p.photo_path||null;settings._ppUp=settings.photo;
   settings.banner=urlOf(AV,p.banner_path);settings._pbn=p.banner_path||null;settings._pbUp=settings.banner;
   profSnap=JSON.stringify({name:user,emoji:settings.emoji,color:settings.avatar||'#008cff',bio:settings.bio,photo_path:settings._pp,banner_path:settings._pbn})}
- await Promise.all([checkFilesCol(),checkCr2(),checkT7()]);
+ await Promise.all([checkFilesCol(),checkCr2(),checkT7(),checkAtt()]);
  await pullAll(true);cloudOn=true;subscribe();setTimeout(refreshPushBanner,1500);flushReview();applyTheme();
  await loadNotifPrefs();loadNotifs();subscribeNotifs();syncPushSub();
  enter(user);handleDeepLink();setTimeout(joinFromLink,400);
