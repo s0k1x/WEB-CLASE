@@ -2169,6 +2169,20 @@ html.light .tt-ed td.tt-h{background:#f5f7fb}
 .ttv td.ttv-c b{overflow-wrap:normal;word-break:normal}
 .tt-ed td.tt-h{min-width:78px}.tt-ed td.tt-c{min-width:112px}
 .tt-ed .tt-time{padding:9px 6px;font-size:12.5px}
+
+/* ===== código OTP: errores en línea, vibración suave, reenvío con cuenta atrás ===== */
+.otp-err{min-height:18px;margin:8px 0 0;font-size:12.5px;line-height:1.4;color:#ff8a8a;text-align:center;opacity:0;transform:translateY(-4px);transition:opacity .2s ease,transform .2s ease}
+.otp-err.show{opacity:1;transform:none}
+html.light .otp-err{color:#c81e1e}
+#otpBoxes.shake{animation:otpShake .4s cubic-bezier(.36,.07,.19,.97)}
+@keyframes otpShake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(3px)}30%,50%,70%{transform:translateX(-6px)}40%,60%{transform:translateX(6px)}}
+.resendBtn{min-height:32px;padding:6px 8px}
+.resendBtn:disabled{opacity:.55;cursor:default;text-decoration:none}
+.verifyButton:disabled{opacity:.7}
+html.calm #otpBoxes.shake{animation:none}
+@media(prefers-reduced-motion:reduce){#otpBoxes.shake{animation:none}}
+/* ===== áreas táctiles mínimas (WCAG 2.2 · 24px) ===== */
+.gl-close{min-width:32px;min-height:32px;display:inline-grid;place-items:center}
 </style>
 </head>
 <body>
@@ -2325,14 +2339,15 @@ html.light .tt-ed td.tt-h{background:#f5f7fb}
     <form id="otpForm" style="display:contents">
       <div class="mainHeading">Verifica tu código</div>
       <p class="otpSubheading" id="otpLabel">Código enviado</p>
-      <div class="inputContainer">
-        <input class="otp-input" id="otp-input1" maxlength="1" inputmode="numeric" autocomplete="one-time-code">
-        <input class="otp-input" id="otp-input2" maxlength="1" inputmode="numeric">
-        <input class="otp-input" id="otp-input3" maxlength="1" inputmode="numeric">
-        <input class="otp-input" id="otp-input4" maxlength="1" inputmode="numeric">
-        <input class="otp-input" id="otp-input5" maxlength="1" inputmode="numeric">
-        <input class="otp-input" id="otp-input6" maxlength="1" inputmode="numeric">
+      <div class="inputContainer" id="otpBoxes">
+        <input class="otp-input" id="otp-input1" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" enterkeyhint="done" aria-label="Dígito 1 de 6">
+        <input class="otp-input" id="otp-input2" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" enterkeyhint="done" aria-label="Dígito 2 de 6">
+        <input class="otp-input" id="otp-input3" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" enterkeyhint="done" aria-label="Dígito 3 de 6">
+        <input class="otp-input" id="otp-input4" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" enterkeyhint="done" aria-label="Dígito 4 de 6">
+        <input class="otp-input" id="otp-input5" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" enterkeyhint="done" aria-label="Dígito 5 de 6">
+        <input class="otp-input" id="otp-input6" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" enterkeyhint="done" aria-label="Dígito 6 de 6">
       </div>
+      <p class="otp-err" id="otpErr" role="alert" aria-live="assertive"></p>
       <button class="verifyButton" type="submit">Verificar y entrar</button>
       <p class="resendNote">¿No te ha llegado? <button type="button" class="resendBtn" id="resendOtp">Reenviar código</button></p>
     </form>
@@ -3730,7 +3745,7 @@ async function sendOtp(type){
     const {error}=await sb.auth.signInWithOtp({email,options:{shouldCreateUser:true}});
     if(error)throw error;
     otpEmail=email;$('otpBox').classList.remove('hidden');
-    $('otpLabel').textContent='Código enviado a '+email;clearOtpInputs();
+    $('otpLabel').textContent='Código enviado a '+email;clearOtpInputs();otpClearErr();otpCooldown(60);setTimeout(()=>$('otp-input1')?.focus(),250);
   }catch(e){alert(otpErrorMsg(e))}
   finally{otpBusy=false;b.textContent=t;b.disabled=false}
 }
@@ -3746,17 +3761,17 @@ function clearOtpInputs(){
 }
 async function verifyOtp(){
   const code=getOtpCode();
-  if(code.length!==6){alert('Escribe el código completo de 6 dígitos.');return}
-  if(!sb||!otpEmail){alert('Primero pide un código a tu correo.');return}
+  if(code.length!==6){otpShowErr('Escribe el código completo de 6 dígitos.');return}
+  if(!sb||!otpEmail){otpShowErr('Primero pide un código a tu correo.');return}
   if(otpBusy)return;otpBusy=true;
-  const btn=document.querySelector('#otpForm .verifyButton');if(btn)btn.disabled=true;
+  const btn=document.querySelector('#otpForm .verifyButton'),bt=btn?btn.textContent:'';if(btn){btn.disabled=true;btn.textContent='Comprobando…'}
   try{
     const {data,error}=await sb.auth.verifyOtp({email:otpEmail,token:code,type:'email'});
     if(error)throw error;
     $('otpBox').classList.add('hidden');
     await afterLogin((data.session&&data.session.user)||data.user);
-  }catch(e){alert(otpErrorMsg(e));clearOtpInputs()}
-  finally{otpBusy=false;if(btn)btn.disabled=false}
+  }catch(e){otpShowErr(otpErrorMsg(e))}
+  finally{otpBusy=false;if(btn){btn.disabled=false;btn.textContent=bt}}
 }
 async function afterLogin(u){
  if(!u||!sb)return;authUid=u.id;authEmail=u.email||'';
@@ -3783,26 +3798,29 @@ document.querySelectorAll('.p.line').forEach(e=>e.textContent='o continúa con')
 
 /* OTP de 6 casillas */
 const otpIds=['otp-input1','otp-input2','otp-input3','otp-input4','otp-input5','otp-input6'];
+let otpCdT=null;
+function otpClearErr(){const e=$('otpErr');if(e){e.textContent='';e.classList.remove('show')}}
+function otpShowErr(msg){const e=$('otpErr');if(e){e.textContent=msg;e.classList.add('show')}const c=$('otpBoxes');if(c){c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')}clearOtpInputs();$('otp-input1')?.focus()}
+function otpFill(start,digits){digits=(digits||'').replace(/\D/g,'').slice(0,6-start);if(!digits)return;digits.split('').forEach((c,j)=>{const el=$(otpIds[start+j]);if(el)el.value=c});$(otpIds[Math.min(start+digits.length,5)])?.focus();otpClearErr();if(getOtpCode().length===6)setTimeout(verifyOtp,60)}
+function otpCooldown(sec){const b=$('resendOtp');if(!b)return;clearInterval(otpCdT);let n=sec;const tick=()=>{if(n<=0){clearInterval(otpCdT);b.disabled=false;b.textContent='Reenviar código';return}b.disabled=true;b.textContent='Reenviar en '+n+' s';n--};tick();otpCdT=setInterval(tick,1000)}
 otpIds.forEach((id,i)=>{
-  const input=$(id);
-  input?.addEventListener('input',e=>{
-    e.target.value=e.target.value.replace(/\D/g,'').slice(-1);
-    if(e.target.value && i<otpIds.length-1) $(otpIds[i+1])?.focus();
+  const input=$(id);if(!input)return;
+  input.addEventListener('focus',()=>{try{input.select()}catch(e){}});
+  input.addEventListener('input',e=>{
+    const v=e.target.value.replace(/\D/g,'');
+    if(v.length>1){e.target.value='';otpFill(v.length===6?0:i,v);return}   // autorrelleno del iPhone o pegado en un cuadro
+    e.target.value=v;otpClearErr();
+    if(v&&i<otpIds.length-1)$(otpIds[i+1])?.focus();
+    if(getOtpCode().length===6)setTimeout(verifyOtp,60);
   });
-  input?.addEventListener('keydown',e=>{
-    if(e.key==='Backspace' && !e.target.value && i>0){
-      $(otpIds[i-1])?.focus();
-    }
-    if(e.key==='ArrowLeft' && i>0) $(otpIds[i-1])?.focus();
-    if(e.key==='ArrowRight' && i<otpIds.length-1) $(otpIds[i+1])?.focus();
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Backspace'&&!e.target.value&&i>0){e.preventDefault();const p=$(otpIds[i-1]);p.value='';p.focus()}
+    if(e.key==='ArrowLeft'&&i>0){e.preventDefault();$(otpIds[i-1])?.focus()}
+    if(e.key==='ArrowRight'&&i<otpIds.length-1){e.preventDefault();$(otpIds[i+1])?.focus()}
   });
-  input?.addEventListener('paste',e=>{
-    const pasted=(e.clipboardData?.getData('text')||'').replace(/\D/g,'').slice(0,6);
-    if(pasted.length){
-      e.preventDefault();
-      pasted.split('').forEach((char,j)=>{ if($(otpIds[j])) $(otpIds[j]).value=char; });
-      $(otpIds[Math.min(pasted.length,6)-1])?.focus();
-    }
+  input.addEventListener('paste',e=>{
+    const t=(e.clipboardData?.getData('text')||'').replace(/\D/g,'');
+    if(t.length){e.preventDefault();otpFill(t.length>=6?0:i,t)}
   });
 });
 $('otpForm')?.addEventListener('submit',e=>{
@@ -3814,7 +3832,7 @@ $('otpClose')?.addEventListener('click',()=>{
   clearOtpInputs();
 });
 $('resendOtp')?.addEventListener('click',()=>{
-  if(!otpMethod){ return; }
+  if(!otpMethod||$('resendOtp').disabled){ return; }
   const type=otpMethod;
   sendOtp(type);
   clearOtpInputs();
@@ -3938,6 +3956,10 @@ window.addEventListener('pageshow',()=>applyPref());window.addEventListener('loa
  document.addEventListener('click',e=>{const el=e.target.closest&&e.target.closest('.welcome-logo,.login-logo,.splash-logo,.brand-ic');if(el){winkAt=performance.now();el.style.animation='none';el.offsetWidth;el.style.animation=''}});
 })();
 
+
+/* Accesibilidad: todo campo sin etiqueta recibe un nombre accesible (placeholder o rótulo anterior) */
+function labelize(root){(root||document).querySelectorAll('input:not([type=hidden]):not([aria-label]):not([aria-labelledby]),textarea:not([aria-label]),select:not([aria-label])').forEach(e=>{if(e.id&&document.querySelector('label[for="'+e.id+'"]'))return;if(e.closest('label'))return;let t=e.placeholder||'';for(let n=e,k=0;n&&!t&&k<3;n=n.parentElement,k++){let p=n.previousElementSibling;while(p&&!t){if(p.classList&&p.classList.contains('fl'))t=p.textContent.trim();p=p.previousElementSibling}}if(!t&&e.type==='date')t='Fecha';if(!t&&e.type==='time')t='Hora';if(t)e.setAttribute('aria-label',t.replace(/…$/,''))})}
+(function(){let tm=null;const run=()=>{tm=null;labelize()};try{new MutationObserver(()=>{if(!tm)tm=setTimeout(run,250)}).observe(document.body,{childList:true,subtree:true})}catch(e){}run()})();
 registerSW();
 pullReviews();
 (async()=>{try{if(!sb)return;const {data}=await sb.auth.getSession();if(data&&data.session)await afterLogin(data.session.user);sb.auth.onAuthStateChange(ev=>{if(ev==='SIGNED_OUT'&&cloudOn)location.reload()})}catch(e){console.warn(e)}})();
