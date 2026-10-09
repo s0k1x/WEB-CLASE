@@ -2895,3 +2895,54 @@ html.nv-tint .ulm:not(.sh2-pv .ulm){filter:hue-rotate(var(--nv-hue,0deg))}
 .sc-cl{display:flex;align-items:center;gap:10px;padding:10px;border-radius:14px;background:rgba(127,127,127,.06);margin-bottom:6px}
 .sc-e{font-size:22px}.sc-t{flex:1;min-width:0}.sc-t b{display:block;font-size:14px}.sc-t small{display:block;font-size:11.5px;opacity:.65;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sc-n{display:flex;gap:8px}.sc-n span{display:flex;flex-direction:column;align-items:center;font-weight:800;font-size:13px;min-width:34px}.sc-n small{font-size:9.5px;font-weight:600;opacity:.6}.sc-n .r{color:#ef4444}
+/* =====================================================================
+   VERSIÓN DE PC (≥1100 px): barra lateral · contenido · panel derecho
+   ===================================================================== */
+@media (min-width:1100px){
+ .container{max-width:1440px}
+ #classView .layout{display:grid!important;grid-template-columns:232px minmax(0,1fr) 312px;grid-template-areas:"nav search side" "nav content side";gap:16px 24px;align-items:start}
+ #classView .layout>main{display:contents}
+ #classView #searchBox{grid-area:search;margin:0!important}
+ #classView .layout>main>.content{grid-area:content;margin:0!important;min-width:0}
+ #classView .layout>aside.side{grid-area:side;position:sticky;top:calc(84px + var(--sat,0px));max-height:calc(100vh - 100px);overflow:auto;scrollbar-width:thin;margin:0!important;display:flex;flex-direction:column;gap:14px}
+ #classView .layout>aside.side>.card{margin:0!important}
+ /* barra lateral de secciones */
+ #classView .ib-tabs{grid-area:nav;position:sticky;top:calc(84px + var(--sat,0px));display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:4px!important;padding:10px!important;margin:0!important;border-radius:22px!important;height:auto!important;overflow:visible!important}
+ #classView .ib-tabs .ib-btn{display:flex!important;align-items:center;justify-content:flex-start!important;gap:12px;width:100%!important;height:46px!important;min-width:0!important;padding:0 14px!important;border-radius:14px!important;flex:none!important;font:inherit;font-size:14.5px;font-weight:650;color:inherit;opacity:.78;transition:background var(--dur-1) var(--ease-out),opacity var(--dur-1),transform var(--dur-1) var(--ease-out)}
+ #classView .ib-tabs .ib-btn::after{content:attr(title);position:static!important;display:block!important;width:auto!important;height:auto!important;background:none!important;transform:none!important;opacity:1!important;border-radius:0!important;white-space:nowrap}
+ #classView .ib-tabs .ib-btn::before{display:none!important}
+ #classView .ib-tabs .ib-ico{width:21px!important;height:21px!important;flex:none}
+ #classView .ib-tabs .ib-btn:hover{opacity:1;background:rgba(127,127,127,.10)}
+ #classView .ib-tabs .ib-btn.active{opacity:1;background:rgba(var(--accent-rgb),.14)!important;color:var(--accent)!important;box-shadow:inset 3px 0 0 var(--accent)}
+ #classView .ib-tabs .ib-ind,#classView .ib-tabs .ib-pill,#classView .ib-tabs .ib-glow{display:none!important}
+ /* cabecera de la clase más amplia */
+ #classView .hero{margin-bottom:22px}
+ /* ventanas: «Nueva tarea» en dos columnas */
+ #modal .modalbox.m-wide{width:min(980px,calc(100vw - 64px))!important;max-width:none!important}
+ .mf-2{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:0 28px;align-items:start}
+ .mf-side{padding:14px 16px;border-radius:18px;background:rgba(127,127,127,.06);border:1px solid rgba(127,127,127,.12)}
+ .mf-side .fl:first-child{margin-top:0}
+ .mf-main textarea#f6{min-height:180px}
+ /* tarjetas y filas: respuesta al pasar el ratón */
+}
+@media (min-width:1100px) and (hover:hover) and (pointer:fine){
+ .wk-item,.up-item,.pcard,.tl-b,.lv-q,.gr-it,.lb-it,.att-row,.sc-cl,.dm-p{transition:transform var(--dur-1) var(--ease-out),box-shadow var(--dur-1) var(--ease-out),background var(--dur-1)}
+ .wk-item:hover,.up-item:hover,.tl-b:hover,.lv-q:hover,.sc-cl:hover,.dm-p:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.12)}
+ .pcard:hover{box-shadow:0 8px 24px rgba(0,0,0,.10)}
+ button,.ib-btn,a{cursor:pointer}
+ .ttv td.ttv-c:hover .tc{transform:translateY(-2px)}
+}
+@media (min-width:1600px){#classView .layout{grid-template-columns:250px minmax(0,1fr) 340px}}
+.st-more{display:block;width:100%;margin:6px 0 4px}
+.chat-more{display:block;margin:6px auto 10px;padding:8px 14px;border:0;border-radius:99px;background:rgba(127,127,127,.14);color:inherit;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.pcard{content-visibility:auto;contain-intrinsic-size:auto 160px}
+/* ===================== FLUIDEZ: animaciones que solo mueven o funden (las hace la tarjeta gráfica) ===================== */
+.splash-logo{animation:ulFloat 3.6s ease-in-out infinite!important;filter:drop-shadow(0 10px 26px rgba(var(--accent-rgb),.32))}
+.welcome-logo{animation:ulFloat 4.2s ease-in-out infinite!important;filter:drop-shadow(0 10px 26px rgba(var(--accent-rgb),.32))}
+.ttv-c.now,.ttv td.ttv-c.now{animation:none!important}
+.lv-ban.hot{animation:none!important;position:relative}
+.lv-ban.hot::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:0 10px 34px rgba(134,76,191,.6);opacity:0;animation:lvGlowO 2s ease-in-out infinite alternate;pointer-events:none}
+@keyframes lvGlowO{to{opacity:1}}
+.launch{animation-name:launchBreath!important;box-shadow:0 0 34px rgba(var(--accent-rgb),.45),inset 0 1px 0 rgba(255,255,255,.4)}
+@keyframes launchBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-iteration-count:1!important}}
