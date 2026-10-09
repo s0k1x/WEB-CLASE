@@ -2585,3 +2585,88 @@ html:not(.light) .login-card.otp-mode #otpBox{background-color:rgb(17,22,31)!imp
 .otp-ulm{position:relative}
 
 #login.otp-on .aurora::before,#login.otp-on .aurora::after,#login.otp-on .aurora *::before,#login.otp-on .aurora *::after{animation-play-state:paused!important}
+
+/* ===== "Vibración" en iPhone: capas de desenfoque invisibles a pantalla completa =====
+   El fondo y la tarjeta del menú del avatar y del aviso de cookies quedaban con opacidad 0 pero
+   seguían presentes con desenfoque activo sobre toda la pantalla; el iPhone las recalculaba sin parar.
+   Cerradas, ahora no existen para el navegador (visibility:hidden y sin backdrop-filter). */
+.am-back:not(.show),.am-card:not(.show),.ck-back:not(.show),.ck-card:not(.show){visibility:hidden;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.am-back,.ck-back{transition:opacity .3s ease,visibility 0s linear .3s}
+.am-back.show,.ck-back.show{transition:opacity .3s ease,visibility 0s}
+.am-card{transition:all .35s cubic-bezier(.2,.8,.2,1),visibility 0s linear .35s}
+.am-card.show{transition:all .35s cubic-bezier(.2,.8,.2,1),visibility 0s}
+.ck-card:not(.show) *,.ck-card:not(.show){animation-play-state:paused!important}
+.popup-window:not(.show):not(.open){-webkit-backdrop-filter:none;backdrop-filter:none}
+
+/* ===================== "Cómo instalarla" animado ===================== */
+.ih{position:fixed;inset:0;z-index:310;display:grid;place-items:center;padding:calc(14px + var(--sat,0px)) 14px calc(14px + var(--sab,0px));opacity:0;transition:opacity .25s ease}
+.ih.on{opacity:1}
+.ih-back{position:absolute;inset:0;background:rgba(4,8,18,.6)}
+.ih-card{position:relative;width:min(100%,360px);max-height:100%;overflow:auto;padding:14px 16px 16px;border-radius:24px;background:#fff;color:#111827;box-shadow:0 24px 60px rgba(0,0,0,.4);transform:translateY(14px) scale(.97);transition:transform .45s cubic-bezier(.2,1.3,.4,1)}
+.ih.on .ih-card{transform:none}
+html:not(.light) .ih-card{background:#171b25;color:#f2f4f8;border:1px solid rgba(255,255,255,.08)}
+.ih-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.ih-head b{font-size:17px}
+.ih-x{width:32px;height:32px;border:0;border-radius:50%;background:rgba(127,127,127,.14);color:inherit;font-size:14px;cursor:pointer}
+.ih-phone{position:relative;width:186px;height:372px;margin:0 auto;border-radius:30px;padding:8px;background:#0b0d12;box-shadow:0 14px 30px rgba(0,0,0,.25),inset 0 0 0 2px #2a2f3a}
+.ih-scr{position:relative;width:100%;height:100%;border-radius:23px;overflow:hidden;background:linear-gradient(180deg,#eaf1ff,#f4f6fb)}
+.ih-scr::before{content:"";position:absolute;left:50%;top:6px;width:54px;height:15px;border-radius:9px;background:#0b0d12;transform:translateX(-50%);z-index:9}
+.ly{position:absolute;inset:0;opacity:0;transition:opacity .35s ease,transform .45s cubic-bezier(.2,1.1,.3,1);pointer-events:none}
+.ih-phone[data-s="0"] .l-page,.ih-phone[data-s="1"] .l-page,.ih-phone[data-s="2"] .l-page,.ih-phone[data-s="3"] .l-page{opacity:1}
+.ih-phone[data-s="1"] .l-menu,.ih-phone[data-s="2"] .l-sheet,.ih-phone[data-s="3"] .l-add,.ih-phone.ios[data-s="4"] .l-home,.ih-phone.and[data-s="3"] .l-home{opacity:1;transform:none}
+.ih-phone.and[data-s="3"] .l-add{opacity:0}
+.pg{padding:30px 14px 0}.pg-top{display:flex;align-items:center;gap:7px;margin-bottom:12px}.pg-top img{width:26px;height:26px;border-radius:7px}.pg-top b{font-size:13px;color:#1f2a44}
+.pg i{display:block;height:9px;border-radius:5px;background:rgba(31,42,68,.14);margin:9px 0}.pg i.s{width:60%}
+.sf-bar{position:absolute;left:8px;right:8px;bottom:10px;display:flex;align-items:center;gap:6px}
+.sf-bar span{display:grid;place-items:center;height:30px;min-width:30px;border-radius:15px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(0,0,0,.12);font-size:12px;color:#111827;font-weight:700}
+.sf-bar .sb-u{flex:1;font-weight:600;font-size:11px}
+.cr-bar{display:flex;align-items:center;gap:6px;padding:28px 8px 6px;background:#fff}.cr-u{flex:1;height:26px;border-radius:13px;background:#eef1f6;display:grid;place-items:center;font-size:10.5px;color:#374151}
+.cr-bar .c-more{width:26px;height:26px;display:grid;place-items:center;font-weight:900;color:#374151;border-radius:50%}
+.l-menu{transform:translateY(10px) scale(.96);transform-origin:right bottom}
+.mn{position:absolute;right:10px;bottom:48px;width:130px;padding:6px;border-radius:14px;background:rgba(255,255,255,.97);box-shadow:0 10px 26px rgba(0,0,0,.2)}
+.mn-a{top:56px;bottom:auto;right:8px;transform-origin:right top}
+.mn span,.sh>span{display:block;padding:7px 8px;border-radius:9px;font-size:10.5px;color:#111827}
+.l-sheet{background:rgba(0,0,0,.25);transform:translateY(16px)}
+.sh{position:absolute;left:0;right:0;bottom:0;padding:10px 8px 14px;border-radius:18px 18px 0 0;background:#f2f2f7}
+.sh-h{display:flex;align-items:center;gap:8px;padding:4px 6px 8px}.sh-h img{width:28px;height:28px;border-radius:7px}.sh-h b{display:block;font-size:11px;color:#111827}.sh-h small{font-size:9.5px;color:#6b7280}
+.sh>span{background:#fff;margin-top:3px}
+.l-add{background:rgba(0,0,0,.3);transform:translateY(16px)}
+.ad{position:absolute;left:8px;right:8px;top:70px;padding:10px;border-radius:16px;background:#f2f2f7;color:#111827}
+.ad-h{display:flex;justify-content:space-between;align-items:center;font-size:10px}.ad-h b{font-size:10.5px}.ad-h span{color:#007aff}.ad-h .ad-ok{font-weight:800;padding:3px 6px;border-radius:8px}
+.ad-r{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px;border-radius:12px;background:#fff;font-size:11px}.ad-r img{width:30px;height:30px;border-radius:8px}.ad-r small{display:block;font-size:9px;color:#6b7280}
+.ad-t{display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding:8px;border-radius:12px;background:#fff;font-size:10px}
+.ad-t i{width:26px;height:15px;border-radius:9px;background:#34c759;position:relative}.ad-t i::after{content:"";position:absolute;right:2px;top:2px;width:11px;height:11px;border-radius:50%;background:#fff}
+.ci{top:120px}.ci b{font-size:11.5px}.ci-b{display:flex;justify-content:flex-end;gap:14px;margin-top:10px;font-size:10.5px;color:#1a73e8;font-weight:700}.ci-b span{padding:4px 8px;border-radius:8px}
+.l-home{background:linear-gradient(160deg,#4b6cb7,#182848);transform:scale(1.04)}
+.hs{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 10px;padding:40px 14px}
+.hs i{display:block;aspect-ratio:1;border-radius:10px;opacity:.9}
+.hs-uv{display:flex;flex-direction:column;align-items:center;gap:3px}.hs-uv img{width:100%;aspect-ratio:1;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.3)}.hs-uv small{font-size:8px;color:#fff}
+.ih-phone[data-s="4"] .hs-uv img,.ih-phone.and[data-s="3"] .hs-uv img{animation:ihPop .6s .2s cubic-bezier(.2,1.6,.4,1) backwards}
+@keyframes ihPop{from{transform:scale(0)}to{transform:scale(1)}}
+.hl{background:rgba(0,122,255,.16)!important;box-shadow:0 0 0 2px rgba(0,122,255,.6);border-radius:9px}
+.ih-f{position:absolute;left:50%;top:60%;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:rgba(255,255,255,.85);box-shadow:0 3px 10px rgba(0,0,0,.35),0 0 0 3px rgba(0,122,255,.45);opacity:0;transition:left .5s cubic-bezier(.3,.9,.25,1),top .5s cubic-bezier(.3,.9,.25,1),opacity .25s;z-index:20;pointer-events:none}
+.ih-f.tap{animation:gdPress .35s ease}
+.ih-f.tap::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid rgba(255,255,255,.9);animation:gdRipple .6s ease-out forwards}
+.ih-cap{text-align:center;margin-top:12px;min-height:58px}.ih-cap small{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}.ih-cap p{margin:4px 0 0;font-size:14px;line-height:1.4}
+.ih-dots{display:flex;justify-content:center;gap:6px;margin:8px 0 12px}.ih-dots i{width:7px;height:7px;border-radius:50%;background:rgba(127,127,127,.3);transition:all .3s}.ih-dots i.on{width:20px;border-radius:99px;background:var(--accent)}
+.ih-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ih-note{margin-top:10px;font-size:11.5px;line-height:1.4;opacity:.6;text-align:center}
+/* ===================== Tarjeta de aviso con la app abierta ===================== */
+.nfc{position:fixed;left:50%;top:calc(10px + var(--sat,0px));z-index:126;display:flex;align-items:center;gap:12px;width:max-content;max-width:min(calc(100vw - 24px),400px);padding:10px 12px;border-radius:18px;border:1px solid rgba(var(--accent-rgb),.4);background:rgba(22,26,36,.96);color:#fff;font:inherit;text-align:left;cursor:pointer;box-shadow:0 12px 32px rgba(0,0,0,.35);transform:translate(-50%,-160%) scale(.92);opacity:0;visibility:hidden;transition:transform .55s cubic-bezier(.2,1.4,.4,1),opacity .25s ease,visibility 0s linear .55s}
+.nfc.show{transform:translate(-50%,0) scale(1);opacity:1;visibility:visible;transition:transform .55s cubic-bezier(.2,1.4,.4,1),opacity .25s ease,visibility 0s}
+html.light .nfc{background:rgba(255,255,255,.98);color:#111827}
+.nfc .nb-ulm{animation:nbJump .7s .15s cubic-bezier(.2,1.6,.4,1) 1}
+.nfc .nb-badge{background:var(--accent);animation:nbPop .5s .2s cubic-bezier(.2,1.8,.4,1) backwards}
+.nfc .nb-badge.k-nota,.nfc .nb-badge.k-recordatorio{background:#f59e0b}.nfc .nb-badge.k-entrega,.nfc .nb-badge.k-prueba{background:#10b981}
+.nfc .nb-badge.k-trabajo{background:#8b5cf6}.nfc .nb-badge.k-chat,.nfc .nb-badge.k-comentario{background:#0ea5e9}
+.nfc-t{flex:1;min-width:0}.nfc-t b{display:block;font-size:13.5px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nfc-t small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12.5px;line-height:1.35;opacity:.8;margin-top:2px}
+.nfc-x{flex:none;font-size:12px;opacity:.45;padding:4px}
+
+.hs{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px 9px!important;padding:40px 12px!important}
+.hs-uv small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.l-home{transform:scale(1.03)}
+.ad-h b{white-space:nowrap;font-size:9.5px}.ad-h{gap:4px}
+
+.ad{left:6px;right:6px;padding:9px 8px}
+.ad-h span,.ad-h b{font-size:9px!important}.ad-h .ad-ok{padding:2px 4px}
+.ih-btns button{font-size:14px;min-height:44px}

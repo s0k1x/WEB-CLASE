@@ -1599,7 +1599,62 @@ async function pushState(){
  if(Notification.permission==='denied')return 'denied';
  try{const reg=await navigator.serviceWorker.getRegistration();const sub=reg&&await reg.pushManager.getSubscription();return sub&&Notification.permission==='granted'?'on':'off'}catch(e){return 'off'}
 }
-function installHelp(){return ask({icon:'📲',title:'Instala Unuvia en tu móvil',text:isIOS()?'iPhone: 1) Toca Compartir en Safari. 2) Elige «Añadir a pantalla de inicio». 3) Abre Unuvia desde el nuevo icono. Los avisos del móvil solo funcionan así.':'Android: abre el menú ⋮ de Chrome y elige «Instalar app» o «Añadir a la pantalla de inicio». iPhone: Compartir → «Añadir a pantalla de inicio».',ok:'Entendido'})}
+/* ===================== "Cómo instalarla": mini vídeo animado con un móvil dibujado ===================== */
+const IH_IOS=[
+ {t:'En Safari, toca ••• abajo a la derecha.',tg:'.s-more'},
+ {t:'Toca «Compartir».',tg:'.m-share'},
+ {t:'Baja y toca «Añadir a pantalla de inicio».',tg:'.sh-add'},
+ {t:'Deja «Abrir como app web» activado y toca «Añadir».',tg:'.ad-ok'},
+ {t:'¡Listo! Abre Unuvia siempre desde su icono: así te llegarán los avisos.',tg:'.hs-uv'}];
+const IH_AND=[
+ {t:'En Chrome, toca ⋮ arriba a la derecha.',tg:'.c-more'},
+ {t:'Toca «Añadir a pantalla de inicio» o «Instalar app».',tg:'.cm-add'},
+ {t:'Toca «Instalar».',tg:'.ci-ok'},
+ {t:'¡Listo! Abre Unuvia desde su icono.',tg:'.hs-uv'}];
+const IH_HOME='<div class="ly l-home"><div class="hs">'+['#34c759','#ff9500','#5ac8fa','#ff2d55','#af52de','#ffcc00','#007aff','#8e8e93','#30b0c7','#ff3b30','#64d2ff'].map(c=>`<i style="background:${c}"></i>`).join('')+'<span class="hs-uv"><img src="icon-192.png" alt=""><small>Unuvia</small></span></div></div>';
+const IH_PAGE='<div class="pg"><div class="pg-top"><img src="icon-192.png" alt=""><b>Unuvia</b></div><i></i><i></i><i class="s"></i><i></i><i class="s"></i></div>';
+const IH_IOS_HTML='<div class="ih-scr"><div class="ly l-page">'+IH_PAGE+'<div class="sf-bar"><span>‹</span><span class="sb-u">unuvia.es</span><span class="s-more">•••</span></div></div>'
+ +'<div class="ly l-menu"><div class="mn"><span class="m-share">Compartir</span><span>Añadir a favoritos</span><span>Nueva pestaña</span></div></div>'
+ +'<div class="ly l-sheet"><div class="sh"><div class="sh-h"><img src="icon-192.png" alt=""><span><b>Unuvia</b><small>unuvia.es</small></span></div><span>Copiar</span><span>Añadir a la lista de lectura</span><span class="sh-add">Añadir a pantalla de inicio</span><span>Buscar en la página</span></div></div>'
+ +'<div class="ly l-add"><div class="ad"><div class="ad-h"><span>Cancelar</span><b>Añadir a inicio</b><span class="ad-ok">Añadir</span></div><div class="ad-r"><img src="icon-192.png" alt=""><span>Unuvia</span></div><div class="ad-t"><span>Abrir como app web</span><i></i></div></div></div>'+IH_HOME+'</div>';
+const IH_AND_HTML='<div class="ih-scr"><div class="ly l-page"><div class="cr-bar"><span class="cr-u">unuvia.es</span><span class="c-more">⋮</span></div>'+IH_PAGE+'</div>'
+ +'<div class="ly l-menu"><div class="mn mn-a"><span>Nueva pestaña</span><span>Historial</span><span class="cm-add">Añadir a pantalla de inicio</span><span>Compartir…</span></div></div>'
+ +'<div class="ly l-sheet"><div class="ad ci"><b>¿Instalar la aplicación?</b><div class="ad-r"><img src="icon-192.png" alt=""><span>Unuvia<small>unuvia.es</small></span></div><div class="ci-b"><span>Cancelar</span><span class="ci-ok">Instalar</span></div></div></div>'+IH_HOME+'</div>';
+function installHelp(){
+ const ios=isIOS(),S=ios?IH_IOS:IH_AND,old=$('ihelp');if(old)old.remove();
+ const el=document.createElement('div');el.id='ihelp';el.className='ih';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Cómo instalar Unuvia');
+ el.innerHTML=`<div class="ih-back"></div><div class="ih-card"><div class="ih-head"><b>Instala Unuvia</b><button type="button" class="ih-x" aria-label="Cerrar">✕</button></div>
+  <div class="ih-phone ${ios?'ios':'and'}" data-s="0" aria-hidden="true">${ios?IH_IOS_HTML:IH_AND_HTML}<span class="ih-f"></span></div>
+  <div class="ih-cap" aria-live="polite"><small></small><p></p></div><div class="ih-dots">${S.map(()=>'<i></i>').join('')}</div>
+  <div class="ih-btns"><button type="button" class="secondary ih-prev">Atrás</button><button type="button" class="add ih-next">Siguiente</button></div>
+  ${ios?'<div class="ih-note">¿iOS 18 o anterior? El botón Compartir está directamente en la barra de Safari: el cuadrado con la flecha.</div>':''}</div>`;
+ document.body.appendChild(el);requestAnimationFrame(()=>el.classList.add('on'));
+ const ph=el.querySelector('.ih-phone'),f=el.querySelector('.ih-f');let i=0,t=null,t2=null;
+ const go=k=>{i=(k+S.length)%S.length;const s=S[i];ph.dataset.s=i;
+  el.querySelector('.ih-cap small').textContent='Paso '+(i+1)+' de '+S.length;el.querySelector('.ih-cap p').textContent=s.t;
+  el.querySelectorAll('.ih-dots i').forEach((d,j)=>d.classList.toggle('on',j===i));el.querySelector('.ih-next').textContent=i===S.length-1?'Entendido':'Siguiente';
+  ph.querySelectorAll('.hl').forEach(x=>x.classList.remove('hl'));f.classList.remove('tap');clearTimeout(t2);
+  t2=setTimeout(()=>{const tg=ph.querySelector(s.tg);if(!tg){f.style.opacity=0;return}const pr=ph.getBoundingClientRect(),r=tg.getBoundingClientRect();f.style.opacity=1;f.style.left=(r.left-pr.left+r.width/2)+'px';f.style.top=(r.top-pr.top+r.height/2)+'px';setTimeout(()=>{tg.classList.add('hl');f.classList.add('tap')},520)},420);
+  clearTimeout(t);t=setTimeout(()=>go(i+1),3800)};
+ const kd=e=>{if(e.key==='Escape')close();else if(e.key==='ArrowRight')go(i+1);else if(e.key==='ArrowLeft')go(i-1)};
+ const close=()=>{clearTimeout(t);clearTimeout(t2);document.removeEventListener('keydown',kd);el.classList.remove('on');setTimeout(()=>el.remove(),300)};
+ document.addEventListener('keydown',kd);el.querySelector('.ih-x').onclick=close;el.querySelector('.ih-back').onclick=close;
+ el.querySelector('.ih-prev').onclick=()=>go(i-1);el.querySelector('.ih-next').onclick=()=>{if(i===S.length-1)close();else go(i+1)};
+ go(0);el.querySelector('.ih-next').focus({preventScroll:true});
+}
+/* ===================== Avisos con la app abierta: tarjeta con Nuvia (como la de conexión) ===================== */
+const NK_ICO={anuncio:'megaphone',trabajo:'pencil',evento:'calendar',nota:'award',entrega:'inbox',comentario:'chat',chat:'chat',miembro:'users',recordatorio:'alarm',prueba:'check'};
+let NQ=[],NQon=false;
+function showNotifCard(n){NQ.push(n);if(NQ.length>3)NQ=NQ.slice(-3);if(!NQon)nqNext()}
+function nqNext(){const n=NQ.shift();if(!n){NQon=false;return}NQon=true;let el=$('nfCard');
+ if(!el){el=document.createElement('button');el.type='button';el.id='nfCard';el.className='nfc';document.body.appendChild(el);
+  let y0=null;el.addEventListener('touchstart',e=>{y0=e.touches[0].clientY},{passive:true});el.addEventListener('touchmove',e=>{if(y0!=null&&e.touches[0].clientY-y0<-18){y0=null;el._sw=1;hideNC()}},{passive:true})}
+ el._sw=0;el.innerHTML=`<span class="nb-nuvia" aria-hidden="true"><svg class="ulm nb-ulm" viewBox="0 0 474 542"><use href="#ul-mark" width="474" height="542"/></svg><span class="nb-badge k-${esc(n.kind||'')}">${svgI(NK_ICO[n.kind]||'megaphone')}</span></span><span class="nfc-t"><b>${esc(n.title||'Unuvia')}</b><small>${esc(n.body||'')}</small></span><span class="nfc-x" aria-hidden="true">✕</span>`;
+ el.setAttribute('aria-label',(n.title||'Unuvia')+': '+(n.body||'')+'. Toca para abrir.');
+ el.onclick=e=>{if(el._sw)return;const x=e.target.closest('.nfc-x');hideNC();if(!x)openNotif(n.id)};
+ el.classList.remove('show');void el.offsetWidth;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(hideNC,5500)}
+function hideNC(){const el=$('nfCard');if(!el)return;clearTimeout(el._t);if(!el.classList.contains('show'))return;el.classList.remove('show');setTimeout(nqNext,450)}
+
 async function enablePush(){
  const st=await pushState();
  if(st==='ios-install'){await installHelp();return}
@@ -1627,7 +1682,7 @@ async function loadNotifs(){try{const {data}=await sb.from('notifications').sele
 const unreadN=()=>notifs.filter(n=>!n.read_at).length;
 function paintBell(){const b=$('bellBtn'),d=$('bellDot');if(!b)return;const n=unreadN();b.classList.toggle('has',n>0);if(d)d.textContent=n>9?'9+':String(n||'')}
 function subscribeNotifs(){try{if(notifCh)sb.removeChannel(notifCh);notifCh=sb.channel('unuvia-notifs').on('postgres_changes',{event:'INSERT',schema:'public',table:'notifications',filter:'user_id=eq.'+authUid},p=>{const n=p.new;if(!n)return;onNotifIn(n)}).subscribe()}catch(e){}}
-function onNotifIn(n){notifs.unshift(n);paintBell();if($('modal').classList.contains('show')&&mType==='notifs')$('modalFields').innerHTML=notifsHTML();if(document.visibilityState==='visible')toast(n.title+(n.body?' — '+n.body:''))}
+function onNotifIn(n){notifs.unshift(n);paintBell();if($('modal').classList.contains('show')&&mType==='notifs')$('modalFields').innerHTML=notifsHTML();if(document.visibilityState==='visible')showNotifCard(n)}
 function notifsHTML(){
  const head='<div class="nt-bar"><button type="button" class="mini-btn" onclick="markAllRead()">Marcar todo como leído</button><button type="button" class="mini-btn" onclick="modal(\'settings\');settingsPage(\'notif\')">Ajustes de avisos</button></div>';
  if(!notifs.length)return head+'<div class="empty">Aún no tienes avisos. Cuando un profesor publique algo, aparecerá aquí.</div>';
