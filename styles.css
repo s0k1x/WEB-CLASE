@@ -2330,3 +2330,38 @@ button:focus-visible,a:focus-visible,[role=button]:focus-visible,summary:focus-v
 .setrow span .ui-i{width:16px;height:16px;margin-right:7px;color:var(--accent);vertical-align:-3px}
 .np-st.on::before,.np-st.denied::before,.np-st.ios-install::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:1px}
 .np-st.on::before{background:var(--ok)}.np-st.denied::before{background:var(--err)}.np-st.ios-install::before{background:var(--warn)}
+
+/* ===== 1) barra "Sin conexión": completamente oculta cuando hay internet (antes asomaba bajo el notch) ===== */
+.netbar{opacity:0;visibility:hidden;transition:transform var(--dur-3) var(--ease-out),opacity var(--dur-2) var(--ease-out),visibility 0s linear var(--dur-3)}
+.netbar.show{opacity:1;visibility:visible;transition:transform var(--dur-3) var(--ease-out),opacity var(--dur-2) var(--ease-out),visibility 0s}
+.netbar:empty{display:none}
+
+/* ===== 2) ventanas en móvil (iPhone y Android): respetan el notch, etiquetas encima y colores sin pisarse ===== */
+.modal{padding-top:calc(318px + var(--sat));padding-bottom:calc(318px + var(--sab))}
+.modalbox{max-height:calc(100vh - 36px - var(--sat) - var(--sab))}
+@supports(height:100dvh){.modalbox{max-height:calc(100dvh - 36px - var(--sat) - var(--sab))}}
+@media(max-width:600px){
+ .modal{padding-left:10px;padding-right:10px}
+ .modal.glass .modalbox{width:100%;max-width:440px;padding:14px 14px 16px;border-radius:20px}
+ .modal.glass .gl-group{flex-direction:column;align-items:stretch;gap:6px;margin:10px 0}
+ .modal.glass .gl-group>.gl-label{width:auto;margin:0 0 0 2px;font-size:12px}
+ .modal.glass .gl-box{width:100%}
+ .gl-box .pks.cb-row,.pks.cb-row{display:grid!important;grid-template-columns:repeat(auto-fill,40px);gap:10px!important;padding:6px 2px 4px!important;transform:none!important;justify-content:start}
+ .pks.cb-row .cb-item{width:40px!important;height:40px!important;transform:none!important;z-index:auto!important}
+ .pks.cb-row .cb-item::after{transform:none;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:800}
+ .pks.cb-row .cb-item.on::after{box-shadow:0 0 0 3px var(--accent);transform:none}
+ .pks.cb-row .cb-item::before{display:none}
+}
+
+/* ===== 3) Nuvia con más vida en la pantalla de carga ===== */
+.splash-logo{animation:nvBob 2.6s cubic-bezier(.45,0,.25,1) infinite,ulGlow 2.6s ease-in-out infinite;transform-origin:50% 85%}
+@keyframes nvBob{0%,100%{transform:translateY(0) rotate(0) scale(1)}20%{transform:translateY(-10px) rotate(-4deg) scale(1.02)}45%{transform:translateY(-14px) rotate(3deg) scale(1.03)}70%{transform:translateY(-4px) rotate(-1.5deg) scale(1)}85%{transform:translateY(1px) rotate(0) scale(.99,1.01)}}
+
+/* ===== 4) abajo del todo igual que arriba: la cuadrícula llega hasta el borde de la pantalla ===== */
+html{--gap:5em;--line:1px;--gcol:rgba(255,255,255,var(--gridA,0.2));background-color:#000;background-image:linear-gradient(-90deg,transparent calc(var(--gap) - var(--line)),var(--gcol) calc(var(--gap) - var(--line) + 1px),var(--gcol) var(--gap)),linear-gradient(0deg,transparent calc(var(--gap) - var(--line)),var(--gcol) calc(var(--gap) - var(--line) + 1px),var(--gcol) var(--gap));background-size:var(--gap) var(--gap)}
+html.light{--gcol:rgba(15,23,42,var(--gridA,0.2));background-color:#eef1f6}
+
+/* la capa base cubre la pantalla; la cuadrícula del <html> solo se ve FUERA (franja inferior / notch) */
+body{background:transparent!important}
+#bgFill{display:block}
+html:not(.light) #bgFill{background:#000}

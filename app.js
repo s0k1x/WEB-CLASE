@@ -1743,7 +1743,7 @@ window.addEventListener('pageshow',()=>applyPref());window.addEventListener('loa
    const r=big;
    if(r){const cx=r.left+r.width/2,cy=r.top+r.height*.55,dx=ptr.x-cx,dy=ptr.y-cy,dist=Math.hypot(dx,dy)||1,k=Math.min(1,dist/160);tx=dx/dist*MX*k;ty=dy/dist*MY*k}
   }else{
-   if(t>nextGlance){const g=GL[Math.floor(Math.random()*GL.length)];tx=g[0]*MX;ty=g[1]*MY;holdUntil=t+900+Math.random()*900;nextGlance=t+2600+Math.random()*2600}
+   if(t>nextGlance){const sp=!!document.getElementById('splash'),g=GL[Math.floor(Math.random()*GL.length)];tx=g[0]*MX;ty=g[1]*MY;holdUntil=t+(sp?450:900)+Math.random()*(sp?350:900);nextGlance=t+(sp?950:2600)+Math.random()*(sp?700:2600)}
    if(t>holdUntil&&holdUntil){tx=0;ty=0;holdUntil=0}
   }
   if(t>nextBlink){blinkAt=t;blinkN=Math.random()<.22?1:0;nextBlink=t+3200+Math.random()*3200}
