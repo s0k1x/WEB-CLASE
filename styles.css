@@ -2946,3 +2946,80 @@ html.nv-tint .ulm:not(.sh2-pv .ulm){filter:hue-rotate(var(--nv-hue,0deg))}
 .launch{animation-name:launchBreath!important;box-shadow:0 0 34px rgba(var(--accent-rgb),.45),inset 0 1px 0 rgba(255,255,255,.4)}
 @keyframes launchBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-iteration-count:1!important}}
+/* ===================== Aviso global y mantenimiento ===================== */
+.g-ban{display:flex;align-items:center;gap:12px;margin:4px 0 14px;padding:12px 14px;border-radius:16px;background:rgba(59,130,246,.10);border:1px solid rgba(59,130,246,.3)}
+.g-ban.g-aviso{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.4)}.g-ban.g-fiesta{background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.35)}
+.g-ic{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:#3b82f6;color:#fff;flex:none}.g-aviso .g-ic{background:#f59e0b}.g-fiesta .g-ic{background:#8b5cf6}.g-ic .ui-i{width:18px;height:18px}
+.g-ban b{display:block;font-size:14px}.g-ban small{display:block;font-size:13px;opacity:.85;line-height:1.4}
+.maint{position:fixed;inset:0;z-index:400;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:30px;text-align:center;background:radial-gradient(120% 80% at 50% 0%,#1e293b,#0b1220);color:#fff}
+.maint-n{width:96px;height:110px;animation:otpBob 2.8s ease-in-out infinite}.maint b{font-size:24px}.maint p{max-width:360px;opacity:.85;line-height:1.5}
+html.maint-admin .brand::after{content:"MANTENIMIENTO";margin-left:8px;padding:2px 7px;border-radius:6px;background:#f59e0b;color:#111;font-size:10px;font-weight:900;letter-spacing:.05em;vertical-align:middle}
+/* ===================== Temáticas ===================== */
+.sz{position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.sz-glow{position:absolute;inset:0}
+html[data-season="navidad"] .sz-glow{background:radial-gradient(40% 30% at 10% 15%,rgba(239,68,68,.10),transparent 70%),radial-gradient(40% 30% at 90% 20%,rgba(34,197,94,.10),transparent 70%),radial-gradient(50% 30% at 50% 100%,rgba(250,204,21,.07),transparent 70%)}
+html[data-season="halloween"] .sz-glow{background:radial-gradient(40% 30% at 12% 18%,rgba(249,115,22,.13),transparent 70%),radial-gradient(45% 35% at 88% 25%,rgba(139,92,246,.14),transparent 70%)}
+#snowCv{position:absolute;inset:0}
+.sz-garland{position:absolute;left:0;right:0;top:var(--sat,0px);width:100%;height:34px}
+.sz-bulbs{position:absolute;left:0;right:0;top:calc(var(--sat,0px) + 2px);display:flex;justify-content:space-around;padding:0 2%}
+.sz-bulbs i{width:9px;height:13px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:var(--c);box-shadow:0 0 10px var(--c);animation:szTw 1.4s ease-in-out infinite alternate;animation-delay:var(--d)}
+.sz-bulbs i:nth-child(odd){margin-top:14px}.sz-bulbs i:nth-child(4n+2){margin-top:8px}
+@keyframes szTw{from{opacity:.35}to{opacity:1}}
+.sz-pill{position:absolute;left:50%;top:calc(var(--sat,0px) + 46px);transform:translateX(-50%);padding:7px 16px;border-radius:99px;background:linear-gradient(135deg,#dc2626,#16a34a);color:#fff;font-weight:900;font-size:13px;box-shadow:0 8px 20px rgba(0,0,0,.25);display:none;white-space:nowrap}
+.sz-pill.hw{background:linear-gradient(135deg,#ea580c,#7c3aed)}
+body:has(#welcome:not(.hidden)) .sz-pill{display:block;animation:lvPop .6s cubic-bezier(.2,1.6,.4,1) .6s backwards}
+/* gorro / sombrero en el logo de la cabecera */
+.brand{position:relative}
+html[data-season="navidad"] .brand::before,html[data-season="halloween"] .brand::before{content:"";position:absolute;left:-6px;top:-13px;width:30px;height:24px;background:var(--hat) center/contain no-repeat;transform:rotate(-14deg);pointer-events:none;z-index:2}
+html[data-season="halloween"] .brand::before{left:-5px;top:-16px;width:30px;height:27px;transform:rotate(-8deg)}
+/* nieve sobre las tarjetas */
+html[data-season="navidad"] .card.content,html[data-season="navidad"] .sidecard,html[data-season="navidad"] .card.pcard{position:relative}
+html[data-season="navidad"] .card.content::before,html[data-season="navidad"] .sidecard::before{content:"";position:absolute;left:14px;right:14px;top:-1px;height:9px;background:radial-gradient(circle at 9px -2px,#fff 7px,transparent 7.5px) 0 0/22px 9px repeat-x;opacity:.9;pointer-events:none;border-radius:0 0 8px 8px}
+html:not(.light)[data-season="navidad"] .card.content::before,html:not(.light)[data-season="navidad"] .sidecard::before{opacity:.75}
+/* Halloween */
+.sz-bat{position:absolute;width:56px;height:28px;left:-80px;opacity:.9;will-change:transform;animation:szBat 18s linear infinite}
+.sz-bat.b1{top:18%}.sz-bat.b2{top:34%;width:40px;animation-duration:24s;animation-delay:-8s}.sz-bat.b3{top:58%;width:48px;animation-duration:21s;animation-delay:-15s}
+.sz-bat path{transform-origin:32px 12px;animation:szFlap .28s ease-in-out infinite alternate}
+@keyframes szBat{0%{transform:translate(0,0)}25%{transform:translate(30vw,-30px)}50%{transform:translate(60vw,20px)}75%{transform:translate(90vw,-20px)}100%{transform:translate(calc(100vw + 120px),10px)}}
+@keyframes szFlap{to{transform:scaleY(.55)}}
+html:not(.light) .sz-bat path{fill:#000}
+.sz-web{position:absolute;right:0;top:var(--sat,0px);width:130px;height:130px}
+html.light .sz-web g{stroke:rgba(30,20,50,.35)}
+.sz-spider{position:absolute;right:46px;top:var(--sat,0px);width:26px;animation:szSpider 6s ease-in-out infinite;transform-origin:top}
+.sz-spider i{display:block;width:1px;height:90px;margin:0 auto;background:rgba(160,160,160,.7)}
+.sz-spider svg{display:block;width:26px;height:26px}
+@keyframes szSpider{0%,100%{transform:translateY(-40px)}50%{transform:translateY(30px)}}
+.sz-pk{position:absolute;bottom:calc(var(--sab,0px) + 8px);width:54px;height:48px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
+.sz-pk.p1{left:8px}.sz-pk.p2{left:56px;width:40px;height:36px}
+.sz-pk svg{width:100%;height:100%}.pk-eyes{animation:szPk 2.2s ease-in-out infinite alternate}
+@keyframes szPk{from{opacity:.55}to{opacity:1}}
+.sz-fog{position:absolute;left:-20%;right:-20%;bottom:0;height:110px;background:radial-gradient(40% 60% at 30% 100%,rgba(200,200,220,.18),transparent 70%),radial-gradient(40% 60% at 75% 100%,rgba(200,190,230,.16),transparent 70%);animation:szFog 14s ease-in-out infinite alternate}
+@keyframes szFog{to{transform:translateX(8%)}}
+@media (max-width:600px){.sz-pk,.sz-web{transform:scale(.8);transform-origin:bottom left}.sz-web{transform-origin:top right}}
+@media (prefers-reduced-motion:reduce){.sz-bat,.sz-fog,.sz-spider,.sz-bulbs i{animation:none!important}.sz-bat{display:none}}
+/* ===================== Panel de Unuvia ===================== */
+.adm{position:fixed;inset:0;z-index:340;display:flex;flex-direction:column;background:var(--bg,#0b1220);color:inherit;padding-top:var(--sat,0px);padding-bottom:var(--sab,0px)}
+html.light .adm{background:#f5f7fb}
+.adm-top{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid rgba(127,127,127,.15)}.adm-top .ulm{width:30px;height:34px}.adm-top b{font-size:17px}.adm-top small{opacity:.6;font-size:12px}
+.adm-top .lv-x{width:38px;height:38px;border:0;border-radius:50%;background:rgba(127,127,127,.14);color:inherit;cursor:pointer}
+.adm-in{flex:1;overflow:auto;padding:14px 16px 30px;max-width:1100px;width:100%;margin:0 auto}
+.adm section{padding:16px;border-radius:20px;background:rgba(127,127,127,.06);border:1px solid rgba(127,127,127,.12);margin-bottom:14px}
+.adm h3{margin:0 0 4px;font-size:16px}.adm section>p{margin:0 0 12px;font-size:13px;opacity:.7}
+.adm-ths{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.adm-th{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 8px;border-radius:18px;border:2px solid transparent;color:#fff;font:inherit;cursor:pointer;overflow:hidden;transition:transform var(--dur-1) var(--ease-out)}
+.adm-th:active{transform:scale(.97)}.adm-th.on{border-color:#fff;box-shadow:0 0 0 3px var(--accent)}
+.t-normal{background:linear-gradient(135deg,#1e3a8a,#0ea5e9)}.t-navidad{background:linear-gradient(135deg,#991b1b,#15803d)}.t-halloween{background:linear-gradient(135deg,#c2410c,#4c1d95)}
+.adm-thp{font-size:32px}.adm-th b{font-size:15px}.adm-th small{font-size:11px;opacity:.85;text-align:center}.adm-th em{position:absolute;top:8px;right:8px;font-style:normal;font-size:10px;font-weight:900;padding:2px 7px;border-radius:99px;background:#fff;color:#111}
+.adm textarea,.adm input:not([type=checkbox]){width:100%;margin:0 0 10px}
+.adm-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.adm-on{color:#f59e0b;font-weight:800;font-size:13px}
+.adm-sw{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid rgba(127,127,127,.12);font-size:14px}.adm-sw input{width:22px!important;height:22px;margin:0!important;accent-color:var(--accent)}
+.adm-kpi{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}.adm-kpi span{padding:10px;border-radius:14px;background:rgba(127,127,127,.08);text-align:center}.adm-kpi b{display:block;font-size:20px}.adm-kpi small{font-size:11px;opacity:.7}
+.adm-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.adm-li{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(127,127,127,.1);font-size:13px}.adm-li b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.adm-li small{opacity:.6;font-size:11.5px;white-space:nowrap}
+.adm-rv{padding:10px 0;border-bottom:1px solid rgba(127,127,127,.1)}.adm-rv b{color:#f59e0b;letter-spacing:2px}.adm-rv span{display:block;margin:3px 0;font-size:13.5px}.adm-rv small{opacity:.6;font-size:11.5px}
+.adm-warn{padding:10px 12px;border-radius:12px;background:rgba(245,158,11,.14);color:#b45309;font-size:13px;margin-bottom:12px}html:not(.light) .adm-warn{color:#fcd34d}
+@media (max-width:640px){.adm-ths{grid-template-columns:1fr}.adm-th{flex-direction:row;justify-content:flex-start;text-align:left;gap:12px}.adm-th small{text-align:left}.adm-2{grid-template-columns:1fr}}
+
+.sz-web{top:calc(var(--sat,0px) + 62px)!important}.sz-spider{top:calc(var(--sat,0px) + 62px)!important}
+html:not(.light) .sz-bat path{fill:#3b1a6b!important}

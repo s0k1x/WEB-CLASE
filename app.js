@@ -487,6 +487,7 @@ function userMenu(a){
  openMenu([
   {k:'rename',label:'Editar nombre',value:user,icon:'pencil',fn:v=>setName(v)},
   {k:'act',label:'Ver mi perfil',icon:'eye',fn:()=>showProfile({n:user,r:'Mi perfil',e:settings.emoji,c:settings.avatar,b:settings.bio})},
+  ...(isAppAdmin()?[{k:'act',label:'Panel de Unuvia',icon:'star',fn:()=>admOpen()}]:[]),
   {k:'act',label:'Pendientes de todas mis clases',icon:'check',fn:()=>modal('todo')},
   ...(classes.some(c=>STAFFR.includes(c.role))?[{k:'act',label:'Centro educativo',icon:'users',fn:()=>toolOpen('school')}]:[]),
   {k:'act',label:'Personalizar perfil',icon:'palette',fn:()=>{modal('settings');settingsPage('profile')}},
@@ -546,7 +547,7 @@ function clearImg(k){IMG[k]='';paintPrev(k)}
 function bindImgs(){['icon','banner','pIcon','pBanner'].forEach(k=>{const e=$('in_'+k);if(e)e.onchange=()=>{const f=e.files[0];if(!f)return;shrink(f,/anner/.test(k)?900:220,.6).then(u=>{IMG[k]=u;paintPrev(k)},()=>toast('No se pudo leer la imagen'))}})}
 function showProfile(x){
  const m=typeof x==='number'?data.members[x]:x;if(!m)return;
- const me=m.n===user,col=okCol(m.c)?m.c:'#008cff',ph=me&&okImg(settings.photo)?settings.photo:(okImg(m.ph)?m.ph:''),bn=me&&okImg(settings.banner)?settings.banner:'';
+ const me=m.n===user,col=okCol(m.c)?m.c:'#008cff',ph=me&&okImg(settings.photo)?settings.photo:(okImg(m.ph)?m.ph:''),bn=me&&okImg(settings.banner)?settings.banner:(okImg(m.bn)?m.bn:'');
  $('pcBody').innerHTML=`<div class="pc-banner" style="${bn?`background-image:url(${bn})`:`background:linear-gradient(135deg,${col},var(--pcb,#0b1220))`}"></div><div class="pc-av" style="${ph?`background-image:url(${ph})`:`background:${col}`}">${ph?'':esc(m.e||(m.n||'?')[0].toUpperCase())}</div><div class="pc-name">${esc(m.n)}</div><div class="pc-role">${rbadge(m.r||'')}</div>${m.b?`<div class="pc-bio">${esc(m.b)}</div>`:''}${(typeof x==='number'&&role==='Administrador'&&!roleBlock(m))?`<button type="button" class="gl-btn pc-rolebtn" onclick="$('pc').classList.add('hidden');roleOpen(${x})">Cambiar rol</button>`:''}<div class="pc-pad"></div>`;
  $('pc').classList.remove('hidden');
 }
@@ -648,7 +649,7 @@ function renderStream(){if(LIVE_OK&&classes[cur]&&LV.cid!==classes[cur].id)liveC
  const _mu=iAmMuted(),canPost=!_mu&&(isStaff()||perm().post),canCom=!_mu&&(isStaff()||perm().comment),meet=safeUrl(c.meet);
  const posts=[...data.posts].sort((a,b)=>(settings.sortPosts==='recent'?0:(b.pin?1:0)-(a.pin?1:0))||b.ts-a.ts).filter(p=>match(p.t+' '+p.n));
  el.innerHTML=`<div class="stream-h"><h3>Tablón</h3>${meet?`<a class="meet-btn" href="${esc(meet)}" target="_blank" rel="noopener noreferrer">📹 Unirse a Meet</a>`:''}</div>`
- +liveBannerHTML()+pushBannerHTML()+toolsCardHTML()+(_mu?'<div class="mute-note">Un profesor te ha silenciado en esta clase: puedes verlo todo y entregar tareas, pero no publicar, comentar ni escribir en el chat.</div>':'')+(canPost?`<div class="post-box" onclick="modal('post')"><div class="pb-av">${avOf(user)}</div><span>Anuncia algo a tu clase…</span></div>`:'')
+ +gBannerHTML()+liveBannerHTML()+pushBannerHTML()+toolsCardHTML()+(_mu?'<div class="mute-note">Un profesor te ha silenciado en esta clase: puedes verlo todo y entregar tareas, pero no publicar, comentar ni escribir en el chat.</div>':'')+(canPost?`<div class="post-box" onclick="modal('post')"><div class="pb-av">${avOf(user)}</div><span>Anuncia algo a tu clase…</span></div>`:'')
  +(posts.length?posts.slice(0,STREAM_N).map(p=>`<div class="pcard${p.pin?' pinned':''}"><div class="pc-h">${avOf(p.n)}<div class="pc-i"><b>${esc(p.n)}</b><small>${when(p.ts)}${p.pin?' <span class="pin-pill">Fijado</span>':''}</small></div>${(isStaff()||p.n===user)?`<button type="button" class="del" aria-label="Opciones" onclick="postMenu('${p.id}')">⋯</button>`:''}</div>${p.t?`<div class="pc-t">${esc(cleanTxt(p.t))}</div>`:''}${pollHTML(p)}${p.img?`<img class="pc-img" src="${p.img}" alt="" onclick="viewImg(this.src)">`:''}<div class="pc-cm">${(p.comments||[]).map(k=>`<div class="cm"><div class="cm-av">${avOf(k.n)}</div><div class="cm-b"><b>${esc(k.n)}</b> <small>${when(k.ts)}</small><div>${esc(cleanTxt(k.t))}</div></div></div>`).join('')}${canCom?`<button type="button" class="cm-open" onclick="const f=this.nextElementSibling;f.classList.add('on');this.remove();f.querySelector('input').focus({preventScroll:true})">${svgI('chat')}Comentar</button><div class="cm-new cm-fold"><input placeholder="Escribe un comentario…" maxlength="300" onkeydown="if(event.key==='Enter'){addComment('${p.id}',this)}"><button type="button" aria-label="Enviar comentario" onclick="addComment('${p.id}',this.previousElementSibling)">➤</button></div>`:''}</div></div>`).join(''):`<div class="empty st-empty">${searchQ?'Sin resultados.':(canPost?'Aún no hay anuncios.<br><button type="button" class="add" onclick="modal(\'post\')">Publicar el primero</button>':'Aún no hay anuncios. Cuando tu profesor publique algo, aparecerá aquí.')}</div>`);
 }
 function addComment(id,inp){if(offGuard())return;const t=inp.value.trim(),p=data.posts.find(x=>x.id===id);if(!t||!p)return;(p.comments=p.comments||[]).push({id:uid(),n:user,t,ts:Date.now()});saveState();renderStream()}
@@ -1013,7 +1014,7 @@ const SFX={ctx:null,on:true,music:null,
  fanfare(){[392,523,659,784,659,784,1047].forEach((f,i)=>this.tone(f,.32,'triangle',.15,i*.13))},
  musicStart(){if(this.music||!this.a())return;const N=[262,330,392,523,392,330,294,349,440,349];let i=0;this.music=setInterval(()=>{if(this.on){this.tone(N[i%N.length],.24,'triangle',.045);if(i%2===0)this.tone(N[i%N.length]/2,.3,'sine',.035)}i++},280)},
  musicStop(){clearInterval(this.music);this.music=null}};
-function liveBannerHTML(){if(!LIVE_OK||!classes[cur])return '';const g=LV.active;
+function liveBannerHTML(){if(!LIVE_OK||!classes[cur]||!FEAT('live'))return '';const g=LV.active;
  if(g)return `<div class="lv-ban hot"><span class="lv-ban-ic">${lShape(0)}${lShape(1)}${lShape(2)}${lShape(3)}</span><div class="lv-ban-t"><b>¡Partida en directo!</b><small>${esc(g.title||'Unuvia Live')} · PIN ${esc(g.pin)}</small></div><button type="button" class="add" onclick="${isStaff()?`liveHost('${g.id}')`:`liveJoin('${g.id}')`}">${isStaff()?'Volver a la partida':'Unirme'}</button></div>`;
  return isStaff()?`<div class="lv-ban"><span class="lv-ban-ic">${lShape(0)}${lShape(1)}${lShape(2)}${lShape(3)}</span><div class="lv-ban-t"><b>Unuvia Live</b><small>Crea juegos de preguntas y jugad en directo.</small></div><button type="button" class="mini-btn" onclick="liveOpen()">Abrir</button></div>`:''}
 async function liveCheck(force){const c=classes[cur];if(!c||!LIVE_OK||!sb)return;if(!force&&LV.cid===c.id&&Date.now()-(LV._ck||0)<12000)return;LV.cid=c.id;LV._ck=Date.now();
@@ -1111,7 +1112,7 @@ const TOOLS={ruleta:['Ruleta de nombres','Elige a un alumno al azar.','sparkles'
  groups:['Grupos','Grupos de trabajo y su chat.','users',0],dm:['Mensajes','Mensajes privados con tus profesores.','chat',0],buzon:['Buzón anónimo','Sugerencias y dudas sin nombre.','mail',0],
  lib:['Biblioteca','Apuntes, vídeos y enlaces de la clase.','file',0],cards:['Tarjetas','Repasa con tarjetas de estudio.','sparkles',0],shop:['Tienda de Nuvia','Gasta tus puntos en Nuvia.','star',0],school:['Centro educativo','Todas las clases de tu colegio o instituto.','users',0]};
 const NEED18=['groups','dm','buzon','lib','cards'];
-function toolsCardHTML(){if(!classes[cur])return '';const st=isStaff(),ks=st?['ruleta','timer','groups','lib','cards','buzon','dm']:['study','cards','lib','groups','dm','buzon','shop'];
+function toolsCardHTML(){if(!classes[cur]||!FEAT('tools'))return '';const st=isStaff(),ks=(st?['ruleta','timer','groups','lib','cards','buzon','dm']:['study','cards','lib','groups','dm','buzon','shop']).filter(k=>k!=='shop'||FEAT('shop'));
  return `<div class="tl-card"><div class="tl-h"><b>Herramientas</b>${st&&T18_OK?`<button type="button" class="tl-flt${classes[cur].filterBad?' on':''}" onclick="toggleFilter()">${svgI('lock')}Filtro de palabrotas: ${classes[cur].filterBad?'activado':'desactivado'}</button>`:''}</div><div class="tl-grid">${ks.map(k=>`<button type="button" class="tl-b" onclick="toolOpen('${k}')"><span>${svgI(TOOLS[k][2])}</span><b>${TOOLS[k][0]}</b></button>`).join('')}</div></div>`}
 function toolOpen(k){TOOL=k;modal('tool');toolPaint()}
 function toolHTML(){if(NEED18.includes(TOOL)&&T18_OK===false)return '<div class="empty">Esta herramienta se activa ejecutando el SQL 18 en Supabase.</div>';const f={ruleta:ruletaHTML,timer:timerHTML,study:studyHTML,groups:()=>'<div class="tl-load">Cargando…</div>',dm:()=>'<div class="tl-load">Cargando…</div>',buzon:buzonHTML,lib:()=>'<div class="tl-load">Cargando…</div>',cards:()=>'<div class="tl-load">Cargando…</div>',shop:shopHTML,school:schoolHTML}[TOOL];return f?f():''}
@@ -1280,6 +1281,63 @@ function mWide(t){const card=document.querySelector('#modal .modal-card,#modal .
 /* Atajo: «/» va al buscador de la clase */
 document.addEventListener('keydown',e=>{if(e.key!=='/'||e.ctrlKey||e.metaKey||e.altKey)return;const a=document.activeElement;if(a&&(a.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)))return;const s=$('searchBox');if(s&&s.getClientRects().length&&!$('modal').classList.contains('show')){e.preventDefault();s.focus()}});
 
+/* ===================== CONFIGURACIÓN GLOBAL Y PANEL DE UNUVIA (SQL 20) ===================== */
+let CFG_OK=null;const CFG=(()=>{try{return JSON.parse(localStorage.getItem('unuvia_cfg')||'{}')}catch(e){return {}}})();
+const isAppAdmin=()=>String(authEmail||'').toLowerCase()==='unuviasupport@gmail.com';
+const FEAT=k=>!(CFG.features&&CFG.features[k]===false);
+async function cfgLoad(){if(!sb)return;try{const {data:d,error}=await sb.from('app_config').select('key,value');if(error){CFG_OK=false;return}CFG_OK=true;(d||[]).forEach(r=>CFG[r.key]=r.value||{});try{localStorage.setItem('unuvia_cfg',JSON.stringify(CFG))}catch(e){}applyCfg()}catch(e){}}
+setInterval(()=>{if(document.visibilityState==='visible')cfgLoad()},120000);
+function applyCfg(){applySeason((CFG.theme||{}).name||'normal');applyMaint();try{if(classes&&classes[cur])renderStream()}catch(e){}}
+function gBannerHTML(){const b=CFG.banner||{};if(!b.on||!b.text)return '';const k=b.kind||'info';return `<div class="g-ban g-${esc(k)}"><span class="g-ic">${svgI(k==='aviso'?'alarm':k==='fiesta'?'sparkles':'megaphone')}</span><div><b>${k==='aviso'?'Aviso importante':k==='fiesta'?'¡Novedades!':'Aviso de Unuvia'}</b><small>${esc(b.text)}</small></div></div>`}
+function applyMaint(){const m=CFG.maintenance||{},on=!!m.on&&!isAppAdmin();let el=$('maint');
+ if(on&&!el){el=document.createElement('div');el.id='maint';el.className='maint';el.setAttribute('role','alertdialog');document.body.appendChild(el)}
+ if(el){if(!on){el.remove();return}el.innerHTML=`<svg class="ulm maint-n" viewBox="0 0 474 542" aria-hidden="true"><use href="#ul-mark" width="474" height="542"/></svg><b>Estamos mejorando Unuvia</b><p>${esc(m.text||'Vuelve en un ratito.')}</p><button type="button" class="add" onclick="cfgLoad()">Volver a intentarlo</button>`}
+ document.documentElement.classList.toggle('maint-admin',!!m.on&&isAppAdmin())}
+/* ---------- temáticas ---------- */
+let SEASON='',SNOW=null;
+const HAT_SANTA='url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 52"><path d="M6 40C10 18 26 4 46 6c8 1 12 8 14 14-6-4-12-4-16 0-6 6-6 16-6 20z" fill="#e11d48"/><path d="M44 6c8 1 12 8 14 14-4-3-8-4-11-3" fill="#be123c"/><rect x="2" y="38" width="44" height="12" rx="6" fill="#fff"/><circle cx="58" cy="22" r="6" fill="#fff"/></svg>')+'")';
+const HAT_WITCH='url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 56"><path d="M20 40 34 4c2-4 6-3 6 1l8 35z" fill="#3b0764"/><path d="M34 4c2-4 6-3 6 1l2 9c-4-4-8-4-10-1z" fill="#581c87"/><ellipse cx="32" cy="42" rx="31" ry="9" fill="#2e1065"/><rect x="21" y="33" width="26" height="6" rx="2" fill="#f97316"/></svg>')+'")';
+function bat(i){return `<svg class="sz-bat b${i}" viewBox="0 0 64 32" aria-hidden="true"><path d="M32 12c-2-6-5-8-8-8 2 3 2 6 0 8-4-4-12-4-20 2 6 0 9 3 10 8 3-3 7-4 10-1 2-3 5-4 8-1 3-3 6-2 8 1 3-3 7-2 10 1 1-5 4-8 10-8-8-6-16-6-20-2-2-2-2-5 0-8-3 0-6 2-8 8z" fill="#1a0b2e"/><circle cx="29" cy="11" r="1.2" fill="#fb923c"/><circle cx="35" cy="11" r="1.2" fill="#fb923c"/></svg>`}
+const PUMPKIN=`<svg viewBox="0 0 64 56" aria-hidden="true"><path d="M30 8c0-4 2-7 6-8l2 3c-3 1-4 3-4 6z" fill="#3f6212"/><ellipse cx="32" cy="32" rx="28" ry="22" fill="#ea580c"/><ellipse cx="20" cy="32" rx="11" ry="21" fill="#f97316"/><ellipse cx="44" cy="32" rx="11" ry="21" fill="#f97316"/><ellipse cx="32" cy="32" rx="9" ry="22" fill="#fb923c"/><g class="pk-eyes" fill="#fde047"><path d="M18 26l6-6 5 6z"/><path d="M35 26l6-6 5 6z"/><path d="M20 38q12 10 24 0l-4 2-4-3-4 3-4-3-4 3z"/></g></svg>`;
+function applySeason(n){if(!['navidad','halloween'].includes(n))n='normal';if(n===SEASON)return;SEASON=n;document.documentElement.dataset.season=n;
+ document.documentElement.style.setProperty('--hat',n==='navidad'?HAT_SANTA:n==='halloween'?HAT_WITCH:'none');
+ let el=$('season');if(el)el.remove();if(SNOW){cancelAnimationFrame(SNOW.raf);SNOW=null}if(n==='normal')return;
+ el=document.createElement('div');el.id='season';el.className='sz';el.setAttribute('aria-hidden','true');
+ if(n==='navidad'){el.innerHTML=`<div class="sz-glow"></div><svg class="sz-garland" viewBox="0 0 400 34" preserveAspectRatio="none"><path d="M0 4 Q50 30 100 6 T200 6 T300 6 T400 4" fill="none" stroke="#14532d" stroke-width="3"/></svg><div class="sz-bulbs">${Array.from({length:14},(_,i)=>`<i style="--d:${(i%4)*.35}s;--c:${['#ef4444','#facc15','#22c55e','#3b82f6'][i%4]}"></i>`).join('')}</div><canvas id="snowCv"></canvas><div class="sz-pill">🎄 ¡Felices fiestas!</div>`;document.body.appendChild(el);snowStart()}
+ else{el.innerHTML=`<div class="sz-glow"></div>${[1,2,3].map(bat).join('')}<svg class="sz-web" viewBox="0 0 120 120"><g fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1"><path d="M120 0 0 120M120 0 30 120M120 0 70 120M120 0 0 80M120 0 0 40"/><path d="M100 0Q104 16 120 20M80 0Q88 32 120 40M60 0Q72 48 120 60M40 0Q56 64 120 80M20 0Q40 80 120 100"/></g></svg><div class="sz-spider"><i></i><svg viewBox="0 0 40 40"><g stroke="#111" stroke-width="2" fill="none"><path d="M20 20 6 10M20 20 4 20M20 20 6 30M20 20 34 10M20 20 36 20M20 20 34 30"/></g><circle cx="20" cy="20" r="7" fill="#111"/><circle cx="17.5" cy="18" r="1.4" fill="#f97316"/><circle cx="22.5" cy="18" r="1.4" fill="#f97316"/></svg></div><div class="sz-pk p1">${PUMPKIN}</div><div class="sz-pk p2">${PUMPKIN}</div><div class="sz-fog"></div><div class="sz-pill hw">🎃 ¡Feliz Halloween!</div>`;document.body.appendChild(el)}}
+function snowStart(){const cv=$('snowCv');if(!cv)return;const x=cv.getContext('2d'),red=matchMedia('(prefers-reduced-motion: reduce)').matches;let W=0,H=0,dpr=Math.min(2,devicePixelRatio||1);
+ const fit=()=>{W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+'px';cv.style.height=H+'px';x.setTransform(dpr,0,0,dpr,0,0)};fit();addEventListener('resize',fit);
+ const N=Math.round(Math.min(70,Math.max(30,W/18))),F=Array.from({length:N},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2.4+.8,s:Math.random()*.6+.35,w:Math.random()*Math.PI*2,o:Math.random()*.5+.45}));
+ SNOW={raf:0};let last=0;const draw=t=>{SNOW&&(SNOW.raf=requestAnimationFrame(draw));if(document.visibilityState!=='visible'||t-last<30)return;last=t;x.clearRect(0,0,W,H);
+  for(const f of F){if(!red){f.y+=f.s;f.w+=.012;f.x+=Math.sin(f.w)*.35;if(f.y>H+4){f.y=-4;f.x=Math.random()*W}}x.globalAlpha=f.o;x.beginPath();x.arc(f.x,f.y,f.r,0,6.283);x.fillStyle=document.documentElement.classList.contains('light')?'#93c5fd':'#fff';x.fill()}};SNOW.raf=requestAnimationFrame(draw)}
+/* ---------- el panel ---------- */
+let ADM={stats:null,recent:null};
+async function admOpen(){if(!isAppAdmin())return;let el=$('adm');if(!el){el=document.createElement('div');el.id='adm';el.className='adm';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Panel de Unuvia');document.body.appendChild(el);document.documentElement.classList.add('guide-lock')}
+ admPaint();await cfgLoad();try{const [a,b]=await Promise.all([sb.rpc('admin_stats'),sb.rpc('admin_recent')]);ADM.stats=a.error?null:a.data;ADM.recent=b.error?null:b.data;ADM.err=a.error&&a.error.message}catch(e){}admPaint()}
+function admClose(){const el=$('adm');if(el)el.remove();document.documentElement.classList.remove('guide-lock')}
+function admPaint(){const el=$('adm');if(!el)return;const th=(CFG.theme||{}).name||'normal',B=CFG.banner||{},M=CFG.maintenance||{},S=ADM.stats,R=ADM.recent;
+ const card=(k,t,d,ic)=>`<button type="button" class="adm-th t-${k}${th===k?' on':''}" onclick="admSet('theme',{name:'${k}'})"><span class="adm-thp">${ic}</span><b>${t}</b><small>${d}</small>${th===k?'<em>Activa</em>':''}</button>`;
+ const kpi=(n,l)=>`<span><b>${n==null?'—':n}</b><small>${l}</small></span>`;
+ el.innerHTML=`<div class="adm-top"><svg class="ulm" viewBox="0 0 474 542" aria-hidden="true"><use href="#ul-mark" width="474" height="542"/></svg><b>Panel de Unuvia</b><small>Solo tú puedes ver esto</small><span class="lv-sp"></span><button type="button" class="lv-x" onclick="admClose()" aria-label="Cerrar">✕</button></div><div class="adm-in">
+  ${CFG_OK===false?'<div class="adm-warn">Ejecuta el SQL 20 en Supabase para activar el panel.</div>':''}
+  <section><h3>Temática de la web</h3><p>Cambia el aspecto de Unuvia para todos los usuarios al momento.</p><div class="adm-ths">${card('normal','Normal','El diseño de siempre.','✨')}${card('navidad','Navidad','Nieve, luces y gorro de Papá Noel.','🎄')}${card('halloween','Halloween','Murciélagos, calabazas y telarañas.','🎃')}</div></section>
+  <section><h3>Aviso para todos</h3><p>Sale arriba en Inicio a todos los usuarios.</p><textarea id="admBT" rows="2" maxlength="220" placeholder="Ej: Mañana a las 22:00 habrá una actualización de 5 minutos.">${esc(B.text||'')}</textarea>
+   <div class="adm-row">${[['info','Información'],['aviso','Importante'],['fiesta','Novedad']].map(([k,l])=>`<button type="button" class="lv-chip2${(B.kind||'info')===k?' on':''}" onclick="ADM.kind='${k}';this.parentElement.querySelectorAll('.lv-chip2').forEach(b=>b.classList.remove('on'));this.classList.add('on')">${l}</button>`).join('')}</div>
+   <div class="adm-row"><button type="button" class="add" onclick="admSet('banner',{on:true,text:$('admBT').value.trim(),kind:ADM.kind||'${esc(B.kind||'info')}'})">${B.on?'Actualizar aviso':'Publicar aviso'}</button>${B.on?`<button type="button" class="secondary" onclick="admSet('banner',{on:false,text:'',kind:'info'})">Quitar aviso</button>`:''}</div></section>
+  <section><h3>Modo mantenimiento</h3><p>Muestra una pantalla de «Estamos mejorando Unuvia» a todos menos a ti.</p><input id="admMT" maxlength="160" value="${esc(M.text||'Estamos mejorando Unuvia. Vuelve en un ratito.')}">
+   <div class="adm-row"><button type="button" class="${M.on?'secondary':'add'}" onclick="admMaint(${!M.on})">${M.on?'Desactivar mantenimiento':'Activar mantenimiento'}</button>${M.on?'<span class="adm-on">● Activo</span>':''}</div></section>
+  <section><h3>Funciones</h3><p>Activa o desactiva partes de la app para todos.</p>${[['live','Unuvia Live (juegos en directo)'],['tools','Herramientas de clase'],['shop','Tienda de Nuvia']].map(([k,l])=>`<label class="adm-sw"><span>${l}</span><input type="checkbox" ${FEAT(k)?'checked':''} onchange="admFeat('${k}',this.checked)"></label>`).join('')}</section>
+  <section><h3>Estadísticas</h3>${ADM.err?`<div class="adm-warn">${esc(ADM.err)}</div>`:''}<div class="adm-kpi">${kpi(S&&S.users,'usuarios')}${kpi(S&&S.users7,'nuevos (7 días)')}${kpi(S&&S.classes,'clases')}${kpi(S&&S.classes7,'clases nuevas')}${kpi(S&&S.members,'miembros')}${kpi(S&&S.works,'tareas')}${kpi(S&&S.subs,'entregas')}${kpi(S&&S.posts,'anuncios')}${kpi(S&&S.messages,'mensajes')}${kpi(S&&S.push,'con avisos')}${kpi(S&&S.live,'partidas Live')}${kpi(S&&S.schools,'centros')}${kpi(S&&S.rating!=null?String(S.rating).replace('.',',')+' ★':null,(S&&S.reviews||0)+' valoraciones')}</div></section>
+  <section class="adm-2"><div><h3>Últimas clases</h3>${R&&R.classes&&R.classes.length?R.classes.map(c=>`<div class="adm-li"><span>${esc(c.emoji||'📚')}</span><b>${esc(c.name)}</b><small>${c.members} miembros · ${when(Date.parse(c.created_at))}</small></div>`).join(''):'<div class="gl-sub">—</div>'}</div>
+   <div><h3>Últimos usuarios</h3>${R&&R.users&&R.users.length?R.users.map(u=>`<div class="adm-li"><b>${esc(u.name)}</b><small>${when(Date.parse(u.created_at))}</small></div>`).join(''):'<div class="gl-sub">—</div>'}</div></section>
+  <section><h3>Valoraciones</h3>${R&&R.reviews&&R.reviews.length?R.reviews.map(v=>`<div class="adm-rv"><b>${'★'.repeat(v.rating)}${'☆'.repeat(5-v.rating)}</b><span>${esc(v.body||'Sin comentario')}</span><small>${esc(v.name||'Anónimo')} · ${when(Date.parse(v.created_at))}</small></div>`).join(''):'<div class="gl-sub">Aún no hay valoraciones.</div>'}</section></div>`}
+async function admSet(key,value){if(!isAppAdmin())return;if(key==='banner'&&value.on&&!value.text){toastErr('Escribe el texto del aviso.');return}
+ try{const {error}=await sb.from('app_config').upsert({key,value,updated_at:new Date().toISOString()},{onConflict:'key'});if(error)throw error;CFG[key]=value;try{localStorage.setItem('unuvia_cfg',JSON.stringify(CFG))}catch(e){}applyCfg();admPaint();toast('Guardado: lo verán todos en menos de 2 minutos','ok')}catch(e){toastErr('No se pudo guardar. ¿Has ejecutado el SQL 20 y has entrado con unuviasupport@gmail.com?')}}
+function admMaint(on){if(on&&!confirmMaint())return;admSet('maintenance',{on,text:String(($('admMT')||{}).value||'').trim()||'Estamos mejorando Unuvia. Vuelve en un ratito.'})}
+function confirmMaint(){return true}
+function admFeat(k,v){const f=Object.assign({live:true,tools:true,shop:true},CFG.features||{});f[k]=v;admSet('features',f)}
+
+setTimeout(()=>{try{applySeason((CFG.theme||{}).name||'normal')}catch(e){}try{cfgLoad()}catch(e){}},60);
 function renderPeople(){
  const el=$('peopleBody');if(!el||!classes[cur])return;
  const all=data.members.map((m,i)=>({m,i})).filter(o=>match(o.m.n)),st=all.filter(o=>STAFFR.includes(o.m.r)),sd=all.filter(o=>!STAFFR.includes(o.m.r));
@@ -1884,10 +1942,10 @@ async function buildFromServer(force){
    sb.from('my_tasks').select('*').eq('user_id',authUid),sb.from('photo_favs').select('photo_id').eq('user_id',authUid)]);
   if(cl.error)throw cl.error;if(mm.error)throw mm.error;
   const uids=[...new Set(L(mm).map(m=>m.user_id))];
-  const pr=await sb.from('profiles').select('id,name,emoji,color,bio,photo_path').in('id',uids);
+  const pr=await sb.from('profiles').select('id,name,emoji,color,bio,photo_path,banner_path').in('id',uids);
   const P={};L(pr).forEach(p=>{P[p.id]=p});
   await signUrls(CF,[...L(wk).flatMap(w=>Array.isArray(w.files)?w.files.map(f=>f.p):[]),...L(su).flatMap(x=>Array.isArray(x.files)?x.files.map(f=>f.p):[]),...L(ms).map(m=>m.file_path),...L(po).map(p=>p.image_path),...L(ph).map(p=>p.image_path),...L(cl).flatMap(c=>[c.icon_path,c.banner_path])]);
-  await signUrls(AV,Object.values(P).map(p=>p.photo_path));
+  await signUrls(AV,Object.values(P).flatMap(p=>[p.photo_path,p.banner_path]));
   const favs=new Set(L(fv).map(f=>f.photo_id));
   out=L(cl).map(row=>{
    const cid=row.id,mine=x=>x.class_id===cid;
@@ -1895,7 +1953,7 @@ async function buildFromServer(force){
    const names={},used=new Set();
    [authUid,...mrows.map(m=>m.user_id)].forEach(u=>{if(names[u]||!P[u]&&u!==authUid)return;let n=u===authUid?user:cap((P[u]||{}).name),k=n,i=2;while(used.has(k.toLowerCase()))k=n+' ('+i++ +')';used.add(k.toLowerCase());names[u]=k});
    const nm=u=>names[u]||'?';
-   const members=mrows.map(m=>{const p=P[m.user_id]||{};return {mu:!!m.muted,id:m.user_id,u:m.user_id,n:nm(m.user_id),r:RL[m.role]||'Alumno',e:p.emoji||'',c:p.color||'#008cff',b:p.bio||'',ph:urlOf(AV,p.photo_path)}});
+   const members=mrows.map(m=>{const p=P[m.user_id]||{};return {mu:!!m.muted,id:m.user_id,u:m.user_id,n:nm(m.user_id),r:RL[m.role]||'Alumno',e:p.emoji||'',c:p.color||'#008cff',b:p.bio||'',ph:urlOf(AV,p.photo_path),bn:urlOf(AV,p.banner_path)}});
    const _tp={},topics=L(tp).filter(mine).map(t=>{_tp[t.name]=t.id;return t.name});
    const tname={};Object.entries(_tp).forEach(([n,id])=>{tname[id]=n});
    const comments={};L(co).filter(mine).sort((a,b)=>String(a.created_at).localeCompare(String(b.created_at))).forEach(k=>{(comments[k.post_id]=comments[k.post_id]||[]).push({id:k.id,n:nm(k.author_id),au:k.author_id,t:k.body,ts:Date.parse(k.created_at)})});
@@ -2190,7 +2248,7 @@ async function afterLogin(u){
  await Promise.all([checkFilesCol(),checkCr2(),checkT7(),checkAtt(),checkPoll(),checkLive(),checkT18(),checkSchool()]);
  await pullAll(true);cloudOn=true;subscribe();setTimeout(refreshPushBanner,1500);flushReview();applyTheme();
  await loadNotifPrefs();loadNotifs();subscribeNotifs();syncPushSub();
- trackVisit();applyNuvia();enter(user);handleDeepLink();setTimeout(joinFromLink,400);offSave();
+ trackVisit();applyNuvia();cfgLoad();enter(user);handleDeepLink();setTimeout(joinFromLink,400);offSave();
 }
 /* Esta versión solo entra con correo + código */
 const ap=$('appleLogin');if(ap)ap.style.display='none';
