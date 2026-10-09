@@ -2417,3 +2417,51 @@ html.light .nb-badge{box-shadow:0 0 0 2px #fff}
 
 .netbar{width:max-content;max-width:min(calc(100vw - 28px),380px)}
 .nb-txt{min-width:0}
+
+/* ===================== Franja translúcida bajo la hora (iPhone) ===================== */
+.sb-shade{position:fixed;top:0;left:0;right:0;height:var(--sat,0px);z-index:95;pointer-events:none;background:rgba(0,0,0,.42);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4)}
+html.light .sb-shade{background:rgba(238,241,246,.62)}
+body:has(#welcome:not(.hidden)) .sb-shade,body:has(#login:not(.hidden)) .sb-shade{display:none}
+
+/* ===================== Calendario ===================== */
+.calx-nav b#calTitle,#calTitle{letter-spacing:0;text-transform:none;font-size:18px;color:inherit}
+#calTitle .cm-m{font-weight:800}#calTitle .cm-y{font-weight:500;opacity:.55}
+.cd.has:not(.sel):not(.today) .cdn{background:rgba(var(--accent-rgb),.10);border-radius:12px}
+.cdd{gap:3px}.cdd i{width:6px;height:6px}
+.cal-legend{gap:8px;flex-wrap:wrap;margin-top:12px}
+.cal-legend span,.cal-legend>*{display:inline-flex;align-items:center;padding:4px 10px;border-radius:var(--r-pill);background:rgba(var(--accent-rgb),.07);font-weight:600}
+.cal-agenda{margin-top:16px;padding-top:14px;border-top:1px solid rgba(127,127,127,.18)}
+.ag-h{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 8px}
+.ag-h b{font-size:15px}.ag-h span{font-size:12px;opacity:.6;font-weight:600}
+.ag-row{display:flex;align-items:center;gap:12px;width:100%;margin:6px 0;padding:10px 12px;border:1px solid rgba(127,127,127,.14);border-radius:var(--r-md);background:rgba(127,127,127,.05);color:inherit;font:inherit;text-align:left;cursor:pointer;position:relative;overflow:hidden;transition:transform var(--dur-1) var(--ease-out),background var(--dur-2)}
+.ag-row::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+.ag-row.k-entrega::before{background:#f59e0b}.ag-row.k-tarea::before{background:#8b5cf6}
+.ag-row:active{transform:scale(.985)}
+.ag-d{flex:none;width:42px;height:44px;border-radius:12px;display:grid;place-items:center;align-content:center;background:rgba(var(--accent-rgb),.12)}
+.ag-row.k-entrega .ag-d{background:rgba(245,158,11,.14)}.ag-row.k-tarea .ag-d{background:rgba(139,92,246,.14)}
+.ag-d b{font-size:17px;line-height:1}.ag-d small{font-size:10px;text-transform:uppercase;opacity:.7;font-weight:700;margin-top:2px}
+.ag-t{flex:1;min-width:0}.ag-t b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ag-t small{display:block;font-size:12px;opacity:.7;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ag-more,.ag-empty{font-size:12.5px;opacity:.65;text-align:center;padding:10px 0 2px}
+
+/* ===================== Horario ===================== */
+.tt-now{display:flex;align-items:center;gap:12px;margin:2px 0 14px;padding:16px 16px 16px 18px;border-radius:20px;color:#fff;background:linear-gradient(135deg,#2f80ff 0%,#3a5bd9 55%,#6b4fd8 100%);box-shadow:0 12px 28px rgba(47,100,255,.28);position:relative;overflow:hidden}
+.tt-now::after{content:"";position:absolute;right:-40px;top:-50px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.22),transparent 70%);pointer-events:none}
+.tn-l{flex:1;min-width:0;position:relative;z-index:1}
+.tn-tag{display:inline-block;padding:3px 10px;border-radius:var(--r-pill);background:rgba(255,255,255,.22);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.tt-now b{display:block;font-size:20px;line-height:1.2;margin-top:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tt-now small{display:block;font-size:12.5px;opacity:.88;margin-top:4px;line-height:1.35}
+.tn-bar{height:6px;border-radius:99px;background:rgba(255,255,255,.25);margin-top:10px;overflow:hidden}.tn-bar i{display:block;height:100%;border-radius:99px;background:#fff}
+.tn-ulm{flex:none;width:56px;height:64px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.25));animation:otpBob 3s ease-in-out infinite;position:relative;z-index:1}
+.ttv th .dn{display:block;font-size:11px;letter-spacing:.08em}
+.ttv th .dd{display:inline-grid;place-items:center;min-width:26px;height:26px;margin-top:3px;border-radius:50%;font-size:13px;font-weight:800;color:inherit;opacity:.85}
+.ttv th.tdy .dd{background:var(--accent);color:#fff;opacity:1;box-shadow:0 4px 12px rgba(var(--accent-rgb),.4)}
+.ttv-h b{display:block;font-size:12.5px}.ttv-h small{display:block;font-size:10px;opacity:.55;font-weight:600;margin-top:2px}
+.ttv-e{background:transparent!important;box-shadow:inset 0 0 0 1.5px rgba(127,127,127,.10);border-radius:12px}
+.ttv td.ttv-e.tdy{background:rgba(var(--accent-rgb),.07)!important;box-shadow:inset 0 0 0 1.5px rgba(var(--accent-rgb),.16)}
+.ttv-c{background:linear-gradient(160deg,hsl(var(--h,210) 85% 62%/.30),hsl(var(--h,210) 70% 55%/.14))!important;box-shadow:inset 4px 0 0 hsl(var(--h,210) 75% 58%),0 2px 6px hsl(var(--h,210) 60% 40%/.10);border-radius:12px;position:relative;transition:transform var(--dur-1) var(--ease-out)}
+.ttv-c:active{transform:scale(.96)}
+.ttv-c.now{box-shadow:inset 4px 0 0 hsl(var(--h,210) 80% 55%),0 0 0 2px hsl(var(--h,210) 80% 55%),0 8px 20px hsl(var(--h,210) 80% 50%/.35)!important;animation:ttPulse 2.4s ease-in-out infinite}
+@keyframes ttPulse{0%,100%{filter:none}50%{filter:brightness(1.06)}}
+.ttv-nowtag{position:absolute;right:5px;top:5px;padding:1px 6px;border-radius:var(--r-pill);background:hsl(var(--h,210) 80% 50%);color:#fff;font-size:8.5px;font-weight:900;letter-spacing:.06em}
+.ttv-c small::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:hsl(var(--h,210) 75% 50%);margin-right:4px;vertical-align:1px}
+.icon.sj{background:linear-gradient(140deg,hsl(var(--h,210) 85% 60%),hsl(calc(var(--h,210) + 30) 75% 52%))!important;color:#fff!important;font-weight:900;font-size:17px}

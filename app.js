@@ -86,9 +86,10 @@ function renderCal(){
  cells.forEach((c,i)=>{
   const col=i%7,we=sun?(col===0||col===6):(col>=5),a=evs.some(e=>e.d===c.k),b=wk.some(w=>w.due===c.k),v=tk.some(t=>t.d===c.k&&!t.done),r=inR(c.k);
   const cl=r&&!(col>0&&inR(cells[i-1].k)),cr=r&&!(col<6&&cells[i+1]&&inR(cells[i+1].k));
-  h+=`<button type="button" class="cd${c.out?' out':''}${c.k===today?' today':''}${c.k===calSel?' sel':''}${we?' we':''}${r?' rng':''}${cl?' cl':''}${cr?' cr':''}" onclick="pickDay('${c.k}')" aria-label="${c.d}"><span class="cdn">${c.d}</span><span class="cdd">${a?'<i></i>':''}${b?'<i class="w"></i>':''}${v?'<i class="v"></i>':''}</span></button>`;
+  h+=`<button type="button" class="cd${(a||b||v)&&!c.out?' has':''}${c.out?' out':''}${c.k===today?' today':''}${c.k===calSel?' sel':''}${we?' we':''}${r?' rng':''}${cl?' cl':''}${cr?' cr':''}" onclick="pickDay('${c.k}')" aria-label="${c.d}"><span class="cdn">${c.d}</span><span class="cdd">${a?'<i></i>':''}${b?'<i class="w"></i>':''}${v?'<i class="v"></i>':''}</span></button>`;
  });
- $('calendarGrid').innerHTML=h;$('calTitle').textContent=MESL[calM]+' '+calY;renderDayPanel();
+ $('calendarGrid').innerHTML=h;$('calTitle').innerHTML='<span class="cm-m">'+MESL[calM]+'</span> <span class="cm-y">'+calY+'</span>';renderDayPanel();
+ let ag=$('calAgenda');if(!ag){ag=document.createElement('div');ag.id='calAgenda';ag.className='cal-agenda';const lg=document.querySelector('.cal-legend');(lg||$('calendarGrid')).after(ag)}ag.innerHTML=calAgendaHTML();
 }
 function renderDayPanel(){
  const el=$('calSide');if(!el||!calSel)return;
@@ -118,25 +119,50 @@ function schedDays(){
  return DIAS.map((d,i)=>{const l=data.sched.filter(x=>x.day===i&&match(x.t+' '+(x.r||''))).sort((a,b)=>a.h.localeCompare(b.h));if(!l.length)return '';
   let nowId=null,nextId=null;
   if(i===wd){l.forEach((x,j)=>{const s0=toMin(x.h),s1=j+1<l.length?toMin(l[j+1].h):s0+60;if(s0<=nm&&nm<s1)nowId=x.id});const nx=l.find(x=>toMin(x.h)>nm);if(nx)nextId=nx.id}
-  return `<div class="sday${i===wd?' today':''}"><div class="side-title">${d.toUpperCase()}${i===wd?' · HOY':''}</div><div class="items">${l.map(x=>`<div class="item${x.id===nowId?' s-now':''}"><div class="icon">🕘</div><main><b>${esc(x.t)}</b><p>${x.h}${x.r?' · '+esc(x.r):''}</p></main>${x.id===nowId?'<span class="stag">Ahora</span>':x.id===nextId?'<span class="stag next">Siguiente</span>':''}<button type="button" class="del adm-only" aria-label="Eliminar" onclick="delItem('sched','${x.id}')">×</button></div>`).join('')}</div></div>`}).join('');
+  return `<div class="sday${i===wd?' today':''}"><div class="side-title">${d.toUpperCase()}${i===wd?' · HOY':''}</div><div class="items">${l.map(x=>`<div class="item${x.id===nowId?' s-now':''}"><div class="icon sj" style="--h:${subjHue(x.t)}">${esc((x.t||'?').trim().charAt(0).toUpperCase())}</div><main><b>${esc(x.t)}</b><p>${x.h.slice(0,5)}${x.r?' · Aula '+esc(x.r):''}</p></main>${x.id===nowId?'<span class="stag">Ahora</span>':x.id===nextId?'<span class="stag next">Siguiente</span>':''}<button type="button" class="del adm-only" aria-label="Eliminar" onclick="delItem('sched','${x.id}')">×</button></div>`).join('')}</div></div>`}).join('');
 }
 function schedGrid(){
  const now=new Date(),wd=(now.getDay()+6)%7,nm=now.getHours()*60+now.getMinutes(),k5=h=>(h||'').slice(0,5);
  const times=[...new Set(data.sched.filter(x=>x.day>=0&&x.day<5).map(x=>k5(x.h)))].sort();if(!times.length)return '';
- const head='<tr><th class="ttv-h"></th>'+DIAS.map((d,i)=>`<th class="${i===wd?'tdy':''}">${d.slice(0,3).toUpperCase()}</th>`).join('')+'</tr>';
+ const mon=new Date(now);mon.setDate(now.getDate()-wd+(wd>4?7:0));const head='<tr><th class="ttv-h"></th>'+DIAS.map((d,i)=>{const dd=new Date(mon);dd.setDate(mon.getDate()+i);return `<th class="${i===wd?'tdy':''}"><span class="dn">${d.slice(0,3).toUpperCase()}</span><span class="dd">${dd.getDate()}</span></th>`}).join('')+'</tr>';
  const rows=times.map((h,ri)=>{const s0=toMin(h),s1=times[ri+1]?toMin(times[ri+1]):s0+55;
-  return `<tr><th class="ttv-h">${h}</th>${[0,1,2,3,4].map(d=>{const l=data.sched.filter(x=>x.day===d&&k5(x.h)===h);
+  const e1=times[ri+1]||(pad(Math.floor((s0+55)/60))+':'+pad((s0+55)%60));
+  return `<tr><th class="ttv-h"><b>${h}</b><small>${e1}</small></th>${[0,1,2,3,4].map(d=>{const l=data.sched.filter(x=>x.day===d&&k5(x.h)===h);
    if(!l.length)return `<td class="ttv-e${d===wd?' tdy':''}"></td>`;
    const t=l.map(x=>x.t).join(' / '),r=l.map(x=>x.r).filter(Boolean).join(' / '),nowC=d===wd&&s0<=nm&&nm<s1;
-   return `<td class="ttv-c${d===wd?' tdy':''}${nowC?' now':''}" style="--h:${subjHue(l[0].t)}" onclick="toast('${esc((t+(r?' · '+r:'')+' · '+DIAS[d]+' '+h).replace(/'/g,'’'))}')"><b><span class="full">${esc(t)}</span><span class="sh">${esc(l.length>1?t:shortSubj(t))}</span></b>${r?`<small>${esc(r)}</small>`:''}</td>`}).join('')}</tr>`}).join('');
+   return `<td class="ttv-c${d===wd?' tdy':''}${nowC?' now':''}" style="--h:${subjHue(l[0].t)}" onclick="toast('${esc((t+(r?' · '+r:'')+' · '+DIAS[d]+' '+h).replace(/'/g,'’'))}')"><b><span class="full">${esc(t)}</span><span class="sh">${esc(l.length>1?t:shortSubj(t))}</span></b>${r?`<small>${esc(r)}</small>`:''}${nowC?'<span class="ttv-nowtag">AHORA</span>':''}</td>`}).join('')}</tr>`}).join('');
  return `<table class="ttv"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
 }
+/* ===================== Calendario: agenda del mes · Horario: tarjeta "ahora" ===================== */
+function calAgendaHTML(){
+ const ym=calY+'-'+pad(calM+1),today=iso(new Date()),cur=today.slice(0,7)===ym,dim=new Date(calY,calM+1,0).getDate(),rows=[];
+ for(let d=1;d<=dim;d++){const k=ym+'-'+pad(d);if(cur&&k<today)continue;dayItems(k).filter(x=>x.k!=='clase'&&!x.done).forEach(x=>rows.push({k,x}))}
+ const KN={evento:'Evento',entrega:'Entrega',tarea:'Tarea'};
+ const list=rows.slice(0,8).map(({k,x})=>{const D=new Date(k+'T12:00:00'),r=relDay(k);return `<button type="button" class="ag-row k-${x.k}" onclick="pickDay('${k}')"><span class="ag-d"><b>${D.getDate()}</b><small>${D.toLocaleDateString('es-ES',{weekday:'short'}).replace('.','')}</small></span><span class="ag-t"><b>${esc(x.t)}</b><small>${KN[x.k]||''}${r?' · '+r:''}${x.s?' · '+esc(x.s):''}</small></span></button>`}).join('');
+ return `<div class="ag-h"><b>${cur?'Lo que queda este mes':'En '+MESL[calM].toLowerCase()}</b><span>${rows.length?rows.length+(rows.length===1?' cosa':' cosas'):''}</span></div>`+(rows.length?list+(rows.length>8?`<div class="ag-more">y ${rows.length-8} más</div>`:''):`<div class="ag-empty">${cur?'Nada más este mes. ¡A disfrutar!':'Nada programado este mes.'}</div>`);
+}
+function schedNowHTML(){
+ const now=new Date(),wd=(now.getDay()+6)%7,nm=now.getHours()*60+now.getMinutes();
+ const dayL=d=>data.sched.filter(x=>x.day===d).sort((a,b)=>a.h.localeCompare(b.h)),endOf=(l,j)=>j+1<l.length?toMin(l[j+1].h):toMin(l[j].h)+55;
+ const fmtM=m=>pad(Math.floor(m/60))+':'+pad(m%60),inM=m=>m<60?m+' min':Math.floor(m/60)+' h'+(m%60?' '+m%60+' min':'');
+ let lab='',main='',sub='',prog=null;
+ if(wd<5){const l=dayL(wd);const j=l.findIndex((x,i)=>toMin(x.h)<=nm&&nm<endOf(l,i)),nx=l.find(x=>toMin(x.h)>nm);
+  if(j>=0){const x=l[j],s=toMin(x.h),e=endOf(l,j);lab='Ahora';main=x.t;sub=(x.r?'Aula '+x.r+' · ':'')+'hasta las '+fmtM(e)+(nx?' · después '+nx.t:'');prog=Math.round((nm-s)/(e-s)*100)}
+  else if(nx){lab='Siguiente';main=nx.t;sub='A las '+nx.h.slice(0,5)+' ('+'en '+inM(toMin(nx.h)-nm)+')'+(nx.r?' · Aula '+nx.r:'')}
+  else if(l.length){lab='Hoy';main='Ya no hay más clases';sub='Has terminado las '+l.length+' de hoy'}}
+ if(!lab){let d=(wd+1)%7,guard=0;while(guard++<7&&(d>4||!dayL(d).length))d=(d+1)%7;const l=dayL(d);
+  if(l.length){lab=d===(wd+1)%7?'Mañana':'El '+DIAS[d].toLowerCase();main='Empiezas con '+l[0].t;sub='A las '+l[0].h.slice(0,5)+(l[0].r?' · Aula '+l[0].r:'')+' · '+l.length+(l.length===1?' clase':' clases')}}
+ if(!lab)return '';
+ return `<div class="tt-now"><div class="tn-l"><span class="tn-tag">${lab}</span><b>${esc(main)}</b><small>${esc(sub)}</small>${prog!=null?`<div class="tn-bar" role="progressbar" aria-valuenow="${prog}" aria-valuemin="0" aria-valuemax="100" aria-label="Progreso de la clase"><i style="width:${prog}%"></i></div>`:''}</div><svg class="ulm tn-ulm" viewBox="0 0 474 542" aria-hidden="true"><use href="#ul-mark" width="474" height="542"/></svg></div>`;
+}
+(function(){try{const s=document.createElement('div');s.className='sb-shade';s.setAttribute('aria-hidden','true');document.body.appendChild(s)}catch(e){}})();
+
 function renderSched(){
  const view=searchQ?'days':(settings.schedView||'week'),has=data.sched.length>0;
  const tog=has?`<div class="seg ttv-seg" data-key="schedView"><button type="button" data-v="week" class="${view==='week'?'on':''}">Semana</button><button type="button" data-v="days" class="${view==='days'?'on':''}">Por días</button></div>`:'';
  let body=has?(view==='week'?schedGrid():schedDays()):'';
  if(!body)body=`<div class="${has?'empty':'ttv-empty'}">${has?(searchQ?'Sin resultados.':'Aún no hay clases en el horario.'):(isStaff()?'Todavía no hay horario.<br>Créalo de golpe, de lunes a viernes.<br><button type="button" class="add" onclick="openTimetable()">Crear el horario</button>':'Tu profesor aún no ha añadido el horario.')}</div>`;
- $('schedList').innerHTML=tog+body;
+ $('schedList').innerHTML=(has?schedNowHTML():'')+tog+body;
 }
 let ttRows=[];
 function openTimetable(){
