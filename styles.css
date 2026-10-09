@@ -2365,3 +2365,55 @@ html.light{--gcol:rgba(15,23,42,var(--gridA,0.2));background-color:#eef1f6}
 body{background:transparent!important}
 #bgFill{display:block}
 html:not(.light) #bgFill{background:#000}
+
+/* ===================== Paso del código (OTP) animado ===================== */
+#authForm.leaving{animation:otpOut .26s var(--ease-in-out) forwards;pointer-events:none}
+#authForm.back{animation:otpBack .45s var(--ease-out)}
+@keyframes otpOut{to{opacity:0;transform:translateX(-36px) scale(.97);filter:blur(2px)}}
+@keyframes otpBack{from{opacity:0;transform:translateX(-30px) scale(.97)}to{opacity:1;transform:none}}
+.login-card.otp-mode #authForm{display:none}
+.login-card.otp-mode #otpBox{margin-top:0!important;animation:otpIn .55s cubic-bezier(.2,1.25,.4,1) both}
+@keyframes otpIn{from{opacity:0;transform:translateX(42px) scale(.95)}to{opacity:1;transform:none}}
+.otp-nuvia{position:relative;width:74px;height:84px;margin:2px auto 6px}
+.otp-ulm{width:68px;height:78px;display:block;margin:0 auto;filter:drop-shadow(0 8px 18px rgba(0,140,255,.35));animation:otpBob 2.8s ease-in-out infinite}
+@keyframes otpBob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(-3deg)}}
+.otp-env{position:absolute;right:-14px;bottom:4px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#1aa0ff,#0066ff);box-shadow:0 6px 16px rgba(0,102,255,.45),0 0 0 3px var(--card-bg,#fff);animation:envIn .7s .35s cubic-bezier(.2,1.6,.4,1) both,envWig 3.2s 1.2s ease-in-out infinite}
+.otp-env svg{width:18px;height:18px}
+html:not(.light) .otp-env{box-shadow:0 6px 16px rgba(0,102,255,.45),0 0 0 3px #1c1f27}
+@keyframes envIn{0%{opacity:0;transform:translate(-30px,20px) scale(.2) rotate(-40deg)}100%{opacity:1;transform:none}}
+@keyframes envWig{0%,86%,100%{transform:none}89%{transform:rotate(-14deg) scale(1.08)}92%{transform:rotate(12deg) scale(1.08)}95%{transform:rotate(-6deg)}}
+.otp-mode .otp-input{animation:digIn .42s cubic-bezier(.2,1.5,.4,1) both}
+.otp-mode .otp-input:nth-child(1){animation-delay:.18s}.otp-mode .otp-input:nth-child(2){animation-delay:.23s}.otp-mode .otp-input:nth-child(3){animation-delay:.28s}
+.otp-mode .otp-input:nth-child(4){animation-delay:.33s}.otp-mode .otp-input:nth-child(5){animation-delay:.38s}.otp-mode .otp-input:nth-child(6){animation-delay:.43s}
+@keyframes digIn{from{opacity:0;transform:translateY(14px) scale(.7)}to{opacity:1;transform:none}}
+.otp-input.filled{border-color:var(--accent)!important;background:rgba(var(--accent-rgb),.10)!important}
+.otp-input.pop{animation:digPop .22s cubic-bezier(.2,1.8,.4,1)!important}
+@keyframes digPop{0%{transform:scale(.82)}100%{transform:scale(1)}}
+#otpBoxes.ok .otp-input{border-color:var(--ok)!important;background:rgba(16,185,129,.16)!important;color:var(--ok)!important;animation:digOk .5s ease both!important}
+#otpBoxes.ok .otp-input:nth-child(2){animation-delay:.05s!important}#otpBoxes.ok .otp-input:nth-child(3){animation-delay:.1s!important}#otpBoxes.ok .otp-input:nth-child(4){animation-delay:.15s!important}#otpBoxes.ok .otp-input:nth-child(5){animation-delay:.2s!important}#otpBoxes.ok .otp-input:nth-child(6){animation-delay:.25s!important}
+@keyframes digOk{0%{transform:none}40%{transform:translateY(-8px) scale(1.06)}100%{transform:none}}
+
+/* ===================== Aviso de conexión con Nuvia ===================== */
+.netbar{display:flex;align-items:center;gap:12px;padding:10px 16px 10px 12px;border-radius:18px;text-align:left;max-width:min(92vw,380px);background:rgba(22,26,36,.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.1);color:#fff;transform:translate(-50%,-160%) scale(.9)}
+.netbar.show{transform:translate(-50%,0) scale(1);transition:transform .55s cubic-bezier(.2,1.5,.4,1),opacity .25s ease,visibility 0s}
+.netbar.off{border-color:rgba(245,158,11,.55);box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 1px rgba(245,158,11,.15)}
+.netbar.on{border-color:rgba(16,185,129,.6);box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 1px rgba(16,185,129,.2)}
+html.light .netbar{background:rgba(255,255,255,.96);color:#111827}
+.nb-nuvia{position:relative;flex:none;width:40px;height:44px}
+.nb-ulm{width:36px;height:41px;display:block}
+.netbar.off .nb-ulm{animation:nbSearch 2.2s ease-in-out infinite;transform-origin:50% 90%}
+.netbar.on .nb-ulm{animation:nbJump .7s cubic-bezier(.2,1.6,.4,1) 2}
+@keyframes nbSearch{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg) translateY(-2px)}}
+@keyframes nbJump{0%{transform:none}40%{transform:translateY(-9px) scale(1.06)}70%{transform:translateY(1px) scale(.97,1.03)}100%{transform:none}}
+.nb-badge{position:absolute;right:-6px;top:-6px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;box-shadow:0 0 0 2px rgba(22,26,36,.94)}
+html.light .nb-badge{box-shadow:0 0 0 2px #fff}
+.nb-badge svg{width:13px;height:13px}
+.netbar.off .nb-badge{background:#f59e0b;animation:nbPulse 1.6s ease-in-out infinite}
+.netbar.on .nb-badge{background:#10b981;animation:nbPop .5s cubic-bezier(.2,1.8,.4,1)}
+@keyframes nbPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 2px rgba(22,26,36,.94),0 0 0 0 rgba(245,158,11,.55)}50%{transform:scale(1.1);box-shadow:0 0 0 2px rgba(22,26,36,.94),0 0 0 7px rgba(245,158,11,0)}}
+@keyframes nbPop{from{transform:scale(0) rotate(-90deg)}to{transform:none}}
+.nb-txt b{display:block;font-size:13.5px;line-height:1.2}
+.nb-txt small{display:block;font-size:11.5px;line-height:1.35;opacity:.75;font-weight:600;margin-top:2px}
+
+.netbar{width:max-content;max-width:min(calc(100vw - 28px),380px)}
+.nb-txt{min-width:0}

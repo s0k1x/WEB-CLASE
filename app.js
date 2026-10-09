@@ -301,7 +301,7 @@ function launchApp(b){
  fx.style.left=(r.left+r.width/2)+'px';fx.style.top=(r.top+r.height/2)+'px';fx.innerHTML='<b></b><i></i><i></i><i></i>';document.body.appendChild(fx);
  document.querySelector('.welcome-box').classList.add('out');setTimeout(showLogin,950);setTimeout(()=>fx.remove(),2400);
 }
-function showWelcome(){document.querySelector('.welcome-box').classList.remove('out');$('startLogin').classList.remove('go');$('otpBox').classList.add('hidden');$('login').classList.add('hidden');$('welcome').classList.remove('hidden');window.scrollTo(0,0)}
+function showWelcome(){document.querySelector('.welcome-box').classList.remove('out');$('startLogin').classList.remove('go');hideOtpStep();$('login').classList.add('hidden');$('welcome').classList.remove('hidden');window.scrollTo(0,0)}
 function dueCount(){const today=iso(new Date()),lim=iso(new Date(Date.now()+(settings.remDays||1)*864e5));let n=0;classes.forEach(c=>{n+=c.data.events.filter(e=>e.d>=today&&e.d<=lim).length+c.data.tasks.filter(t=>!t.done&&t.d>=today&&t.d<=lim).length});return n}
 function enter(name){
  document.body.classList.add('in-app');
@@ -1546,8 +1546,8 @@ async function sendOtp(type){
   try{
     const {error}=await sb.auth.signInWithOtp({email,options:{shouldCreateUser:true}});
     if(error)throw error;
-    otpEmail=email;$('otpBox').classList.remove('hidden');
-    $('otpLabel').textContent='Código enviado a '+email;clearOtpInputs();otpClearErr();otpCooldown(60);setTimeout(()=>$('otp-input1')?.focus(),250);
+    otpEmail=email;
+    $('otpLabel').textContent='Te hemos enviado un código a '+email;clearOtpInputs();otpClearErr();otpCooldown(60);showOtpStep();
   }catch(e){toastErr(otpErrorMsg(e))}
   finally{otpBusy=false;b.textContent=t;b.disabled=false}
 }
@@ -1557,10 +1557,20 @@ function getOtpCode(){
     .map(id=>$(id)?.value||'').join('');
 }
 function clearOtpInputs(){
+  document.querySelectorAll('.otp-input').forEach(i=>i.classList.remove('filled','pop'));
   ['otp-input1','otp-input2','otp-input3','otp-input4','otp-input5','otp-input6']
     .forEach(id=>{ if($(id)) $(id).value=''; });
   $('otp-input1')?.focus();
 }
+
+/* ===== Paso del código: la tarjeta del correo sale y entra la del código (con Nuvia y su sobre) ===== */
+function showOtpStep(){const card=document.querySelector('.login-card'),f=$('authForm'),box=$('otpBox');if(!card||!box)return;
+ const go=()=>{f&&f.classList.remove('leaving');card.classList.add('otp-mode');box.classList.remove('hidden');box.classList.remove('ok');const c=$('otpBoxes');if(c)c.classList.remove('ok');setTimeout(()=>$('otp-input1')?.focus(),380)};
+ if(card.classList.contains('otp-mode')){go();return}
+ if(f&&!document.documentElement.classList.contains('calm')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){f.classList.add('leaving');setTimeout(go,260)}else go()}
+function resetOtpStep(){const card=document.querySelector('.login-card');if(card)card.classList.remove('otp-mode');$('otpBox')?.classList.add('hidden');$('otpBoxes')?.classList.remove('ok')}
+function hideOtpStep(){const card=document.querySelector('.login-card'),f=$('authForm');if(card)card.classList.remove('otp-mode');$('otpBox')?.classList.add('hidden');if(f){f.classList.remove('leaving');f.classList.add('back');setTimeout(()=>f.classList.remove('back'),500)}}
+document.addEventListener('input',e=>{const i=e.target;if(!i.classList||!i.classList.contains('otp-input'))return;i.classList.toggle('filled',!!i.value);if(i.value){i.classList.remove('pop');void i.offsetWidth;i.classList.add('pop')}});
 async function verifyOtp(){
   const code=getOtpCode();
   if(code.length!==6){otpShowErr('Escribe el código completo de 6 dígitos.');return}
@@ -1570,8 +1580,10 @@ async function verifyOtp(){
   try{
     const {data,error}=await sb.auth.verifyOtp({email:otpEmail,token:code,type:'email'});
     if(error)throw error;
-    $('otpBox').classList.add('hidden');
+    const ob=$('otpBoxes');if(ob){ob.classList.add('ok')}if(btn)btn.textContent='¡Dentro!';
+    await new Promise(r=>setTimeout(r,700));
     await afterLogin((data.session&&data.session.user)||data.user);
+    resetOtpStep();
   }catch(e){otpShowErr(otpErrorMsg(e))}
   finally{otpBusy=false;if(btn){btn.disabled=false;btn.textContent=bt}}
 }
@@ -1631,8 +1643,8 @@ $('otpForm')?.addEventListener('submit',e=>{
   verifyOtp();
 });
 $('otpClose')?.addEventListener('click',()=>{
-  $('otpBox')?.classList.add('hidden');
-  clearOtpInputs();
+  hideOtpStep();
+  clearOtpInputs();setTimeout(()=>$('emailInput')?.focus(),300);
 });
 $('resendOtp')?.addEventListener('click',()=>{
   if(!otpMethod||$('resendOtp').disabled){ return; }
@@ -1674,7 +1686,7 @@ $('localLoginButton')?.addEventListener('click',()=>{
 });
 
 
-document.querySelectorAll('input[name="loginMode"]').forEach(r=>r.addEventListener('change',()=>{$('otpBox').classList.add('hidden')}));
+document.querySelectorAll('input[name="loginMode"]').forEach(r=>r.addEventListener('change',()=>{hideOtpStep()}));
 $('authForm').addEventListener('submit',e=>{e.preventDefault();document.querySelector('.login-method-panel.active .button-submit')?.click()});
 /* Sesión guardada: una vez iniciada, no vuelve a salir inicio ni login */
 const SKEY='mariotools_session';const LOWPERF=/Android/i.test(navigator.userAgent)&&(((navigator.deviceMemory||8)<=4)||((navigator.hardwareConcurrency||8)<=4));
@@ -1807,7 +1819,11 @@ function labelize(root){(root||document).querySelectorAll('input:not([type=hidde
 (function(){let tm=null;const run=()=>{tm=null;labelize()};try{new MutationObserver(()=>{try{iconize()}catch(e){}if(!tm)tm=setTimeout(run,250)}).observe(document.body,{childList:true,subtree:true})}catch(e){}try{iconize()}catch(e){}run()})();
 
 /* Estado de la conexión: aviso discreto y sincronización al volver */
-function netState(first){const bar=$('netBar');if(!bar)return;if(!navigator.onLine){bar.textContent='Sin conexión · tus cambios se enviarán al volver';bar.className='netbar off show'}else if(!first){bar.textContent='Conexión recuperada';bar.className='netbar on show';setTimeout(()=>bar.classList.remove('show'),2600);try{if(cloudOn){pullAll(true);if(dirty&&!pushing)pushAll()}}catch(e){}}}
+const NB_NUVIA='<span class="nb-nuvia" aria-hidden="true"><svg class="ulm nb-ulm" viewBox="0 0 474 542"><use href="#ul-mark" width="474" height="542"/></svg><span class="nb-badge">';
+const NB_WIFI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h.01M8.5 16.43a5 5 0 0 1 7 0M5 12.86a10 10 0 0 1 5.17-2.69M19 12.86a10 10 0 0 0-2.01-1.45M2 8.82a15 15 0 0 1 4.18-2.65M22 8.82a15 15 0 0 0-11.29-3.76M2 2l20 20"/></svg>';
+const NB_OK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+function nbHTML(off){return NB_NUVIA+(off?NB_WIFI:NB_OK)+'</span></span><span class="nb-txt"><b>'+(off?'Sin conexión':'¡Conexión recuperada!')+'</b><small>'+(off?'Nuvia busca señal… tus cambios se enviarán al volver':'Todo vuelve a sincronizarse')+'</small></span>'}
+function netState(first){const bar=$('netBar');if(!bar)return;if(!navigator.onLine){bar.innerHTML=nbHTML(true);bar.className='netbar off show'}else if(!first){bar.innerHTML=nbHTML(false);bar.className='netbar on show';setTimeout(()=>bar.classList.remove('show'),2600);try{if(cloudOn){pullAll(true);if(dirty&&!pushing)pushAll()}}catch(e){}}}
 window.addEventListener('online',()=>netState(false));window.addEventListener('offline',()=>netState(false));netState(true);
 registerSW();
 pullReviews();
