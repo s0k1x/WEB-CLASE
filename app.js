@@ -999,65 +999,88 @@ let tourI=0;
 /* ===================== GUÍA DE BIENVENIDA EN MODO VÍDEO (con Nuvia, foco y dedo animado) ===================== */
 let GD=null;
 function gdTab(n){return [...document.querySelectorAll('.ib-tabs .ib-btn')].find(b=>b.textContent.trim()===n)}
+function gdFit(e){if(!e)return null;const r=e.getBoundingClientRect();if(r.height<=innerHeight*.55)return e;const kids=[...e.children].filter(k=>{const q=k.getBoundingClientRect();return q.height>20});return kids.length?kids[0]:e}
 function gdSteps(){
  const inClass=classes.some(c=>!c.archived)&&$('classShell')&&$('classShell').classList.contains('visible'),st=inClass&&isStaff();
  if(!inClass)return [
-  {t:'¡Hola! Soy Nuvia',p:'Te enseño Unuvia en menos de un minuto. Puedes pausar, saltar o tocar a los lados para ir atrás o adelante.'},
+  {t:'¡Hola! Soy Nuvia',p:'Te enseño Unuvia en menos de un minuto. Toca a la derecha para avanzar o a la izquierda para volver.'},
   {spot:()=>document.querySelector('#noClass .primary,.noclass .primary'),t:'Empieza por aquí',p:'Crea tu clase si eres profesor, o únete con el código que te den.'},
   {t:'¡Listo para empezar!',p:'Cuando estés dentro de una clase, vuelve a ver esta guía desde Ajustes → Ayuda para conocer todo lo demás.'}];
- const S=[
+ return [
   {t:'¡Hola! Soy Nuvia',p:'Te enseño tu aula en un minuto. Toca a la derecha para avanzar, a la izquierda para volver, o deja que siga sola.',go:'Inicio'},
   {spot:()=>{const c=$('classCode');return c&&(c.closest('[class*=code]')||c)},t:'El código de tu clase',p:'Compártelo para que tus compañeros se unan. También puedes invitar con un enlace desde Personas.'},
   {spot:()=>document.querySelector('.ib-tabs'),t:'Todo, a un toque',p:'Aquí están las secciones de tu clase. Vamos a verlas.'},
-  {tap:()=>gdTab('Inicio'),go:'Inicio',spot:()=>$('items')&&($('items').closest('.card,.panel,section')||$('items')),t:'Inicio',p:'Lo próximo que tienes, ordenado por hoy, esta semana y más adelante, y debajo el tablón con los anuncios.'},
+  {tap:()=>gdTab('Inicio'),go:'Inicio',spot:()=>{const i=$('items');if(!i)return null;const c=i.closest('.card');return c&&c.getBoundingClientRect().height<innerHeight*.5?c:i},t:'Inicio',p:'Lo próximo que tienes, ordenado por hoy, esta semana y más adelante. Debajo está el tablón con los anuncios.'},
   {tap:()=>gdTab('Calendario'),go:'Calendario',spot:()=>document.querySelector('.calx-side'),t:'Calendario',p:'Toca cualquier día para ver sus eventos, entregas y tareas. Debajo tienes todo lo que queda del mes.'},
-  {tap:()=>gdTab('Trabajo'),go:'Trabajo',spot:()=>$('workList'),t:'Trabajo',p:st?'Crea tareas, preguntas y materiales, con archivos, hora límite y rúbrica. Arriba verás lo que tienes pendiente de corregir.':'Tus tareas, preguntas y materiales. Ábrelas para entregar, adjuntar archivos y escribir al profesor.'},
-  {tap:()=>gdTab('Horario'),go:'Horario',spot:()=>document.querySelector('.tt-now')||$('schedList'),t:'Horario',p:'Tu semana de lunes a viernes. Arriba siempre sabrás qué clase tienes ahora y cuál viene después.'},
-  {tap:()=>gdTab('Notas'),go:'Notas',spot:()=>$('gradeBody'),t:'Calificaciones',p:st?'Toca cualquier casilla para calificar. Guarda en borrador y devuelve las notas cuando quieras.':'Tu media, tus entregas y cómo van tus notas. Solo las ves tú.'},
-  {spot:()=>gdTab('Chat'),t:'Chat de la clase',p:'Habla con tu clase en tiempo real: mensajes, fotos, audios y stickers.',go:'Inicio'},
+  {tap:()=>gdTab('Trabajo'),go:'Trabajo',spot:()=>gdFit($('workList')),t:'Trabajo',p:st?'Crea tareas, preguntas y materiales, con archivos, hora límite y rúbrica. Arriba verás lo pendiente de corregir.':'Tus tareas, preguntas y materiales. Ábrelas para entregar, adjuntar archivos y escribir al profesor.'},
+  {tap:()=>gdTab('Horario'),go:'Horario',spot:()=>document.querySelector('.tt-now')||gdFit($('schedList')),t:'Horario',p:'Tu semana de lunes a viernes. Aquí arriba siempre sabrás qué clase tienes ahora y cuál viene después.'},
+  {tap:()=>gdTab('Notas'),go:'Notas',spot:()=>gdFit($('gradeBody')),t:'Calificaciones',p:st?'Toca cualquier casilla para calificar. Guarda en borrador y devuelve las notas cuando quieras.':'Tu media, tus entregas y cómo van tus notas. Solo las ves tú.'},
+  {go:'Inicio',spot:()=>gdTab('Chat'),t:'Chat de la clase',p:'Habla con tu clase en tiempo real: mensajes, fotos, audios y stickers.'},
   {spot:()=>$('fab'),t:'El botón +',p:st?'Crea lo que necesites según la pestaña en la que estés: anuncios, eventos, tareas…':'Añade fotos, tareas personales y más, según la pestaña en la que estés.'},
   {spot:()=>$('topAvatar'),t:'Tu perfil y ajustes',p:'Personaliza tu perfil, cambia los ajustes y mira los pendientes de todas tus clases.'},
-  {t:'¡Ya lo sabes todo!',p:'Puedes volver a ver esta guía cuando quieras desde Ajustes → Ayuda. ¡A por ello!',go:'Inicio'}];
- return S;
+  {go:'Inicio',t:'¡Ya lo sabes todo!',p:'Puedes volver a ver esta guía cuando quieras desde Ajustes → Ayuda. ¡A por ello!'}];
 }
+const GD_PAUSE='<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>',GD_PLAY='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.2-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
 function startGuide(){
- if(GD)return;closeModal&&closeModal();try{closeMenu()}catch(e){}
+ if(GD)return;try{closeModal()}catch(e){}try{closeMenu()}catch(e){}
  const steps=gdSteps(),el=document.createElement('div');el.id='guide';el.className='gd';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Guía de bienvenida');
  el.innerHTML=`<div class="gd-hole"></div><div class="gd-finger" aria-hidden="true"><i></i></div>
  <div class="gd-tap gd-prev" aria-hidden="true"></div><div class="gd-tap gd-next" aria-hidden="true"></div>
- <div class="gd-top"><div class="gd-prog">${steps.map(()=>'<span><i></i></span>').join('')}</div><div class="gd-ctl"><button type="button" class="gd-pp" aria-label="Pausar">${GD_PAUSE}</button><button type="button" class="gd-x">Saltar</button></div></div>
- <div class="gd-card" aria-live="polite"><svg class="ulm gd-ulm" viewBox="0 0 474 542" aria-hidden="true"><use href="#ul-mark" width="474" height="542"/></svg><div class="gd-txt"><b></b><p></p></div></div>`;
+ <div class="gd-card"><div class="gd-prog">${steps.map(()=>'<span><i></i></span>').join('')}</div>
+  <div class="gd-row"><svg class="ulm gd-ulm" viewBox="0 0 474 542" aria-hidden="true"><use href="#ul-mark" width="474" height="542"/></svg><div class="gd-txt" aria-live="polite"><b></b><p></p></div></div>
+  <div class="gd-ctl"><span class="gd-n"></span><button type="button" class="gd-pp" aria-label="Pausar">${GD_PAUSE}</button><button type="button" class="gd-x">Saltar</button></div></div>`;
  document.body.appendChild(el);document.body.classList.add('guide-open');document.documentElement.classList.add('guide-lock');
  const stop=e=>{e.preventDefault()};el.addEventListener('touchmove',stop,{passive:false});el.addEventListener('wheel',stop,{passive:false});
- GD={el,steps,i:-1,t0:0,el0:0,paused:false,raf:0,timers:[],prevFocus:document.activeElement,DUR:5600};
+ GD={el,steps,i:-1,el0:0,paused:false,raf:0,timers:[],prevFocus:document.activeElement,DUR:6200,busy:false};
  el.querySelector('.gd-x').onclick=()=>endGuide();el.querySelector('.gd-pp').onclick=()=>gdPause(!GD.paused);
  el.querySelector('.gd-prev').onclick=()=>gdGo(GD.i-1);el.querySelector('.gd-next').onclick=()=>gdGo(GD.i+1);
  document.addEventListener('keydown',gdKey);window.addEventListener('resize',gdReflow);
  requestAnimationFrame(()=>el.classList.add('on'));gdGo(0);el.querySelector('.gd-x').focus();GD.raf=requestAnimationFrame(gdTick);
 }
-const GD_PAUSE='<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>',GD_PLAY='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.2-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
 function gdKey(e){if(!GD)return;if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End'].includes(e.key)){e.preventDefault();return}if(e.key==='Escape'){e.preventDefault();endGuide()}else if(e.key==='ArrowRight'){gdGo(GD.i+1)}else if(e.key==='ArrowLeft'){gdGo(GD.i-1)}else if(e.key===' '&&e.target.tagName!=='BUTTON'){e.preventDefault();gdPause(!GD.paused)}}
 function gdPause(p){if(!GD)return;GD.paused=p;const b=GD.el.querySelector('.gd-pp');b.innerHTML=p?GD_PLAY:GD_PAUSE;b.setAttribute('aria-label',p?'Continuar':'Pausar');GD.el.classList.toggle('paused',p)}
-function gdTick(ts){if(!GD)return;if(!GD.last)GD.last=ts;const dt=ts-GD.last;GD.last=ts;if(!GD.paused&&!document.hidden)GD.el0+=dt;
- const segs=GD.el.querySelectorAll('.gd-prog i');segs.forEach((s,j)=>{s.style.width=(j<GD.i?100:j>GD.i?0:Math.min(100,GD.el0/GD.DUR*100))+'%'});
+function gdTick(ts){if(!GD)return;if(!GD.last)GD.last=ts;const dt=ts-GD.last;GD.last=ts;if(!GD.paused&&!GD.busy&&!document.hidden)GD.el0+=dt;
+ GD.el.querySelectorAll('.gd-prog i').forEach((s,j)=>{s.style.width=(j<GD.i?100:j>GD.i?0:Math.min(100,GD.el0/GD.DUR*100))+'%'});
  if(GD.el0>=GD.DUR){if(GD.i>=GD.steps.length-1){endGuide();return}gdGo(GD.i+1)}
  GD.raf=requestAnimationFrame(gdTick)}
-function gdRect(e,pad){if(!e)return null;const r=e.getBoundingClientRect();if(!r.width&&!r.height)return null;const vh=innerHeight,vw=innerWidth,p=pad==null?8:pad;
- const top=Math.max(6,r.top-p),bot=Math.min(vh-6,r.bottom+p);return {x:Math.max(6,r.left-p),y:top,w:Math.min(vw-12,r.width+p*2),h:Math.max(30,bot-top)}}
+function gdClear(){GD.timers.forEach(clearTimeout);GD.timers=[]}
+function gdAt(ms,fn){GD.timers.push(setTimeout(()=>{if(GD)fn()},ms))}
+const gdSat=()=>parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sat'))||0;
+function gdFixed(e){for(let n=e;n&&n!==document.body;n=n.parentElement){const p=getComputedStyle(n).position;if(p==='fixed'||p==='sticky')return true}return false}
+/* coloca la tarjeta (arriba, abajo o centro) y devuelve la zona libre donde puede ir el foco */
+function gdPlace(s,e){const c=GD.el.querySelector('.gd-card');let mode='mid';
+ if(e){const r=e.getBoundingClientRect();mode=gdFixed(e)&&(r.top+r.height/2)>innerHeight*.5?'up':'down'}
+ c.classList.toggle('up',mode==='up');c.classList.toggle('mid',mode==='mid');
+ c.querySelector('b').textContent=s.t;c.querySelector('p').textContent=s.p;GD.el.querySelector('.gd-n').textContent=(GD.i+1)+' / '+GD.steps.length;
+ if(GD.cardFor!==GD.i){GD.cardFor=GD.i;c.classList.remove('in');void c.offsetWidth;c.classList.add('in')}
+ const cr=c.getBoundingClientRect(),sat=gdSat();
+ return mode==='up'?{top:cr.bottom+16,bottom:innerHeight-10}:{top:sat+12,bottom:(mode==='mid'?innerHeight:cr.top)-16}}
+/* desplaza la página (si hace falta) para que el elemento quede dentro de la zona libre */
+function gdEnsure(e,z,then){if(!e){then();return}const r=e.getBoundingClientRect(),zh=z.bottom-z.top;
+ if(gdFixed(e)){then();return}
+ let y=r.height>zh?scrollY+r.top-z.top-8:scrollY+r.top-(z.top+(zh-r.height)/2);
+ y=Math.max(0,Math.min(y,document.documentElement.scrollHeight-innerHeight));
+ if(Math.abs(y-scrollY)<4){then();return}
+ window.scrollTo({top:y,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});gdAt(520,then)}
+function gdRect(e,z,pad){if(!e)return null;const r=e.getBoundingClientRect();if(!r.width&&!r.height)return null;const p=pad==null?8:pad,vw=innerWidth;
+ const top=Math.max(z?z.top-4:6,r.top-p),bot=Math.min(z?z.bottom+4:innerHeight-6,r.bottom+p);if(bot-top<12)return null;
+ return {x:Math.max(6,r.left-p),y:top,w:Math.min(vw-12,r.width+p*2),h:bot-top}}
 function gdHole(r){const h=GD.el.querySelector('.gd-hole');if(!r){h.style.cssText=`left:${innerWidth/2}px;top:${innerHeight/2}px;width:0;height:0;border-radius:50%`;return}
  h.style.cssText=`left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;border-radius:${Math.min(22,r.h/2)}px`}
 function gdFinger(r,tap){const f=GD.el.querySelector('.gd-finger');if(!r){f.classList.remove('show');return}f.classList.add('show');f.style.left=(r.x+r.w/2)+'px';f.style.top=(r.y+r.h/2)+'px';if(tap){f.classList.remove('tap');void f.offsetWidth;f.classList.add('tap')}}
-function gdCard(s,r){const c=GD.el.querySelector('.gd-card');c.querySelector('b').textContent=s.t;c.querySelector('p').textContent=s.p;
- const low=r&&(r.y+r.h/2)>innerHeight*.5;c.classList.toggle('up',!!low);c.classList.toggle('mid',!r);c.classList.remove('in');void c.offsetWidth;c.classList.add('in')}
-function gdClear(){GD.timers.forEach(clearTimeout);GD.timers=[]}
-function gdAt(ms,fn){GD.timers.push(setTimeout(()=>{if(GD)fn()},ms))}
-function gdShow(s){const e=s.spot&&s.spot();if(e&&e.scrollIntoView){const r=e.getBoundingClientRect();if(r.top<70||r.bottom>innerHeight-40)e.scrollIntoView({block:r.height>innerHeight*.6?'start':'center',behavior:'smooth'})}
- gdAt(e?380:0,()=>{const r=gdRect(e);gdHole(r);gdCard(s,r);gdFinger(null);GD.cur=e})}
-function gdGo(i){if(!GD)return;if(i<0)i=0;if(i>=GD.steps.length){endGuide();return}gdClear();GD.i=i;GD.el0=0;const s=GD.steps[i];GD.cur=null;
+function gdSpot(s){const e=s.spot&&s.spot();const z=gdPlace(s,e);gdFinger(null);
+ gdEnsure(e,z,()=>{const z2=gdPlace(s,e);GD.cur=e;GD.zone=z2;gdHole(gdRect(e,z2));GD.busy=false})}
+function gdGo(i){if(!GD)return;if(i<0)i=0;if(i>=GD.steps.length){endGuide();return}gdClear();GD.i=i;GD.el0=0;GD.busy=true;GD.cur=null;const s=GD.steps[i];
  const tapEl=s.tap&&s.tap();
- if(tapEl){const tr=gdRect(tapEl,4);gdHole(tr);gdCard(s,tr);gdFinger(tr,false);gdAt(650,()=>gdFinger(gdRect(tapEl,4),true));gdAt(900,()=>{if(s.go)goTab(s.go)});gdAt(1250,()=>gdShow(s))}
- else{if(s.go){const tb=gdTab(s.go);if(!tb||!tb.classList.contains('active'))goTab(s.go)}gdShow(s)}}
-function gdReflow(){if(GD&&GD.cur)gdHole(gdRect(GD.cur))}
+ if(tapEl){const z=gdPlace(s,tapEl);
+  gdEnsure(tapEl,z,()=>{const tr=gdRect(tapEl,null,4);gdHole(tr);gdFinger(tr,false);
+   gdAt(620,()=>gdFinger(gdRect(tapEl,null,4),true));
+   gdAt(880,()=>{if(s.go)goTab(s.go)});
+   gdAt(1150,()=>gdSpot(s))})}
+ else{if(s.go){const tb=gdTab(s.go);if(!tb||!tb.classList.contains('active'))goTab(s.go)}
+  if(!s.spot){window.scrollTo({top:0,behavior:'smooth'})}
+  gdSpot(s)}}
+function gdReflow(){if(GD&&GD.cur&&GD.zone)gdHole(gdRect(GD.cur,GD.zone))}
 function endGuide(){if(!GD)return;gdClear();cancelAnimationFrame(GD.raf);document.removeEventListener('keydown',gdKey);window.removeEventListener('resize',gdReflow);
  const el=GD.el,pf=GD.prevFocus;GD=null;el.classList.remove('on');document.body.classList.remove('guide-open');document.documentElement.classList.remove('guide-lock');setTimeout(()=>el.remove(),350);
  try{if($('classShell')&&$('classShell').classList.contains('visible'))goTab('Inicio');scrollTo({top:0,behavior:'smooth'})}catch(e){}

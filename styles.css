@@ -2539,3 +2539,21 @@ body.guide-open{overflow:hidden}
 /* guía: la página no se mueve */
 .gd{touch-action:none;overscroll-behavior:none}
 html.guide-lock,html.guide-lock body{overflow:hidden!important;overscroll-behavior:none}
+
+/* ===== guía v2: progreso y controles dentro de la tarjeta de Nuvia ===== */
+.gd-top{display:none!important}
+.gd-card{pointer-events:auto;flex-direction:column;align-items:stretch;gap:10px;padding:12px 14px 12px}
+.gd-card.mid{padding:18px 18px 14px}
+.gd-prog{display:flex;gap:4px}
+.gd-prog span{flex:1;height:4px;border-radius:99px;background:rgba(127,127,127,.22);overflow:hidden}
+.gd-prog i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px}
+.gd-row{display:flex;align-items:center;gap:12px}
+.gd-card.mid .gd-row{flex-direction:column;text-align:center;gap:8px}
+.gd-ctl{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.gd-n{margin-right:auto;font-size:11.5px;font-weight:700;opacity:.5}
+.gd-ctl button{height:32px;min-width:32px;padding:0 12px;border:0;border-radius:99px;background:rgba(127,127,127,.14);color:inherit;font:inherit;font-size:12.5px;font-weight:700;display:grid;place-items:center;cursor:pointer}
+.gd-ctl .gd-pp{padding:0;width:32px}.gd-ctl svg{width:14px;height:14px}
+.gd-card.mid{flex-direction:column}
+.gd-card.up{top:calc(14px + var(--sat,0px))}
+.gd-card{bottom:calc(16px + var(--sab,0px))}
+.gd-tap{z-index:1}.gd-card{z-index:3}
