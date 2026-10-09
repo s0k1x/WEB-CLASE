@@ -2557,3 +2557,10 @@ html.guide-lock,html.guide-lock body{overflow:hidden!important;overscroll-behavi
 .gd-card.up{top:calc(14px + var(--sat,0px))}
 .gd-card{bottom:calc(16px + var(--sab,0px))}
 .gd-tap{z-index:1}.gd-card{z-index:3}
+
+/* ===== sin "vibración": nada de texto que cambie de tamaño o espaciado en cada fotograma ===== */
+@keyframes tagBreath{0%,100%{opacity:.62}50%{opacity:1}}          /* antes también animaba letter-spacing → las letras temblaban */
+.login-title h2{animation:titleShine 7s linear infinite!important}   /* el título de la entrada ya no flota (temblor sub-píxel junto a la tarjeta) */
+.welcome h1{will-change:transform;backface-visibility:hidden}
+#login.otp-on .login-logo{animation:none!important}
+.otp-ulm,.otp-env,.tn-ulm,.gd-ulm,.splash-logo{will-change:transform;backface-visibility:hidden}
