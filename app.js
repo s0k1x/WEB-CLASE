@@ -647,7 +647,7 @@ function renderStream(){
  const _mu=iAmMuted(),canPost=!_mu&&(isStaff()||perm().post),canCom=!_mu&&(isStaff()||perm().comment),meet=safeUrl(c.meet);
  const posts=[...data.posts].sort((a,b)=>(settings.sortPosts==='recent'?0:(b.pin?1:0)-(a.pin?1:0))||b.ts-a.ts).filter(p=>match(p.t+' '+p.n));
  el.innerHTML=`<div class="stream-h"><h3>Tablón</h3>${meet?`<a class="meet-btn" href="${esc(meet)}" target="_blank" rel="noopener noreferrer">📹 Unirse a Meet</a>`:''}</div>`
- +(_mu?'<div class="mute-note">Un profesor te ha silenciado en esta clase: puedes verlo todo y entregar tareas, pero no publicar, comentar ni escribir en el chat.</div>':'')+(canPost?`<div class="post-box" onclick="modal('post')"><div class="pb-av">${avOf(user)}</div><span>Anuncia algo a tu clase…</span></div>`:'')
+ +pushBannerHTML()+(_mu?'<div class="mute-note">Un profesor te ha silenciado en esta clase: puedes verlo todo y entregar tareas, pero no publicar, comentar ni escribir en el chat.</div>':'')+(canPost?`<div class="post-box" onclick="modal('post')"><div class="pb-av">${avOf(user)}</div><span>Anuncia algo a tu clase…</span></div>`:'')
  +(posts.length?posts.map(p=>`<div class="pcard${p.pin?' pinned':''}"><div class="pc-h">${avOf(p.n)}<div class="pc-i"><b>${esc(p.n)}</b><small>${when(p.ts)}${p.pin?' <span class="pin-pill">Fijado</span>':''}</small></div>${(isStaff()||p.n===user)?`<button type="button" class="del" aria-label="Opciones" onclick="postMenu('${p.id}')">⋯</button>`:''}</div><div class="pc-t">${esc(p.t)}</div>${p.img?`<img class="pc-img" src="${p.img}" alt="" onclick="viewImg(this.src)">`:''}<div class="pc-cm">${(p.comments||[]).map(k=>`<div class="cm"><div class="cm-av">${avOf(k.n)}</div><div class="cm-b"><b>${esc(k.n)}</b> <small>${when(k.ts)}</small><div>${esc(k.t)}</div></div></div>`).join('')}${canCom?`<div class="cm-new"><input placeholder="Añadir comentario a la clase…" maxlength="300" onkeydown="if(event.key==='Enter'){addComment('${p.id}',this)}"><button type="button" aria-label="Enviar comentario" onclick="addComment('${p.id}',this.previousElementSibling)">➤</button></div>`:''}</div></div>`).join(''):`<div class="empty st-empty">${searchQ?'Sin resultados.':(canPost?'Aún no hay anuncios.<br><button type="button" class="add" onclick="modal(\'post\')">Publicar el primero</button>':'Aún no hay anuncios. Cuando tu profesor publique algo, aparecerá aquí.')}</div>`);
 }
 function addComment(id,inp){const t=inp.value.trim(),p=data.posts.find(x=>x.id===id);if(!t||!p)return;(p.comments=p.comments||[]).push({id:uid(),n:user,t,ts:Date.now()});saveState();renderStream()}
@@ -1000,25 +1000,43 @@ let tourI=0;
 let GD=null;
 function gdTab(n){return [...document.querySelectorAll('.ib-tabs .ib-btn')].find(b=>b.textContent.trim()===n)}
 function gdFit(e){if(!e)return null;const r=e.getBoundingClientRect();if(r.height<=innerHeight*.55)return e;const kids=[...e.children].filter(k=>{const q=k.getBoundingClientRect();return q.height>20});return kids.length?kids[0]:e}
+function gdBtn(txt,root){return [...(root||document).querySelectorAll('button')].find(b=>b.textContent.trim()===txt&&b.getClientRects().length)}
 function gdSteps(){
- const inClass=classes.some(c=>!c.archived)&&$('classShell')&&$('classShell').classList.contains('visible'),st=inClass&&isStaff();
+ const inClass=classes.some(c=>!c.archived)&&$('classShell')&&$('classShell').classList.contains('visible');
  if(!inClass)return [
   {t:'¡Hola! Soy Nuvia',p:'Te enseño Unuvia en menos de un minuto. Toca a la derecha para avanzar o a la izquierda para volver.'},
   {spot:()=>document.querySelector('#noClass .primary,.noclass .primary'),t:'Empieza por aquí',p:'Crea tu clase si eres profesor, o únete con el código que te den.'},
-  {t:'¡Listo para empezar!',p:'Cuando estés dentro de una clase, vuelve a ver esta guía desde Ajustes → Ayuda para conocer todo lo demás.'}];
- return [
-  {t:'¡Hola! Soy Nuvia',p:'Te enseño tu aula en un minuto. Toca a la derecha para avanzar, a la izquierda para volver, o deja que siga sola.',go:'Inicio'},
-  {spot:()=>{const c=$('classCode');return c&&(c.closest('[class*=code]')||c)},t:'El código de tu clase',p:'Compártelo para que tus compañeros se unan. También puedes invitar con un enlace desde Personas.'},
-  {spot:()=>document.querySelector('.ib-tabs'),t:'Todo, a un toque',p:'Aquí están las secciones de tu clase. Vamos a verlas.'},
-  {tap:()=>gdTab('Inicio'),go:'Inicio',spot:()=>{const i=$('items');if(!i)return null;const c=i.closest('.card');return c&&c.getBoundingClientRect().height<innerHeight*.5?c:i},t:'Inicio',p:'Lo próximo que tienes, ordenado por hoy, esta semana y más adelante. Debajo está el tablón con los anuncios.'},
-  {tap:()=>gdTab('Calendario'),go:'Calendario',spot:()=>document.querySelector('.calx-side'),t:'Calendario',p:'Toca cualquier día para ver sus eventos, entregas y tareas. Debajo tienes todo lo que queda del mes.'},
-  {tap:()=>gdTab('Trabajo'),go:'Trabajo',spot:()=>gdFit($('workList')),t:'Trabajo',p:st?'Crea tareas, preguntas y materiales, con archivos, hora límite y rúbrica. Arriba verás lo pendiente de corregir.':'Tus tareas, preguntas y materiales. Ábrelas para entregar, adjuntar archivos y escribir al profesor.'},
-  {tap:()=>gdTab('Horario'),go:'Horario',spot:()=>document.querySelector('.tt-now')||gdFit($('schedList')),t:'Horario',p:'Tu semana de lunes a viernes. Aquí arriba siempre sabrás qué clase tienes ahora y cuál viene después.'},
-  {tap:()=>gdTab('Notas'),go:'Notas',spot:()=>gdFit($('gradeBody')),t:'Calificaciones',p:st?'Toca cualquier casilla para calificar. Guarda en borrador y devuelve las notas cuando quieras.':'Tu media, tus entregas y cómo van tus notas. Solo las ves tú.'},
-  {go:'Inicio',spot:()=>gdTab('Chat'),t:'Chat de la clase',p:'Habla con tu clase en tiempo real: mensajes, fotos, audios y stickers.'},
-  {spot:()=>$('fab'),t:'El botón +',p:st?'Crea lo que necesites según la pestaña en la que estés: anuncios, eventos, tareas…':'Añade fotos, tareas personales y más, según la pestaña en la que estés.'},
-  {spot:()=>$('topAvatar'),t:'Tu perfil y ajustes',p:'Personaliza tu perfil, cambia los ajustes y mira los pendientes de todas tus clases.'},
-  {go:'Inicio',t:'¡Ya lo sabes todo!',p:'Puedes volver a ver esta guía cuando quieras desde Ajustes → Ayuda. ¡A por ello!'}];
+  {t:'¡Listo para empezar!',p:'Cuando estés dentro de una clase, vuelve a ver esta guía desde Ajustes → Ayuda: te enseñaré lo que puedes hacer según tu rol.'}];
+ const R=role==='Administrador'?'admin':role==='Profesor'?'prof':role==='Delegado'?'dele':'alum',st=R==='admin'||R==='prof';
+ const T={
+  intro:{admin:'Eres administrador de esta clase: puedes gestionarlo todo. Te enseño lo más importante en un minuto.',prof:'Eres profesor de esta clase. Te enseño cómo publicar, crear trabajo y calificar en un minuto.',dele:'Eres delegado de esta clase: ayudas al profesor con algunos permisos. Te enseño tu aula en un minuto.',alum:'Te enseño tu aula en un minuto. Toca a la derecha para avanzar, a la izquierda para volver, o deja que siga sola.'}[R],
+  code:st?'Compártelo para que tus alumnos se unan. También puedes invitar con un enlace desde Personas.':'Es el código de tu clase. Pásaselo a un compañero que aún no esté dentro.',
+  inicio:st?'Publica anuncios para toda la clase y fíjalos arriba. Aquí también verás lo próximo de la semana.':'Lo próximo que tienes, ordenado por hoy, esta semana y más adelante. Debajo están los anuncios del profesor.',
+  cal:st?'Toca un día para ver lo que hay o añadir un evento, como un examen o una excursión.':'Toca cualquier día para ver sus eventos, entregas y tareas. Debajo tienes lo que queda del mes.',
+  work:st?'Crea tareas, preguntas tipo test y materiales, con archivos, hora límite, rúbrica o solo para algunos alumnos. Arriba verás lo pendiente de corregir.':'Tus tareas, preguntas y materiales. Ábrelas para entregar, adjuntar archivos y escribir en privado al profesor.',
+  tt:st?'Rellena el horario de toda la semana de una vez con «Editar horario». Tus alumnos verán qué clase toca ahora.':'Tu semana de lunes a viernes. Aquí arriba siempre sabrás qué clase tienes ahora y cuál viene después.',
+  notas:st?'Toca cualquier casilla para calificar, también con rúbrica. Guarda en borrador y devuelve las notas cuando quieras.':'Tu media, tus entregas y cómo van tus notas. Solo las ves tú.',
+  chat:R==='alum'?'Habla con tu clase en tiempo real, si el profesor lo permite: mensajes, fotos, audios y stickers.':'Habla con la clase en tiempo real: mensajes, fotos, audios y stickers.',
+  fab:st?'Crea lo que necesites según la pestaña en la que estés: anuncios, eventos, tareas, clases del horario…':'Añade fotos, tareas personales y más, según la pestaña en la que estés.',
+  avatar:st?'Tu perfil, los ajustes y lo que tienes por corregir en todas tus clases.':'Tu perfil, los ajustes y tus pendientes de todas tus clases en un solo sitio.',
+  fin:{admin:'Ya puedes gestionar tu clase. Vuelve a ver esta guía cuando quieras desde Ajustes → Ayuda.',prof:'Ya puedes dar tu clase en Unuvia. Vuelve a ver esta guía desde Ajustes → Ayuda.',dele:'¡A ayudar a tu clase! Vuelve a ver esta guía desde Ajustes → Ayuda.',alum:'Puedes volver a ver esta guía cuando quieras desde Ajustes → Ayuda. ¡A por ello!'}[R]};
+ const S=[
+  {t:'¡Hola! Soy Nuvia',p:T.intro,go:'Inicio'},
+  {spot:()=>{const c=$('classCode');return c&&(c.closest('[class*=code]')||c)},t:'El código de la clase',p:T.code},
+  {spot:()=>document.querySelector('.ib-tabs'),t:'Todo, a un toque',p:'Aquí están las secciones de la clase. Vamos a verlas.'},
+  {tap:()=>gdTab('Inicio'),go:'Inicio',spot:()=>{const i=$('items');if(!i)return null;const c=i.closest('.card');return c&&c.getBoundingClientRect().height<innerHeight*.5?c:i},t:'Inicio',p:T.inicio},
+  {tap:()=>gdTab('Calendario'),go:'Calendario',spot:()=>document.querySelector('.calx-side'),t:'Calendario',p:T.cal},
+  {tap:()=>gdTab('Trabajo'),go:'Trabajo',spot:()=>gdFit($('workList')),t:'Trabajo',p:T.work},
+  {tap:()=>gdTab('Horario'),go:'Horario',spot:()=>(st&&gdBtn('Editar horario',$('sched')))||document.querySelector('.tt-now')||gdFit($('schedList')),t:'Horario',p:T.tt},
+  {tap:()=>gdTab('Notas'),go:'Notas',spot:()=>gdFit($('gradeBody')),t:'Calificaciones',p:T.notas}];
+ if(st)S.push({tap:()=>gdTab('Personas'),go:'Personas',spot:()=>gdFit($('peopleBody')),t:'Personas',p:R==='admin'?'Toca a cualquier persona para cambiar su rol (administrador, profesor, delegado o alumno) o silenciarla en el tablón y el chat.':'Invita a tus alumnos con el código o un enlace, y silencia a quien no participe bien.'});
+ if(R==='admin')S.push({go:'Inicio',spot:()=>gdBtn('Admin',$('classView')),t:'Administrar la clase',p:'Cambia el nombre y los permisos, copia la clase para el curso que viene, archívala o elimínala.'});
+ S.push(
+  {go:'Inicio',spot:()=>gdTab('Chat'),t:'Chat de la clase',p:T.chat},
+  {spot:()=>$('fab'),t:'El botón +',p:T.fab},
+  {spot:()=>$('topAvatar'),t:'Tu perfil y ajustes',p:T.avatar},
+  {go:'Inicio',t:R==='admin'?'¡Tu clase está lista!':'¡Ya lo sabes todo!',p:T.fin});
+ return S;
 }
 const GD_PAUSE='<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>',GD_PLAY='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.2-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
 function startGuide(){
@@ -1621,6 +1639,12 @@ function openNotif(id){const n=notifs.find(x=>x.id===id);if(!n)return;markRead([
 async function markAllRead(){const ids=notifs.filter(n=>!n.read_at).map(n=>n.id);if(!ids.length)return;await markRead(ids);$('modalFields').innerHTML=notifsHTML()}
 function openUrl(u){try{const x=new URL(u||'/',location.origin),c=x.searchParams.get('c'),t=x.searchParams.get('t');if(!$('classShell').classList.contains('visible'))return;if(c){const i=classes.findIndex(k=>k.id===c);if(i>=0&&i!==cur){setCur(i);renderAll()}}if(t&&['Inicio','Calendario','Trabajo','Horario','Ahora','Notas','Personas','Chat'].includes(t))goTab(t)}catch(e){}}
 function handleDeepLink(){const q=location.search;if(!q)return;if(/[?&]c=/.test(q))openUrl(location.href);try{history.replaceState(null,'',location.pathname)}catch(e){}}
+
+/* ===== invitación a activar los avisos (Inicio) ===== */
+let PUSH_ST=null;
+async function refreshPushBanner(){try{PUSH_ST=await pushState()}catch(e){PUSH_ST=null}try{renderStream()}catch(e){}}
+function pushBannerHTML(){if(settings.pushNag||!['off','ios-install'].includes(PUSH_ST))return '';const ios=PUSH_ST==='ios-install';
+ return `<div class="push-ban"><svg class="ulm pb-ulm" viewBox="0 0 474 542" aria-hidden="true"><use href="#ul-mark" width="474" height="542"/></svg><div class="pb-t"><b>${ios?'Recibe avisos en tu iPhone':'Activa los avisos'}</b><small>${ios?'Instala Unuvia en tu pantalla de inicio y te avisaré de tareas, notas y anuncios.':'Te avisaré de tareas nuevas, notas y anuncios aunque tengas la app cerrada.'}</small><div class="pb-b"><button type="button" class="add" onclick="${ios?'installHelp()':'enablePush().then(refreshPushBanner)'}">${ios?'Cómo instalarla':'Activar avisos'}</button><button type="button" class="pb-x" onclick="settings.pushNag=1;saveState();renderStream()">Ahora no</button></div></div></div>`}
 async function sendTestNotif(){const {error}=await sb.rpc('send_test_notification');toast(error?'No se pudo enviar la prueba. ¿Has ejecutado el SQL de notificaciones?':'Prueba enviada: llega en unos segundos')}
 /* --- página de ajustes: Notificaciones --- */
 function notifPageHTML(){
@@ -1717,7 +1741,7 @@ async function afterLogin(u){
   settings.banner=urlOf(AV,p.banner_path);settings._pbn=p.banner_path||null;settings._pbUp=settings.banner;
   profSnap=JSON.stringify({name:user,emoji:settings.emoji,color:settings.avatar||'#008cff',bio:settings.bio,photo_path:settings._pp,banner_path:settings._pbn})}
  await Promise.all([checkFilesCol(),checkCr2(),checkT7()]);
- await pullAll(true);cloudOn=true;subscribe();flushReview();applyTheme();
+ await pullAll(true);cloudOn=true;subscribe();setTimeout(refreshPushBanner,1500);flushReview();applyTheme();
  await loadNotifPrefs();loadNotifs();subscribeNotifs();syncPushSub();
  enter(user);handleDeepLink();setTimeout(joinFromLink,400);
 }
