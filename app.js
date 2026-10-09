@@ -1027,7 +1027,8 @@ function startGuide(){
  <div class="gd-tap gd-prev" aria-hidden="true"></div><div class="gd-tap gd-next" aria-hidden="true"></div>
  <div class="gd-top"><div class="gd-prog">${steps.map(()=>'<span><i></i></span>').join('')}</div><div class="gd-ctl"><button type="button" class="gd-pp" aria-label="Pausar">${GD_PAUSE}</button><button type="button" class="gd-x">Saltar</button></div></div>
  <div class="gd-card" aria-live="polite"><svg class="ulm gd-ulm" viewBox="0 0 474 542" aria-hidden="true"><use href="#ul-mark" width="474" height="542"/></svg><div class="gd-txt"><b></b><p></p></div></div>`;
- document.body.appendChild(el);document.body.classList.add('guide-open');
+ document.body.appendChild(el);document.body.classList.add('guide-open');document.documentElement.classList.add('guide-lock');
+ const stop=e=>{e.preventDefault()};el.addEventListener('touchmove',stop,{passive:false});el.addEventListener('wheel',stop,{passive:false});
  GD={el,steps,i:-1,t0:0,el0:0,paused:false,raf:0,timers:[],prevFocus:document.activeElement,DUR:5600};
  el.querySelector('.gd-x').onclick=()=>endGuide();el.querySelector('.gd-pp').onclick=()=>gdPause(!GD.paused);
  el.querySelector('.gd-prev').onclick=()=>gdGo(GD.i-1);el.querySelector('.gd-next').onclick=()=>gdGo(GD.i+1);
@@ -1035,7 +1036,7 @@ function startGuide(){
  requestAnimationFrame(()=>el.classList.add('on'));gdGo(0);el.querySelector('.gd-x').focus();GD.raf=requestAnimationFrame(gdTick);
 }
 const GD_PAUSE='<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>',GD_PLAY='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.2-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
-function gdKey(e){if(!GD)return;if(e.key==='Escape'){e.preventDefault();endGuide()}else if(e.key==='ArrowRight'){gdGo(GD.i+1)}else if(e.key==='ArrowLeft'){gdGo(GD.i-1)}else if(e.key===' '&&e.target.tagName!=='BUTTON'){e.preventDefault();gdPause(!GD.paused)}}
+function gdKey(e){if(!GD)return;if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End'].includes(e.key)){e.preventDefault();return}if(e.key==='Escape'){e.preventDefault();endGuide()}else if(e.key==='ArrowRight'){gdGo(GD.i+1)}else if(e.key==='ArrowLeft'){gdGo(GD.i-1)}else if(e.key===' '&&e.target.tagName!=='BUTTON'){e.preventDefault();gdPause(!GD.paused)}}
 function gdPause(p){if(!GD)return;GD.paused=p;const b=GD.el.querySelector('.gd-pp');b.innerHTML=p?GD_PLAY:GD_PAUSE;b.setAttribute('aria-label',p?'Continuar':'Pausar');GD.el.classList.toggle('paused',p)}
 function gdTick(ts){if(!GD)return;if(!GD.last)GD.last=ts;const dt=ts-GD.last;GD.last=ts;if(!GD.paused&&!document.hidden)GD.el0+=dt;
  const segs=GD.el.querySelectorAll('.gd-prog i');segs.forEach((s,j)=>{s.style.width=(j<GD.i?100:j>GD.i?0:Math.min(100,GD.el0/GD.DUR*100))+'%'});
@@ -1058,7 +1059,7 @@ function gdGo(i){if(!GD)return;if(i<0)i=0;if(i>=GD.steps.length){endGuide();retu
  else{if(s.go){const tb=gdTab(s.go);if(!tb||!tb.classList.contains('active'))goTab(s.go)}gdShow(s)}}
 function gdReflow(){if(GD&&GD.cur)gdHole(gdRect(GD.cur))}
 function endGuide(){if(!GD)return;gdClear();cancelAnimationFrame(GD.raf);document.removeEventListener('keydown',gdKey);window.removeEventListener('resize',gdReflow);
- const el=GD.el,pf=GD.prevFocus;GD=null;el.classList.remove('on');document.body.classList.remove('guide-open');setTimeout(()=>el.remove(),350);
+ const el=GD.el,pf=GD.prevFocus;GD=null;el.classList.remove('on');document.body.classList.remove('guide-open');document.documentElement.classList.remove('guide-lock');setTimeout(()=>el.remove(),350);
  try{if($('classShell')&&$('classShell').classList.contains('visible'))goTab('Inicio');scrollTo({top:0,behavior:'smooth'})}catch(e){}
  settings.toured=true;try{saveState()}catch(e){}try{pf&&pf.focus&&pf.focus()}catch(e){}}
 
@@ -1185,7 +1186,9 @@ function applyTheme(){
  const av=$('topAvatar');if(av)av.style.setProperty('background',okImg(settings.photo)?`center/cover no-repeat url(${settings.photo})`:(settings.avatar||'#008cff'),'important');
  h.style.zoom=settings.text>100?settings.text/100:'';h.style.setProperty('--gridA',(settings.grid==null?20:settings.grid)/100);
  const m=document.querySelector('meta[name=viewport]');
- if(m)m.content=settings.zoomOK?'width=device-width,initial-scale=1,viewport-fit=cover':'width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover';
+ const ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ /* en iPhone/iPad, maximum-scale=1 evita el zoom automático al tocar casillas y aun así deja ampliar con dos dedos */
+ if(m)m.content=settings.zoomOK?(ios?'width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover':'width=device-width,initial-scale=1,viewport-fit=cover'):'width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover';
 }
 
 function toggleNotif(e){
@@ -1657,11 +1660,11 @@ function clearOtpInputs(){
 
 /* ===== Paso del código: la tarjeta del correo sale y entra la del código (con Nuvia y su sobre) ===== */
 function showOtpStep(){const card=document.querySelector('.login-card'),f=$('authForm'),box=$('otpBox');if(!card||!box)return;
- const go=()=>{f&&f.classList.remove('leaving');card.classList.add('otp-mode');box.classList.remove('hidden');box.classList.remove('ok');const c=$('otpBoxes');if(c)c.classList.remove('ok');setTimeout(()=>$('otp-input1')?.focus(),380)};
+ const go=()=>{f&&f.classList.remove('leaving');card.classList.add('otp-mode');$('login')&&$('login').classList.add('otp-on');box.classList.remove('hidden');box.classList.remove('ok');const c=$('otpBoxes');if(c)c.classList.remove('ok');setTimeout(()=>$('otp-input1')?.focus(),380)};
  if(card.classList.contains('otp-mode')){go();return}
  if(f&&!document.documentElement.classList.contains('calm')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){f.classList.add('leaving');setTimeout(go,260)}else go()}
-function resetOtpStep(){const card=document.querySelector('.login-card');if(card)card.classList.remove('otp-mode');$('otpBox')?.classList.add('hidden');$('otpBoxes')?.classList.remove('ok')}
-function hideOtpStep(){const card=document.querySelector('.login-card'),f=$('authForm');if(card)card.classList.remove('otp-mode');$('otpBox')?.classList.add('hidden');if(f){f.classList.remove('leaving');f.classList.add('back');setTimeout(()=>f.classList.remove('back'),500)}}
+function resetOtpStep(){const card=document.querySelector('.login-card');if(card)card.classList.remove('otp-mode');$('login')&&$('login').classList.remove('otp-on');$('otpBox')?.classList.add('hidden');$('otpBoxes')?.classList.remove('ok')}
+function hideOtpStep(){const card=document.querySelector('.login-card'),f=$('authForm');if(card)card.classList.remove('otp-mode');$('login')&&$('login').classList.remove('otp-on');$('otpBox')?.classList.add('hidden');if(f){f.classList.remove('leaving');f.classList.add('back');setTimeout(()=>f.classList.remove('back'),500)}}
 document.addEventListener('input',e=>{const i=e.target;if(!i.classList||!i.classList.contains('otp-input'))return;i.classList.toggle('filled',!!i.value);if(i.value){i.classList.remove('pop');void i.offsetWidth;i.classList.add('pop')}});
 async function verifyOtp(){
   const code=getOtpCode();

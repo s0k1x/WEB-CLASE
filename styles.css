@@ -2532,3 +2532,10 @@ html:not(.light) .gd-card{background:rgba(24,28,38,.97);color:#f2f4f8;border:1px
 .gd.paused .gd-ulm{animation-play-state:paused}
 body.guide-open{overflow:hidden}
 @media(prefers-reduced-motion:reduce){.gd-hole,.gd-finger{transition:none}}
+
+/* la Nuvia de arriba se pliega cuando aparece la tarjeta del código */
+.login-logo{transition:max-height .4s var(--ease-out),opacity .25s ease,margin .4s var(--ease-out),transform .4s var(--ease-out);max-height:120px}
+#login.otp-on .login-logo{max-height:0;opacity:0;margin:0 auto;transform:scale(.6);overflow:hidden}
+/* guía: la página no se mueve */
+.gd{touch-action:none;overscroll-behavior:none}
+html.guide-lock,html.guide-lock body{overflow:hidden!important;overscroll-behavior:none}
