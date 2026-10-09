@@ -1,6 +1,37 @@
-/* Unuvia · service worker: solo avisos (no guarda nada en caché, así siempre ves la última versión) */
-self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+/* Unuvia · service worker
+   - Avisos al móvil.
+   - Sin conexión: guarda una copia de la web (red primero; si no hay internet, usa la copia).
+     Así siempre ves la última versión cuando hay conexión. */
+const CACHE = 'unuvia-v2';
+self.addEventListener('install', e => {
+  self.skipWaiting();
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/', '/manifest.webmanifest', '/icon-192.png', '/badge-96.png']).catch(() => {})));
+});
+self.addEventListener('activate', e => e.waitUntil((async () => {
+  const keys = await caches.keys();
+  await Promise.all(keys.filter(k => k.startsWith('unuvia-') && k !== CACHE).map(k => caches.delete(k)));
+  await self.clients.claim();
+})()));
+
+self.addEventListener('fetch', e => {
+  const r = e.request;
+  if (r.method !== 'GET') return;
+  const u = new URL(r.url);
+  const same = u.origin === self.location.origin, cdn = u.hostname === 'cdn.jsdelivr.net';
+  if (!same && !cdn) return;                       // la base de datos y los archivos de Supabase nunca se guardan aquí
+  e.respondWith((async () => {
+    try {
+      const res = await fetch(r);
+      if (res && res.ok) { const c = await caches.open(CACHE); c.put(r, res.clone()).catch(() => {}); }
+      return res;
+    } catch (err) {
+      const hit = await caches.match(r, { ignoreSearch: r.mode === 'navigate' });
+      if (hit) return hit;
+      if (r.mode === 'navigate') { const home = (await caches.match('/')) || (await caches.match('/index.html')); if (home) return home; }
+      throw err;
+    }
+  })());
+});
 
 self.addEventListener('push', e => {
   let d = {};
