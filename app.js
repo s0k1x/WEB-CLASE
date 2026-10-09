@@ -669,13 +669,13 @@ function workForm0(){
  const tp=[{v:'',l:'Sin tema'},...(data.topics||[]).map(x=>({v:x,l:x}))];
  return '<input id="f1" placeholder="Título" maxlength="80" value="'+esc(w?w.title:'')+'"><textarea id="f6" rows="4" placeholder="Instrucciones (opcional)">'+esc(w?w.desc:'')+'</textarea><div class="fl">Tema</div>'+bsel('f2','Tema',tp,w?w.topic:'')
  +(t!=='material'?'<div class="fl">Fecha de entrega</div><input id="f3" type="date" value="'+esc(w?w.due:'')+'">':'')
- +(t==='tarea'?'<input id="f7" type="text" inputmode="decimal" autocomplete="off" placeholder="Puntos (opcional)" value="'+esc(w&&w.pts!=null?w.pts:'')+'">':'')
+ +(t==='tarea'?'<input id="f7" type="text" inputmode="decimal" autocomplete="off" placeholder="Nota máxima (hasta 10)" value="'+esc(w&&w.pts!=null?w.pts:10)+'">':'')
  +'<input id="f8" placeholder="Enlace https:// (opcional)" value="'+esc(w?w.link:'')+'">';
 }
 function setWkTopic(i){wkTopic=i<0?'':(data.topics[i]||'');renderWork()}
 function stOf(w,n){
  if(w.type==='material')return '';
- const s=subOf(w,n);if(s&&s.grade!=null)return '<span class="wk-st ok">'+s.grade+(w.pts!=null?'/'+w.pts:'')+'</span>';
+ const s=subOf(w,n);if(s&&s.grade!=null)return '<span class="wk-st ok">'+fmtN(N10(s.grade,w.pts))+'/10</span>';
  if(s&&s.st==='tarde')return '<span class="wk-st late">Con retraso</span>';if(s&&s.st==='entregada')return '<span class="wk-st done">Entregada</span>';
  return w.due&&w.due<iso(new Date())?'<span class="wk-st late">Atrasada</span>':'<span class="wk-st">Pendiente</span>';
 }
@@ -727,7 +727,7 @@ function workViewHTML(id){
   else if(isPastDue(w))h+=`<div class="wv-state late"><b>El plazo terminó el ${dueTxt(w)}</b><span>Si entregas ahora, quedará marcada como entrega con retraso.</span></div>`;
   else if(w.due){const r=relDay(w.due);h+=`<div class="wv-state"><b>Pendiente</b><span>Entrega ${r?r.toLowerCase():'el '+fmt(w.due)}${w.dueTime?' a las '+String(w.dueTime).slice(0,5):''}</span></div>`}
   if(s&&s.grade!=null&&s.ret!==false&&w.rub&&w.rub.length&&s.rs&&Object.keys(s.rs).length)h+=rubricView(w,s);
-  if(s&&s.grade!=null&&s.ret!==false)h+=`<div class="wv-grade"><b>${s.grade}${w.pts!=null?' / '+w.pts:''}</b><span>${esc(s.fb||'Calificada')}</span></div>`;
+  if(s&&s.grade!=null&&s.ret!==false)h+=`<div class="wv-grade"><b>${fmtN(N10(s.grade,w.pts))} / 10</b><span>${esc(s.fb||'Calificada')}</span></div>`;
   h+='<div class="fl">Tu trabajo</div>'+(w.type==='pregunta'&&w.opts&&w.opts.length?'<div class="fl">Elige una respuesta</div><div class="mcq">'+w.opts.map((o,i)=>'<label class="mcq-o"><input type="radio" name="mcq" value="'+i+'" '+(s&&s.answer===o?'checked':'')+(s&&s.grade!=null?' disabled':'')+'> <span>'+esc(o)+'</span></label>').join('')+'</div>':'')+(w.type==='pregunta'&&!(w.opts&&w.opts.length)?'<textarea id="sbA" rows="3" placeholder="Tu respuesta">'+esc(s?s.answer||'':'')+'</textarea>':'')+'<input id="sbC" placeholder="Comentario privado para el profesor (opcional)" maxlength="200" value="'+esc(s?s.comment||'':'')+'">'
   +'<div class="fl">Tus archivos</div><div id="subFiles">'+fileChips(s&&s.files,!(s&&s.grade!=null),'delSubFile')+'</div>'+((s&&s.grade!=null)?'':uploaderHTML('sub'))
   +`<button type="button" class="gl-btn" onclick="submitWork('${w.id}')">${s&&s.st!=='pendiente'?'Actualizar entrega':'Entregar'}</button>`+(s&&s.st!=='pendiente'?`<button type="button" class="gl-btn danger" onclick="unsubmitWork('${w.id}')">Anular entrega</button>`:'')+privBox(w.id,user,'pcIn');
@@ -881,13 +881,13 @@ function grade1HTML(){
  const s=subOf(w,m.n),st=!s||s.st==='pendiente'?'Pendiente':s.st==='tarde'?'Entregada con retraso':'Entregada';
  return `<div class="g1-who">${mAv(m)}<div><b>${esc(m.n)}</b><small>${esc(w.title)} · ${st}${s&&s.ts&&s.st!=='pendiente'?' · '+new Date(s.ts).toLocaleDateString('es-ES',{day:'numeric',month:'short'}):''}</small></div></div>`
   +(s&&s.answer?`<div class="fl">Respuesta</div><div class="wv-d">${esc(s.answer)}</div>`:'')+(s&&s.comment?`<div class="fl">Comentario del alumno</div><div class="wv-d">${esc(s.comment)}</div>`:'')+(s&&s.files&&s.files.length?'<div class="fl">Archivos entregados</div>'+fileChips(s.files,false):'')
-  +(T7_OK&&w.rub&&w.rub.length?rubricInputs(w,s):'')+`<div class="fl">Nota${w.pts!=null?' (de 0 a '+w.pts+')':''}</div><input id="gr1" type="text" inputmode="decimal" autocomplete="off" ${T7_OK&&w.rub&&w.rub.length?'readonly':''} value="${s&&s.grade!=null?s.grade:''}" placeholder="Sin nota">`
+  +(T7_OK&&w.rub&&w.rub.length?rubricInputs(w,s):'')+`<div class="fl">Nota (de 0 a ${fmtN(w.pts!=null?w.pts:10)})</div><input id="gr1" type="text" inputmode="decimal" autocomplete="off" ${T7_OK&&w.rub&&w.rub.length?'readonly':''} value="${s&&s.grade!=null?s.grade:''}" placeholder="Sin nota">`
   +`<div class="fl">Comentario para ${esc(m.n)}</div><input id="gr1f" maxlength="120" value="${esc(s&&s.fb||'')}" placeholder="Opcional">`+privBox(w.id,m.n,'pcIn2');
 }
 function saveGrades(id,ret){
  const w=data.work.find(x=>x.id===id);if(!w)return;if(!w.subs)w.subs={};
-const bad=[];data.members.forEach((m,i)=>{const g=$('g_'+i);if(!g)return;g.classList.remove('bad');const v=g.value.trim();if(v==='')return;const n=+v.replace(',','.');if(!isFinite(n)||n<0||(w.pts!=null&&n>w.pts)){g.classList.add('bad');bad.push(m.n)}});
- if(bad.length){toastErr('Revisa la nota de '+bad.join(', ')+(w.pts!=null?': debe estar entre 0 y '+w.pts+'.':': debe ser un número de 0 en adelante.'));return}
+const bad=[];data.members.forEach((m,i)=>{const g=$('g_'+i);if(!g)return;g.classList.remove('bad');const v=g.value.trim();if(v==='')return;const n=+v.replace(',','.');if(!isFinite(n)||n<0||n>(w.pts!=null?w.pts:10)){g.classList.add('bad');bad.push(m.n)}});
+ if(bad.length){toastErr('Revisa la nota de '+bad.join(', ')+': debe estar entre 0 y '+fmtN(w.pts!=null?w.pts:10)+'.');return}
  data.members.forEach((m,i)=>{
   const g=$('g_'+i),f=$('f_'+i);if(!g)return;
   const s=w.subs[m.n]||(w.subs[m.n]={st:'pendiente'});
@@ -992,9 +992,9 @@ function statsHTML(works){const st=students();if(!st.length||!works.length)retur
  const P=x=>tot?Math.round(x/tot*100):0,cp=classPct(works);
  const part=st.map(m=>({m,n:(data.posts||[]).reduce((a,p)=>a+(p.n===m.n?1:0)+(p.comments||[]).filter(k=>k.n===m.n).length,0)})).sort((a,b)=>b.n-a.n),zero=part.filter(x=>!x.n).length;
  const risk=st.map(m=>{const r=[],pc=pctOf(works,m.n),ov=works.filter(w=>assignedTo(w,m)&&isPastDue(w)&&!(subOf(w,m.n)&&subOf(w,m.n).st!=='pendiente')).length,at=ATT_OK?attStats(m.u):null;
-  if(pc!=null&&pc<50)r.push('media '+pc+'%');if(ov>=2)r.push(ov+' sin entregar');if(at&&at.n>=3&&at.pct<80)r.push('asistencia '+at.pct+'%');return {m,r}}).filter(x=>x.r.length).slice(0,6);
+  if(pc!=null&&pc<50)r.push('media '+fmtN(pc/10));if(ov>=2)r.push(ov+' sin entregar');if(at&&at.n>=3&&at.pct<80)r.push('asistencia '+at.pct+'%');return {m,r}}).filter(x=>x.r.length).slice(0,6);
  return `<div class="sx-card"><div class="sx-h"><b>Estadísticas de la clase</b><small>${works.length} ${works.length===1?'trabajo':'trabajos'} · ${st.length} ${st.length===1?'alumno':'alumnos'}</small></div>
-  <div class="sx-kpi"><span class="g"><b>${P(on)}%</b><small>a tiempo</small></span><span class="a"><b>${P(lt)}%</b><small>con retraso</small></span><span class="r"><b>${miss}</b><small>sin entregar</small></span><span><b>${cp==null?'—':cp+'%'}</b><small>media</small></span></div>
+  <div class="sx-kpi"><span class="g"><b>${P(on)}%</b><small>a tiempo</small></span><span class="a"><b>${P(lt)}%</b><small>con retraso</small></span><span class="r"><b>${miss}</b><small>sin entregar</small></span><span><b>${cp==null?'—':fmtN(cp/10)}</b><small>media /10</small></span></div>
   ${tot?`<div class="sx-bar" aria-hidden="true"><i class="g" style="width:${P(on)}%"></i><i class="a" style="width:${P(lt)}%"></i><i class="r" style="width:${P(miss)}%"></i></div>`:''}
   ${risk.length?`<div class="sx-sub">Necesitan atención</div>${risk.map(x=>`<div class="sx-row">${mAv(x.m)}<span class="att-n">${esc(x.m.n)}</span><small>${x.r.join(' · ')}</small></div>`).join('')}`:'<div class="sx-ok">Nadie necesita atención especial ahora mismo.</div>'}
   <div class="sx-sub">Participación en el tablón</div><div class="sx-part">${part.slice(0,4).filter(x=>x.n).map(x=>`<span>${esc(x.m.n)} · <b>${x.n}</b></span>`).join('')||'<span>Aún nadie ha participado</span>'}${zero?`<span class="z">${zero} sin participar</span>`:''}</div></div>`}
@@ -1017,27 +1017,28 @@ function studentSummary(works){
  const td=iso(new Date()),mine=works.map(w=>({w,s:subOf(w,user)})),done=mine.filter(x=>x.s&&x.s.st!=='pendiente').length,late=mine.filter(x=>x.s&&x.s.st==='tarde').length,over=mine.filter(x=>!(x.s&&x.s.st!=='pendiente')&&x.w.due&&x.w.due<td).length,pc=pctOf(works,user);
  const gr=mine.filter(x=>x.s&&x.s.grade!=null&&x.s.ret!==false&&x.w.pts).sort((a,b)=>(a.w.due||'').localeCompare(b.w.due||'')||(a.w.ts||0)-(b.w.ts||0));
  const bars=gr.length?`<div class="gs-evo" role="img" aria-label="Evolución de tus notas"><div class="gs-bars">${gr.map(x=>{const p=Math.max(4,Math.round(x.s.grade/x.w.pts*100));return `<div class="gs-bar" title="${esc(x.w.title)}: ${fmtN(x.s.grade)}/${x.w.pts}"><span style="height:${p}%" class="${p>=50?'ok':'low'}"></span><small>${esc(x.w.title.slice(0,8))}</small></div>`}).join('')}</div></div>`:'';
- return `<div class="gsum"><div class="gs-main"><div class="gs-pc"><b>${pc==null?'—':pc+'%'}</b><small>${pc==null?'Sin notas todavía':'Tu media'}</small></div><div class="gs-stats"><span><b>${done}/${works.length}</b> entregadas</span><span class="${over?'warn':''}"><b>${over}</b> vencidas</span><span><b>${late}</b> con retraso</span></div></div>${bars}</div>`;
+ return `<div class="gsum"><div class="gs-main"><div class="gs-pc"><b>${pc==null?'—':fmtN(pc/10)}</b><small>${pc==null?'Sin notas todavía':'Tu media (sobre 10)'}</small></div><div class="gs-stats"><span><b>${done}/${works.length}</b> entregadas</span><span class="${over?'warn':''}"><b>${over}</b> vencidas</span><span><b>${late}</b> con retraso</span></div></div>${bars}</div>`;
 }
-function pctOf(works,n){let g=0,p=0;works.forEach(w=>{const s=subOf(w,n);if(s&&s.grade!=null&&w.pts&&(isStaff()||s.ret!==false)){g+=s.grade;p+=w.pts}});return p?Math.round(g/p*100):null}
+const N10=(g,pts)=>g==null?null:(pts&&pts!==10?g/pts*10:g);
+function pctOf(works,n){let g=0,p=0;works.forEach(w=>{const s=subOf(w,n);if(s&&s.grade!=null&&(isStaff()||s.ret!==false)){g+=N10(s.grade,w.pts);p+=10}});return p?Math.round(g/p*100):null}
 function renderGrades(){renderGrades0();try{const el=$('gradeBody');if(!el||!classes[cur])return;const works=data.work.filter(w=>w.type!=='material'&&visibleWork(w));if(isStaff()){const h=statsHTML(works);if(h)el.insertAdjacentHTML('afterbegin',h)}else{const g=el.querySelector('.gsum');if(g)g.insertAdjacentHTML('afterend',logrosHTML(works));else el.insertAdjacentHTML('afterbegin',logrosHTML(works))}}catch(e){console.warn(e)}}
 function renderGrades0(){
  const el=$('gradeBody');if(!el)return;
  const works=data.work.filter(w=>w.type!=='material'&&visibleWork(w)),stu=students();
  if(!works.length){el.innerHTML='<div class="empty">Aún no hay tareas calificables.</div>';$('gradeInfo').textContent='';$('gradeAct').innerHTML='';return}
  if(isStaff()){
-  $('gradeInfo').textContent=works.length+' trabajos · '+stu.length+' alumnos'+(classPct(works)!=null?' · media de la clase '+classPct(works)+'%':'');$('gradeAct').innerHTML=DL('Exportar','Notas · .csv','exportGrades()');
-  el.innerHTML='<div class="gr-wrap"><table class="gr"><thead><tr><th>Alumno</th>'+works.map(w=>`<th title="${esc(w.title)}">${esc(w.title.slice(0,12))}<small>${w.pts!=null?'/'+w.pts:''}</small></th>`).join('')+'<th>Media</th></tr></thead><tbody>'+(stu.length?stu.map(m=>{const pc=pctOf(works,m.n);return '<tr><td>'+esc(m.n)+'</td>'+works.map(w=>{if(!assignedTo(w,m))return '<td class="na" title="No asignada">n/a</td>';const s=subOf(w,m.n),k=s&&s.grade!=null?(s.ret===false?'g draft':'g'):s&&s.st==='tarde'?'late':s&&s.st!=='pendiente'?'sub':'';const v=s&&s.grade!=null?s.grade:(s&&s.st!=='pendiente'?'✓':'–');return '<td class="'+k+'"><button type="button" class="gr-cell" onclick="gradeCell(\''+w.id+'\','+data.members.indexOf(m)+')" aria-label="Calificar '+esc(w.title)+' de '+esc(m.n)+'">'+v+'</button></td>'}).join('')+'<td><b>'+(pc==null?'–':pc+'%')+'</b></td></tr>'}).join(''):'<tr><td colspan="'+(works.length+2)+'">Sin alumnos</td></tr>')+'</tbody>'+(stu.length?'<tfoot><tr><th>Media de la clase</th>'+works.map(w=>{const a=workAvg(w);return '<td>'+(a.avg==null?'–':fmtN(a.avg)+(w.pts!=null?'<small>/'+w.pts+'</small>':''))+'<small class="gr-cnt">'+a.n+'/'+stu.length+'</small></td>'}).join('')+'<td><b>'+(classPct(works)==null?'–':classPct(works)+'%')+'</b></td></tr></tfoot>':'')+'</table></div>';
+  $('gradeInfo').textContent=works.length+' trabajos · '+stu.length+' alumnos'+(classPct(works)!=null?' · media de la clase '+fmtN(classPct(works)/10):'');$('gradeAct').innerHTML=DL('Exportar','Notas · .csv','exportGrades()');
+  el.innerHTML='<div class="gr-wrap"><table class="gr"><thead><tr><th>Alumno</th>'+works.map(w=>`<th title="${esc(w.title)}">${esc(w.title.slice(0,12))}<small>/10</small></th>`).join('')+'<th>Media</th></tr></thead><tbody>'+(stu.length?stu.map(m=>{const pc=pctOf(works,m.n);return '<tr><td>'+esc(m.n)+'</td>'+works.map(w=>{if(!assignedTo(w,m))return '<td class="na" title="No asignada">n/a</td>';const s=subOf(w,m.n),k=s&&s.grade!=null?(s.ret===false?'g draft':'g'):s&&s.st==='tarde'?'late':s&&s.st!=='pendiente'?'sub':'';const v=s&&s.grade!=null?fmtN(N10(s.grade,w.pts)):(s&&s.st!=='pendiente'?'✓':'–');return '<td class="'+k+'"><button type="button" class="gr-cell" onclick="gradeCell(\''+w.id+'\','+data.members.indexOf(m)+')" aria-label="Calificar '+esc(w.title)+' de '+esc(m.n)+'">'+v+'</button></td>'}).join('')+'<td><b>'+(pc==null?'–':fmtN(pc/10))+'</b></td></tr>'}).join(''):'<tr><td colspan="'+(works.length+2)+'">Sin alumnos</td></tr>')+'</tbody>'+(stu.length?'<tfoot><tr><th>Media de la clase</th>'+works.map(w=>{const a=workAvg(w);return '<td>'+(a.avg==null?'–':fmtN(N10(a.avg,w.pts))+'<small>/10</small>')+'<small class="gr-cnt">'+a.n+'/'+stu.length+'</small></td>'}).join('')+'<td><b>'+(classPct(works)==null?'–':fmtN(classPct(works)/10))+'</b></td></tr></tfoot>':'')+'</table></div>';
  }else{
-  const pc=pctOf(works,user);$('gradeAct').innerHTML='';$('gradeInfo').textContent=pc==null?'Sin notas todavía':'Media: '+pc+'%';
+  const pc=pctOf(works,user);$('gradeAct').innerHTML='';$('gradeInfo').textContent=pc==null?'Sin notas todavía':'Media: '+fmtN(pc/10)+' / 10';
   el.innerHTML=studentSummary(works)+works.map(w=>{const s=subOf(w,user);return `<div class="wk-item" onclick="openWork('${w.id}')"><div class="wk-ic">${WI[w.type]}</div><div class="wk-b"><b>${esc(w.title)}</b><small>${stBadge(w,s)}${s&&s.fb&&s.ret!==false?esc(s.fb):(w.due?'Entrega: '+fmt(w.due):WN[w.type])}</small></div>${stOf(w,user)}</div>`}).join('');
  }
 }
 function exportGrades(){
  const works=data.work.filter(w=>w.type!=='material'),q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"',num=n=>n==null||n===''?'':String(Math.round(n*100)/100).replace('.',',');
- const rows=[['Alumno',...works.map(w=>w.title+(w.pts!=null?' (/'+w.pts+')':'')),'Entregadas','Media %']];
- students().forEach(m=>{const pc=pctOf(works,m.n),d=works.filter(w=>{const x=subOf(w,m.n);return x&&x.st!=='pendiente'}).length;rows.push([m.n,...works.map(w=>{const x=subOf(w,m.n);return x&&x.grade!=null?num(x.grade):''}),d+'/'+works.length,pc==null?'':pc])});
- const cp=classPct(works);rows.push(['Media de la clase',...works.map(w=>num(workAvg(w).avg)),'',cp==null?'':cp]);
+ const rows=[['Alumno',...works.map(w=>w.title+' (/10)'),'Entregadas','Media (sobre 10)']];
+ students().forEach(m=>{const pc=pctOf(works,m.n),d=works.filter(w=>{const x=subOf(w,m.n);return x&&x.st!=='pendiente'}).length;rows.push([m.n,...works.map(w=>{const x=subOf(w,m.n);return x&&x.grade!=null?num(N10(x.grade,w.pts)):''}),d+'/'+works.length,pc==null?'':num(pc/10)])});
+ const cp=classPct(works);rows.push(['Media de la clase',...works.map(w=>num(N10(workAvg(w).avg,w.pts))),'',cp==null?'':num(cp/10)]);
  saveFile('notas-'+slug(classes[cur].name)+'.csv','\ufeff'+rows.map(r=>r.map(q).join(';')).join('\r\n'),'text/csv');
 }
 /* --- Permisos y archivo (solo profesores) --- */
@@ -1417,7 +1418,7 @@ function saveModal(){if(offGuard())return;
   const w=data.work.find(x=>x.id===gradeArg.wid),m=data.members[gradeArg.i];if(!w||!m)return;
   let _rs=null;if(T7_OK&&w.rub&&w.rub.length){_rs={};for(let k=0;k<w.rub.length;k++){const e=$('rb_'+k),t=e?e.value.trim():'';if(e)e.classList.remove('bad');if(t==='')continue;const x=+t.replace(',','.');if(!isFinite(x)||x<0||x>w.rub[k].p){e.classList.add('bad');toastErr('«'+w.rub[k].c+'» debe estar entre 0 y '+w.rub[k].p+'.');return}_rs[k]=x}rubSum()}
   const g=$('gr1'),v=g.value.trim(),n=v===''?null:+v.replace(',','.');
-  if(n!=null&&(!isFinite(n)||n<0||(w.pts!=null&&n>w.pts))){g.classList.add('bad');toastErr(w.pts!=null?'La nota debe estar entre 0 y '+w.pts+'.':'La nota debe ser un número de 0 en adelante.');return}
+  if(n!=null&&(!isFinite(n)||n<0||n>(w.pts!=null?w.pts:10))){g.classList.add('bad');toastErr('La nota debe estar entre 0 y '+fmtN(w.pts!=null?w.pts:10)+'.');return}
   if(!w.subs)w.subs={};const s=w.subs[m.n]||(w.subs[m.n]={st:'pendiente'});s.grade=n;s.fb=$('gr1f').value.trim();if(CR2_OK)s.ret=true;if(_rs)s.rs=_rs;if(n!=null&&s.st==='pendiente')s.st='entregada';
   renderAll();toast(n==null?'Nota quitada':'Nota guardada','ok');
  }else if(mType==='timetable'){
@@ -1453,13 +1454,13 @@ function saveModal(){if(offGuard())return;
   return;
  }else if(mType==='work'){
   if(!v('f1')){toastErr('Escribe un título.');return}
-  const _pt=v('f7')===''?null:+String(v('f7')).replace(',','.');if(_pt!=null&&(!isFinite(_pt)||_pt<=0)){toastErr('Los puntos deben ser un número mayor que 0.');return}
+  const _pt=v('f7')===''?null:+String(v('f7')).replace(',','.');if(_pt!=null&&(!isFinite(_pt)||_pt<=0||_pt>10)){toastErr('La nota máxima de una tarea va de 0,1 a 10.');return}
   const o={title:v('f1'),desc:$('f6')?$('f6').value.trim():'',topic:v('f2'),due:v('f3'),pts:_pt,link:safeUrl(v('f8'))};
   if(CR2_OK){o.dueTime=$('f9')?$('f9').value:'';if(o.dueTime&&!o.due){toastErr('Pon también la fecha de entrega.');return}
    if($('f10')){o.opts=$('f10').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,10);if(o.opts.length===1){toastErr('Pon al menos dos opciones, o deja el campo vacío.');return}}
    const all=$('asgAll');o.assg=all&&!all.checked?[...document.querySelectorAll('.asg-one input:checked')].map(x=>x.value):[];if(all&&!all.checked&&!o.assg.length){toastErr('Elige al menos un alumno o marca «Toda la clase».');return}
    const pv=$('f11')?$('f11').value:'';o.pubAt=pv?new Date(pv).getTime():0}
-  if(T7_OK&&$('f12')){const pr=parseRubric($('f12').value);if(pr.err){toastErr(pr.err);return}o.rub=pr.list;if(o.rub.length)o.pts=Math.round(o.rub.reduce((a,r)=>a+r.p,0)*100)/100}
+  if(T7_OK&&$('f12')){const pr=parseRubric($('f12').value);if(pr.err){toastErr(pr.err);return}o.rub=pr.list;{const _sum=o.rub.reduce((a,r)=>a+r.p,0);if(_sum>10){toastErr('La rúbrica suma '+fmtN(_sum)+' puntos: como máximo puede sumar 10.');return}}if(o.rub.length)o.pts=Math.round(o.rub.reduce((a,r)=>a+r.p,0)*100)/100}
   const _wd=workDraft||{id:uid(),files:[],orig:[]};o.files=_wd.files.slice();const _rm=(_wd.orig||[]).filter(p=>!o.files.some(f=>f.p===p));if(_rm.length&&sb)sb.storage.from(CF).remove(_rm).catch(()=>{});
   if(workEditId){Object.assign(data.work.find(x=>x.id===workEditId),o)}else data.work.push(Object.assign({id:_wd.id,type:workType,ts:Date.now(),subs:{}},o));
   renderAll();goTab('Trabajo');
