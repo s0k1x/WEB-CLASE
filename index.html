@@ -2271,6 +2271,32 @@ input.bad{border-color:var(--err)!important;box-shadow:0 0 0 3px rgba(239,68,68,
 .pcard.pinned{box-shadow:inset 3px 0 0 var(--accent)}
 .st-empty .add{margin-top:12px}
 html.light .fp-row{background:rgba(15,23,42,.05)}html.light .fp-row.err{color:#c81e1e}
+
+/* ===== calificaciones y progreso ===== */
+.gr tfoot th,.gr tfoot td{border-top:2px solid rgba(var(--accent-rgb),.35);font-weight:700;background:rgba(var(--accent-rgb),.06)}
+.gr tfoot small,.gr .gr-cnt{display:block;font-size:10px;opacity:.7;font-weight:600}
+.gsum{margin:2px 0 14px;padding:14px;border-radius:var(--r-md);border:1px solid rgba(var(--accent-rgb),.3);background:rgba(var(--accent-rgb),.07)}
+.gs-main{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.gs-pc b{display:block;font-size:34px;line-height:1;font-weight:800;color:var(--accent)}.gs-pc small{font-size:12px;opacity:.75}
+.gs-stats{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px}.gs-stats b{font-size:14px}
+.gs-stats .warn b{color:var(--err)}
+.gs-evo{margin-top:12px}
+.gs-bars{display:flex;align-items:flex-end;gap:6px;height:96px;padding-top:4px;overflow-x:auto}
+.gs-bar{flex:1 0 34px;max-width:56px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px}
+.gs-bar span{width:100%;border-radius:6px 6px 3px 3px;background:var(--ok);transform-origin:bottom;animation:gsGrow var(--dur-4) var(--ease-out)}
+.gs-bar span.low{background:var(--warn)}
+.gs-bar small{font-size:9.5px;opacity:.7;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+@keyframes gsGrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.ev-grp{margin:12px 2px 2px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8f9bad}
+.ev-grp:first-child{margin-top:2px}
+html.light .ev-grp{color:#5b6475}
+
+/* ===== funciones tipo Classroom ===== */
+.inv-link{margin:8px 0;padding:10px 12px;border-radius:var(--r-sm);background:rgba(var(--accent-rgb),.08);border:1px dashed rgba(var(--accent-rgb),.4);font-size:12.5px;word-break:break-all}
+.todo-row{display:flex;align-items:center;gap:12px;width:100%;margin:6px 0;padding:10px 12px;border-radius:var(--r-md);border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:inherit;font:inherit;text-align:left;cursor:pointer;transition:background var(--dur-2) var(--ease-out),transform var(--dur-1) var(--ease-out)}
+.todo-row:active{transform:scale(.985)}.todo-row:hover{background:rgba(var(--accent-rgb),.08)}
+.todo-c{font-size:22px}.todo-t{flex:1;min-width:0}.todo-t b{display:block;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.todo-t small{display:block;font-size:11.5px;opacity:.8;margin-top:2px}
+html.light .todo-row{border-color:rgba(15,23,42,.1);background:rgba(15,23,42,.03)}
 </style>
 </head>
 <body>
@@ -2538,7 +2564,8 @@ function renderEvents(){
  const today=iso(new Date()),all=[...data.events,...workEv()].sort((a,b)=>a.d.localeCompare(b.d)),up=all.filter(e=>e.d>=today),past=all.filter(e=>e.d<today).reverse();
  const row=(e,p)=>`<div class="item${p?' past':''}"><div class="icon">${e.i}</div><main><b>${esc(e.t)}</b><p>${esc(e.s)}</p></main><span class="badge${p?'':relClass(e.d)}">${p?fmt(e.d):relBadge(e.d)}</span><button type="button" class="del adm-only" aria-label="Eliminar" onclick="delItem('events','${e.id}')">×</button></div>`;
  const show=[...up.map(e=>[e,0]),...(settings.showPast===false?[]:past.map(e=>[e,1]))].filter(([e])=>match(e.t+' '+e.s));
- $('items').innerHTML=show.length?show.map(([e,p])=>row(e,p)).join(''):'<div class="empty">'+(searchQ?'Sin resultados.':'No tienes nada pendiente.')+'</div>';
+ const grp=([e,p])=>{if(p)return 'Ya pasado';const n=Math.round((new Date(e.d+'T12:00:00')-new Date(today+'T12:00:00'))/864e5);return n===0?'Hoy':n<=6?'Esta semana':'Más adelante'};let lastG='';
+ $('items').innerHTML=show.length?show.map(x=>{const g=grp(x),h=g!==lastG?`<div class="ev-grp">${g}</div>`:'';lastG=g;return h+row(x[0],x[1])}).join(''):'<div class="empty">'+(searchQ?'Sin resultados.':'No tienes nada pendiente.')+'</div>';
  $('mini').innerHTML=up.length?up.slice(0,3).map(e=>`<div class="member"><div class="ma">${+e.d.slice(8)}</div><div>${esc(e.t)}<small>${fmt(e.d)}</small></div></div>`).join(''):'<div class="muted">Sin entregas.</div>';
  renderCal();
 }
@@ -2947,6 +2974,7 @@ function userMenu(a){
  openMenu([
   {k:'rename',label:'Editar nombre',value:user,icon:'pencil',fn:v=>setName(v)},
   {k:'act',label:'Ver mi perfil',icon:'eye',fn:()=>showProfile({n:user,r:'Mi perfil',e:settings.emoji,c:settings.avatar,b:settings.bio})},
+  {k:'act',label:'Pendientes de todas mis clases',icon:'check',fn:()=>modal('todo')},
   {k:'act',label:'Personalizar perfil',icon:'palette',fn:()=>{modal('settings');settingsPage('profile')}},
   {k:'act',label:'Ajustes',icon:'settings',fn:()=>modal('settings')},
   {k:'sep'},
@@ -3176,7 +3204,7 @@ function workViewHTML(id){
     return `<div class="sg-row"><div class="sg-n">${mAv(m)}<div><b>${esc(m.n)}</b><small>${s?(s.st==='tarde'?'Con retraso':done?'Entregada':'Pendiente'):'Pendiente'}${s&&s.comment?' · "'+esc(s.comment)+'"':''}</small>${s&&s.files&&s.files.length?fileChips(s.files,false):''}</div></div><div class="sg-in"><input class="sg-g" id="g_${i}" type="text" inputmode="decimal" autocomplete="off" placeholder="Nota${w.pts!=null?' /'+w.pts:''}" value="${s&&s.grade!=null?s.grade:''}"><input class="sg-f" id="f_${i}" placeholder="Comentario" maxlength="120" value="${esc(s?s.fb||'':'')}"><button type="button" class="mini-btn" onclick="toggleSub('${w.id}',${i})">${done?'↩ Anular':'✓ Entregada'}</button></div></div>`;
    }).join('')+`<button type="button" class="gl-btn" onclick="saveGrades('${w.id}')">Guardar calificaciones</button>`:'<div class="empty">Aún no hay alumnos.</div>');
   }
-  h+=`<div class="wv-act"><button type="button" class="secondary" onclick="editWork('${w.id}')">✏️ Editar</button><button type="button" class="secondary danger" onclick="delWork('${w.id}')">Eliminar</button></div>`;
+  h+=`<div class="wv-act"><button type="button" class="secondary" onclick="editWork('${w.id}')">✏️ Editar</button><button type="button" class="secondary" onclick="dupWork('${w.id}')">Reutilizar</button><button type="button" class="secondary danger" onclick="delWork('${w.id}')">Eliminar</button></div>`;
  }else if(w.type!=='material'){
   const s=subOf(w,user),done=s&&s.st!=='pendiente',td=iso(new Date());
   if(done)h+=`<div class="wv-state ok"><b>${s.st==='tarde'?'Entregada con retraso':'Entregada'}</b>${s.ts?'<span>'+new Date(s.ts).toLocaleString('es-ES',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</span>':''}</div>`;
@@ -3205,14 +3233,17 @@ function toggleSub(id,i){
 /* ===================== ARCHIVOS ADJUNTOS (tareas del profesor y entregas del alumno) ===================== */
 let FILES_OK=null,workDraft=null;
 async function checkFilesCol(){try{const {error}=await sb.from('work').select('files').limit(1);FILES_OK=!error}catch(e){FILES_OK=false}}
-const FMAX=10*1024*1024,ACCEPT='.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp,.txt,.zip,image/*,video/*,audio/*';
+const FMAX=10*1024*1024;
+const SAFE_MIME=new Set(['image/jpeg','image/png','image/webp','image/gif','image/heic','image/heif','audio/mp4','audio/webm','audio/mpeg','audio/ogg','audio/aac','video/mp4','video/webm','video/quicktime','application/pdf','text/plain','application/zip','application/x-zip-compressed','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','application/vnd.ms-powerpoint','application/vnd.openxmlformats-officedocument.presentationml.presentation','application/vnd.oasis.opendocument.text','application/vnd.oasis.opendocument.spreadsheet','application/vnd.oasis.opendocument.presentation']);
+const BLOCK_EXT=/\.(exe|msi|bat|cmd|com|scr|pif|ps1|vbs|vbe|js|mjs|jse|wsf|wsh|jar|apk|aab|ipa|app|dmg|pkg|deb|rpm|sh|bash|run|bin|html?|xhtml|svgz?|php|hta|lnk|reg|dll|sys|iso|img)$/i;
+const ctypeOf=f=>SAFE_MIME.has(f.type)?f.type:'application/octet-stream';
 const fsize=n=>n<1024?n+' B':n<1048576?Math.round(n/1024)+' KB':(n/1048576).toFixed(1).replace('.',',')+' MB';
 const safeName=n=>(n||'archivo').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9._-]+/g,'_').slice(-60);
 function fileChips(list,canDel,delFn){if(!list||!list.length)return '';return '<div class="fchips">'+list.map((f,i)=>{const u=urlOf(CF,f.p);return `<span class="fchip"><a ${u?`href="${esc(u)}" target="_blank" rel="noopener"`:`href="#" onclick="openFileP(event,'${esc(f.p)}')"`}>${svgI('clip')}<span class="fn">${esc(f.n)}</span><small>${fsize(f.s||0)}</small></a>${canDel?`<button type="button" class="fx" aria-label="Quitar ${esc(f.n)}" onclick="${delFn}(${i})">×</button>`:''}</span>`}).join('')+'</div>'}
 function openFileP(ev,p){ev.preventDefault();const win=window.open('','_blank');sb.storage.from(CF).createSignedUrl(p,3600).then(({data,error})=>{if(error||!data){if(win)win.close();toastErr('No se pudo abrir el archivo');return}urlCache.set(CF+'/'+p,{url:data.signedUrl,exp:Date.now()+3600e3});if(win)win.location=data.signedUrl;else location.href=data.signedUrl}).catch(()=>{if(win)win.close();toastErr('No se pudo abrir el archivo')})}
 function uploaderHTML(kind){
  if(FILES_OK===false)return '<div class="gl-sub">Los archivos aún no están activados: el administrador debe ejecutar el SQL 08 en Supabase.</div>';
- return `<label class="fup">${svgI('clip')}<span>Adjuntar archivo</span><input type="file" multiple accept="${ACCEPT}" onchange="pickFiles(this,'${kind}')"></label><div class="fprog" id="fprog_${kind}" aria-live="polite"></div><div class="gl-sub">Hasta 10 MB por archivo: PDF, Word, Excel, PowerPoint, fotos, audio o vídeo.</div>`;
+ return `<label class="fup">${svgI('clip')}<span>Adjuntar archivo</span><input type="file" multiple onchange="pickFiles(this,'${kind}')"></label><div class="fprog" id="fprog_${kind}" aria-live="polite"></div><div class="gl-sub">Hasta 10 MB por archivo. Casi cualquier formato: documentos, Pages, Keynote, Numbers, PDF, fotos, audio, vídeo, comprimidos… Por seguridad no se admiten programas ni páginas web.</div>`;
 }
 function uploadErr(e){const m=((e&&(e.message||e.error))||'').toLowerCase();if(m.includes('mime')||m.includes('type'))return 'Tipo de archivo no permitido';if(m.includes('size')||m.includes('large')||m.includes('exceed'))return 'Pesa demasiado (máx. 10 MB)';if(m.includes('policy')||m.includes('row-level')||m.includes('unauthorized'))return 'Sin permiso para subirlo';return 'No se pudo subir. Inténtalo otra vez'}
 async function pickFiles(inp,kind){
@@ -3223,10 +3254,12 @@ async function pickFiles(inp,kind){
  const prog=$('fprog_'+kind);
  for(const f of files){
   if(f.size>FMAX){toastErr(f.name+': pesa más de 10 MB');continue}
+  if(BLOCK_EXT.test(f.name)){toastErr(f.name+': por seguridad no se admiten programas ni páginas web');continue}
+  if(!f.size){toastErr(f.name+': el archivo está vacío');continue}
   const row=document.createElement('div');row.className='fp-row';row.innerHTML=`<span class="spin" aria-hidden="true"></span><span class="fn">${esc(f.name)}</span><small>Subiendo…</small>`;if(prog)prog.appendChild(row);
   const path=(kind==='sub'?`${c.id}/subs/${wid}/${authUid}/`:`${c.id}/work/${wid}/`)+uid().slice(0,8)+'-'+safeName(f.name);
   try{
-   const {error}=await sb.storage.from(CF).upload(path,f,{contentType:f.type||'application/octet-stream',upsert:false});if(error)throw error;
+   const {error}=await sb.storage.from(CF).upload(path,f,{contentType:ctypeOf(f),upsert:false});if(error)throw error;
    try{await signUrls(CF,[path])}catch(e){}
    const meta={p:path,n:String(f.name).slice(0,120),s:f.size,t:f.type||''};
    if(kind==='sub'){if(!w.subs)w.subs={};const sb2=w.subs[user]||(w.subs[user]={st:'pendiente'});(sb2.files=sb2.files||[]).push(meta);saveState()}
@@ -3242,6 +3275,32 @@ function refreshFiles(kind){
 }
 async function delSubFile(i){const w=data.work.find(x=>x.id===modalArg),x=w&&subOf(w,user);if(!x||!x.files||!x.files[i])return;const f=x.files.splice(i,1)[0];saveState();refreshFiles('sub');try{await sb.storage.from(CF).remove([f.p])}catch(e){}}
 function delWorkFile(i){if(!workDraft)return;workDraft.files.splice(i,1);refreshFiles('work')}
+
+
+/* ===================== FUNCIONES TIPO CLASSROOM ===================== */
+/* Enlace de invitación: unuvia.es/?unirse=CODIGO */
+const inviteUrl=()=>{const c=classes[cur];return c?'https://unuvia.es/?unirse='+encodeURIComponent(c.code):''};
+function shareInvite(){const c=classes[cur];if(!c)return;const u=inviteUrl(),d={title:'Únete a '+c.name+' en Unuvia',text:'Únete a mi clase «'+c.name+'» en Unuvia:',url:u};if(navigator.share)navigator.share(d).catch(()=>{});else copyText(u).then(ok=>toast(ok?'Enlace copiado':'No se pudo copiar',ok?'ok':'err'))}
+(function(){try{const q=new URLSearchParams(location.search).get('unirse');if(q)sessionStorage.setItem('unuvia_join',q.trim().toUpperCase())}catch(e){}})();
+async function joinFromLink(){let jc='';try{jc=sessionStorage.getItem('unuvia_join')||'';sessionStorage.removeItem('unuvia_join')}catch(e){}if(!jc)return;
+ const have=classes.findIndex(c=>c.code===jc);if(have>=0){setCur(have);renderAll();toast('Ya estás en esta clase');return}
+ if(await ask({icon:'👋',title:'¿Unirte a la clase?',text:'Te han invitado con el código '+jc+'.',ok:'Unirme'}))await cloudJoin(jc)}
+/* Reutilizar: duplicar una tarea, pregunta o material */
+function dupWork(id){const w=data.work.find(x=>x.id===id);if(!w||!isStaff())return;const n=JSON.parse(JSON.stringify(w));n.id=uid();n.title=(w.title+' (copia)').slice(0,80);n.subs={};n.ts=Date.now();data.work.push(n);saveState();renderAll();closeModal();toast('Copia creada: edítala si quieres cambiar algo','ok');setTimeout(()=>editWork(n.id),150)}
+/* Pendientes de TODAS mis clases (alumno) y por corregir (profesor) */
+function todoHTML(){
+ const td=iso(new Date()),me=[],rev=[];
+ classes.forEach((c,ci)=>{if(c.archived)return;const st=STAFFR.includes(c.role),works=(c.data.work||[]).filter(w=>w.type!=='material');
+  if(st){works.forEach(w=>{const n=Object.values(w.subs||{}).filter(x=>x&&x.st!=='pendiente'&&x.grade==null).length;if(n)rev.push({ci,c,w,n})})}
+  else works.forEach(w=>{const x=(w.subs||{})[user];if(!(x&&x.st!=='pendiente'))me.push({ci,c,w,late:w.due&&w.due<td})})});
+ me.sort((a,b)=>(a.w.due||'9999').localeCompare(b.w.due||'9999'));
+ const row=(o,sub)=>`<button type="button" class="todo-row" onclick="goTodo(${o.ci},'${o.w.id}')"><span class="todo-c">${esc(o.c.emoji||'📚')}</span><span class="todo-t"><b>${esc(o.w.title)}</b><small>${esc(o.c.name)} · ${sub}</small></span><span class="tc-go" aria-hidden="true">›</span></button>`;
+ let h='';
+ if(me.length)h+='<div class="fl">Por entregar</div>'+me.map(o=>row(o,o.w.due?(o.late?'<span class="due-b b-late">Vencida · '+fmt(o.w.due)+'</span>':(relDay(o.w.due)?'<span class="due-b'+relClass(o.w.due)+'">'+relDay(o.w.due)+'</span>':'Entrega '+fmt(o.w.due))):'Sin fecha')).join('');
+ if(rev.length)h+='<div class="fl">Por corregir</div>'+rev.map(o=>row(o,o.n+(o.n===1?' entrega sin nota':' entregas sin nota'))).join('');
+ return h||'<div class="empty">¡Todo al día! No tienes nada pendiente en ninguna clase.</div>';
+}
+function goTodo(ci,wid){closeModal();setCur(ci);renderAll();goTab('Trabajo');setTimeout(()=>openWork(wid),120)}
 
 /* Calificar una sola entrega desde la tabla de Calificaciones */
 let gradeArg=null;
@@ -3279,24 +3338,34 @@ function renderPeople(){
 }
 /* --- Calificaciones --- */
 function stBadge(w,s){const td=iso(new Date());if(s&&s.grade!=null)return '<span class="due-b b-ok">Calificada</span> ';if(s&&s.st==='tarde')return '<span class="due-b b-pronto">Con retraso</span> ';if(s&&s.st!=='pendiente')return '<span class="due-b">Entregada · sin nota</span> ';if(w.due&&w.due<td)return '<span class="due-b b-late">Vencida</span> ';return '<span class="due-b">Pendiente</span> '}
+const fmtN=n=>Math.round(n*10)/10===Math.round(n)?String(Math.round(n)):(Math.round(n*10)/10).toString().replace('.',',');
+function classPct(works){const l=students().map(m=>pctOf(works,m.n)).filter(x=>x!=null);return l.length?Math.round(l.reduce((a,b)=>a+b,0)/l.length):null}
+function workAvg(w){const g=students().map(m=>subOf(w,m.n)).filter(x=>x&&x.grade!=null).map(x=>x.grade);return {avg:g.length?g.reduce((a,b)=>a+b,0)/g.length:null,n:g.length}}
+function studentSummary(works){
+ const td=iso(new Date()),mine=works.map(w=>({w,s:subOf(w,user)})),done=mine.filter(x=>x.s&&x.s.st!=='pendiente').length,late=mine.filter(x=>x.s&&x.s.st==='tarde').length,over=mine.filter(x=>!(x.s&&x.s.st!=='pendiente')&&x.w.due&&x.w.due<td).length,pc=pctOf(works,user);
+ const gr=mine.filter(x=>x.s&&x.s.grade!=null&&x.w.pts).sort((a,b)=>(a.w.due||'').localeCompare(b.w.due||'')||(a.w.ts||0)-(b.w.ts||0));
+ const bars=gr.length?`<div class="gs-evo" role="img" aria-label="Evolución de tus notas"><div class="gs-bars">${gr.map(x=>{const p=Math.max(4,Math.round(x.s.grade/x.w.pts*100));return `<div class="gs-bar" title="${esc(x.w.title)}: ${fmtN(x.s.grade)}/${x.w.pts}"><span style="height:${p}%" class="${p>=50?'ok':'low'}"></span><small>${esc(x.w.title.slice(0,8))}</small></div>`}).join('')}</div></div>`:'';
+ return `<div class="gsum"><div class="gs-main"><div class="gs-pc"><b>${pc==null?'—':pc+'%'}</b><small>${pc==null?'Sin notas todavía':'Tu media'}</small></div><div class="gs-stats"><span><b>${done}/${works.length}</b> entregadas</span><span class="${over?'warn':''}"><b>${over}</b> vencidas</span><span><b>${late}</b> con retraso</span></div></div>${bars}</div>`;
+}
 function pctOf(works,n){let g=0,p=0;works.forEach(w=>{const s=subOf(w,n);if(s&&s.grade!=null&&w.pts){g+=s.grade;p+=w.pts}});return p?Math.round(g/p*100):null}
 function renderGrades(){
  const el=$('gradeBody');if(!el)return;
  const works=data.work.filter(w=>w.type!=='material'),stu=students();
  if(!works.length){el.innerHTML='<div class="empty">Aún no hay tareas calificables.</div>';$('gradeInfo').textContent='';$('gradeAct').innerHTML='';return}
  if(isStaff()){
-  $('gradeInfo').textContent=works.length+' trabajos · '+stu.length+' alumnos';$('gradeAct').innerHTML=DL('Exportar','Notas · .csv','exportGrades()');
-  el.innerHTML='<div class="gr-wrap"><table class="gr"><thead><tr><th>Alumno</th>'+works.map(w=>`<th title="${esc(w.title)}">${esc(w.title.slice(0,12))}<small>${w.pts!=null?'/'+w.pts:''}</small></th>`).join('')+'<th>Media</th></tr></thead><tbody>'+(stu.length?stu.map(m=>{const pc=pctOf(works,m.n);return '<tr><td>'+esc(m.n)+'</td>'+works.map(w=>{const s=subOf(w,m.n),k=s&&s.grade!=null?'g':s&&s.st==='tarde'?'late':s&&s.st!=='pendiente'?'sub':'';const v=s&&s.grade!=null?s.grade:(s&&s.st!=='pendiente'?'✓':'–');return '<td class="'+k+'"><button type="button" class="gr-cell" onclick="gradeCell(\''+w.id+'\','+data.members.indexOf(m)+')" aria-label="Calificar '+esc(w.title)+' de '+esc(m.n)+'">'+v+'</button></td>'}).join('')+'<td><b>'+(pc==null?'–':pc+'%')+'</b></td></tr>'}).join(''):'<tr><td colspan="'+(works.length+2)+'">Sin alumnos</td></tr>')+'</tbody></table></div>';
+  $('gradeInfo').textContent=works.length+' trabajos · '+stu.length+' alumnos'+(classPct(works)!=null?' · media de la clase '+classPct(works)+'%':'');$('gradeAct').innerHTML=DL('Exportar','Notas · .csv','exportGrades()');
+  el.innerHTML='<div class="gr-wrap"><table class="gr"><thead><tr><th>Alumno</th>'+works.map(w=>`<th title="${esc(w.title)}">${esc(w.title.slice(0,12))}<small>${w.pts!=null?'/'+w.pts:''}</small></th>`).join('')+'<th>Media</th></tr></thead><tbody>'+(stu.length?stu.map(m=>{const pc=pctOf(works,m.n);return '<tr><td>'+esc(m.n)+'</td>'+works.map(w=>{const s=subOf(w,m.n),k=s&&s.grade!=null?'g':s&&s.st==='tarde'?'late':s&&s.st!=='pendiente'?'sub':'';const v=s&&s.grade!=null?s.grade:(s&&s.st!=='pendiente'?'✓':'–');return '<td class="'+k+'"><button type="button" class="gr-cell" onclick="gradeCell(\''+w.id+'\','+data.members.indexOf(m)+')" aria-label="Calificar '+esc(w.title)+' de '+esc(m.n)+'">'+v+'</button></td>'}).join('')+'<td><b>'+(pc==null?'–':pc+'%')+'</b></td></tr>'}).join(''):'<tr><td colspan="'+(works.length+2)+'">Sin alumnos</td></tr>')+'</tbody>'+(stu.length?'<tfoot><tr><th>Media de la clase</th>'+works.map(w=>{const a=workAvg(w);return '<td>'+(a.avg==null?'–':fmtN(a.avg)+(w.pts!=null?'<small>/'+w.pts+'</small>':''))+'<small class="gr-cnt">'+a.n+'/'+stu.length+'</small></td>'}).join('')+'<td><b>'+(classPct(works)==null?'–':classPct(works)+'%')+'</b></td></tr></tfoot>':'')+'</table></div>';
  }else{
   const pc=pctOf(works,user);$('gradeAct').innerHTML='';$('gradeInfo').textContent=pc==null?'Sin notas todavía':'Media: '+pc+'%';
-  el.innerHTML=works.map(w=>{const s=subOf(w,user);return `<div class="wk-item" onclick="openWork('${w.id}')"><div class="wk-ic">${WI[w.type]}</div><div class="wk-b"><b>${esc(w.title)}</b><small>${stBadge(w,s)}${s&&s.fb?esc(s.fb):(w.due?'Entrega: '+fmt(w.due):WN[w.type])}</small></div>${stOf(w,user)}</div>`}).join('');
+  el.innerHTML=studentSummary(works)+works.map(w=>{const s=subOf(w,user);return `<div class="wk-item" onclick="openWork('${w.id}')"><div class="wk-ic">${WI[w.type]}</div><div class="wk-b"><b>${esc(w.title)}</b><small>${stBadge(w,s)}${s&&s.fb?esc(s.fb):(w.due?'Entrega: '+fmt(w.due):WN[w.type])}</small></div>${stOf(w,user)}</div>`}).join('');
  }
 }
 function exportGrades(){
- const works=data.work.filter(w=>w.type!=='material'),q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
- const rows=[['alumno',...works.map(w=>w.title+(w.pts!=null?' (/'+w.pts+')':'')),'media %']];
- students().forEach(m=>{const pc=pctOf(works,m.n);rows.push([m.n,...works.map(w=>{const s=subOf(w,m.n);return s&&s.grade!=null?s.grade:''}),pc==null?'':pc])});
- saveFile('notas-'+slug(classes[cur].name)+'.csv','\ufeff'+rows.map(r=>r.map(q).join(',')).join('\n'),'text/csv');
+ const works=data.work.filter(w=>w.type!=='material'),q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"',num=n=>n==null||n===''?'':String(Math.round(n*100)/100).replace('.',',');
+ const rows=[['Alumno',...works.map(w=>w.title+(w.pts!=null?' (/'+w.pts+')':'')),'Entregadas','Media %']];
+ students().forEach(m=>{const pc=pctOf(works,m.n),d=works.filter(w=>{const x=subOf(w,m.n);return x&&x.st!=='pendiente'}).length;rows.push([m.n,...works.map(w=>{const x=subOf(w,m.n);return x&&x.grade!=null?num(x.grade):''}),d+'/'+works.length,pc==null?'':pc])});
+ const cp=classPct(works);rows.push(['Media de la clase',...works.map(w=>num(workAvg(w).avg)),'',cp==null?'':cp]);
+ saveFile('notas-'+slug(classes[cur].name)+'.csv','\ufeff'+rows.map(r=>r.map(q).join(';')).join('\r\n'),'text/csv');
 }
 /* --- Permisos y archivo (solo profesores) --- */
 function permHTML(){
@@ -3509,10 +3578,11 @@ function modal(t){
   post:['Nuevo anuncio','Compártelo con toda la clase.','<textarea id="f1" rows="4" placeholder="Anuncia algo a tu clase…" maxlength="1000"></textarea><label class="custum-file-upload" for="f5"><span class="icon">'+FILE_ICON+'</span><span class="text"><span>Añadir foto (opcional)</span></span><input type="file" id="f5" accept="image/*"></label><div class="file-upload-name" id="fname"></div>'+(isStaff()?'<div class="setrow"><span>📌 Fijar arriba</span>'+SW('pinSw')+'</div>':'')],
   work:[(workEditId?'Editar ':'Nueva ')+{tarea:'tarea',material:'material',pregunta:'pregunta'}[workType],'Visible para toda la clase.',workForm()],
   topic:['Nuevo tema','Agrupa el trabajo por temas.','<input id="f1" placeholder="Nombre del tema" maxlength="40">'],
-  invite:['Invitar a la clase','Pásale este código para que se una desde “Añadir o unirse → Unirme con código”.','<div class="cp-row pp-code"><span>Código · <b>'+esc((classes[cur]||{}).code||'')+'</b></span>'+CP('classes[cur].code','Copiar código')+'</div>'],
+  invite:['Invitar a la clase','Comparte el enlace: al abrirlo e iniciar sesión, entran directamente a la clase. También vale el código.','<div class="cp-row pp-code"><span>Código · <b>'+esc((classes[cur]||{}).code||'')+'</b></span>'+CP('classes[cur].code','Copiar código')+'</div><div class="inv-link"><span>'+esc(inviteUrl())+'</span></div><button type="button" class="gl-btn" onclick="shareInvite()">📤 Compartir enlace de invitación</button>'],
   role:['Cambiar rol','Elige qué puede hacer en esta clase.',roleHTML()],
   notifs:['Avisos','Lo último de tus clases.',notifsHTML()],
   postedit:['Editar anuncio','Los cambios los verá toda la clase.',t==='postedit'?(()=>{const p=data.posts.find(x=>x.id===modalArg);return p?'<textarea id="f1" rows="5" maxlength="1500">'+esc(p.t)+'</textarea>':''})():''],
+  todo:['Pendientes','De todas tus clases.',t==='todo'?todoHTML():''],
   grade1:['Calificar','La nota solo la verá este alumno.',t==='grade1'?grade1HTML():''],
   workview:['Trabajo','',''],
   archived:['Clases archivadas','Restáuralas cuando quieras.',''],
@@ -3530,7 +3600,7 @@ function modal(t){
  if(t==='admin')bindPerm();
  $('f5')?.addEventListener('change',e=>{$('fname').textContent=e.target.files[0]?.name||''});
  if(t==='class'){IMG.icon='';IMG.banner=''}if(t==='editclass'&&classes[cur]){IMG.icon=classes[cur].icon||'';IMG.banner=classes[cur].banner||''}bindImgs();
- document.querySelector('#modal .primary').style.display=['add','admin','settings','workview','archived','invite','notifs'].includes(t)?'none':'';if(t==='role')document.querySelector('#modal .primary').textContent='Guardar rol';else document.querySelector('#modal .primary').textContent='Guardar';
+ document.querySelector('#modal .primary').style.display=['add','admin','settings','workview','archived','invite','notifs','todo'].includes(t)?'none':'';if(t==='role')document.querySelector('#modal .primary').textContent='Guardar rol';else document.querySelector('#modal .primary').textContent='Guardar';
  $('modal').classList.toggle('glass',t==='settings');document.querySelector('#modal .modalbox').classList.toggle('wide',t==='timetable');if(t==='settings')settingsPage('menu');
  $('modal').classList.add('show');if(!['admin','settings','add','workview','archived','timetable'].includes(t))$('f1')?.focus();
 }
@@ -3967,7 +4037,7 @@ async function afterLogin(u){
  await checkFilesCol();
  await pullAll(true);cloudOn=true;subscribe();flushReview();applyTheme();
  await loadNotifPrefs();loadNotifs();subscribeNotifs();syncPushSub();
- enter(user);handleDeepLink();
+ enter(user);handleDeepLink();setTimeout(joinFromLink,400);
 }
 /* Esta versión solo entra con correo + código */
 const ap=$('appleLogin');if(ap)ap.style.display='none';
