@@ -35,9 +35,12 @@ function setCur(i){cur=i;const c=classes[i];data=Object.assign(blank(),c.data);c
 function addClass(c){classes.push(c);setCur(classes.length-1);renderAll();confetti();if(!settings.toured)setTimeout(showTour,700)}
 const t0=Date.now();let splashDone=false;
 function hideSplash(){if(splashDone)return;splashDone=true;const sp=$('splash');['splashUnder','splashOver'].forEach(i=>{const su=$(i);if(su){su.style.opacity='0';setTimeout(()=>su.remove(),600)}});setTimeout(()=>$('themeSlot')&&$('themeSlot').classList.add('show'),sp?250:0);if(!sp)return;sp.style.transition='opacity .45s ease';sp.style.opacity='0';setTimeout(()=>{sp.remove();showCookies()},500)}
-function pageReady(){const rest=Math.max(0,700-(Date.now()-t0));setTimeout(hideSplash,rest)}
+let pageOK=false,authOK=false;
+function tryHide(){if(!pageOK||!authOK)return;const rest=Math.max(0,700-(Date.now()-t0));setTimeout(hideSplash,rest)}
+function pageReady(){pageOK=true;tryHide()}
+function authReady(){authOK=true;tryHide()}
 Promise.race([document.fonts?document.fonts.ready:Promise.resolve(),new Promise(r=>setTimeout(r,1200))]).then(pageReady,pageReady);
-setTimeout(hideSplash,8000);
+setTimeout(hideSplash,10000);
 let toastT;function toastErr(m){toast(String(m),'err')}
 function toast(m,k){const t=$('toast');t.textContent=m;t.classList.remove('ok','err','info');if(k)t.classList.add(k);t.setAttribute('role',k==='err'?'alert':'status');t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3400)}
 async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand('copy')}catch(x){}a.remove();return ok}}
@@ -769,7 +772,7 @@ function delWorkFile(i){if(!workDraft)return;workDraft.files.splice(i,1);refresh
 
 /* ===================== CLASSROOM (SQL 09): hora límite, opción múltiple, comentarios privados, programar, asignar, devolver ===================== */
 let CR2_OK=null;
-async function checkCr2(){try{const a=await sb.from('work').select('due_time,options,publish_at,assignees').limit(1),b=await sb.from('submissions').select('thread,returned').limit(1);CR2_OK=!a.error&&!b.error}catch(e){CR2_OK=false}}
+async function checkCr2(){try{const [a,b]=await Promise.all([sb.from('work').select('due_time,options,publish_at,assignees').limit(1),sb.from('submissions').select('thread,returned').limit(1)]);CR2_OK=!a.error&&!b.error}catch(e){CR2_OK=false}}
 const dueEnd=w=>w&&w.due?new Date(w.due+'T'+String(w.dueTime||'23:59').slice(0,5)+':59'):null;
 const isPastDue=w=>{const e=dueEnd(w);return !!e&&Date.now()>e.getTime()};
 const dueTxt=w=>w.due?fmt(w.due)+(w.dueTime?' · '+String(w.dueTime).slice(0,5):''):'';
@@ -793,7 +796,7 @@ function mcqResults(w){const st=students().filter(m=>assignedTo(w,m)),c=w.opts.m
 
 /* ===================== TANDA 7: copiar clase, silenciar, rúbricas, estado de envío del chat ===================== */
 let T7_OK=null;
-async function checkT7(){try{const a=await sb.from('members').select('muted').limit(1),b=await sb.from('work').select('rubric').limit(1),c=await sb.from('submissions').select('rscores').limit(1);T7_OK=!a.error&&!b.error&&!c.error}catch(e){T7_OK=false}}
+async function checkT7(){try{const [a,b,c]=await Promise.all([sb.from('members').select('muted').limit(1),sb.from('work').select('rubric').limit(1),sb.from('submissions').select('rscores').limit(1)]);T7_OK=!a.error&&!b.error&&!c.error}catch(e){T7_OK=false}}
 const iAmMuted=()=>!!(data&&data.members&&(data.members.find(x=>x.u===authUid)||{}).mu);
 async function toggleMute(i){const m=data.members[i];if(!m||!isStaff()||STAFFR.includes(m.r))return;if(!T7_OK){toastErr('Para silenciar hay que ejecutar el SQL 10 en Supabase');return}
  if(!m.mu&&!await ask({icon:'🔒',title:'¿Silenciar a '+m.n+'?',text:'No podrá publicar, comentar ni escribir en el chat de esta clase hasta que se lo quites. Podrá seguir viendo todo y entregando tareas.',ok:'Silenciar'}))return;
@@ -1583,7 +1586,7 @@ async function afterLogin(u){
   settings.photo=urlOf(AV,p.photo_path);settings._pp=p.photo_path||null;settings._ppUp=settings.photo;
   settings.banner=urlOf(AV,p.banner_path);settings._pbn=p.banner_path||null;settings._pbUp=settings.banner;
   profSnap=JSON.stringify({name:user,emoji:settings.emoji,color:settings.avatar||'#008cff',bio:settings.bio,photo_path:settings._pp,banner_path:settings._pbn})}
- await checkFilesCol();await checkCr2();await checkT7();
+ await Promise.all([checkFilesCol(),checkCr2(),checkT7()]);
  await pullAll(true);cloudOn=true;subscribe();flushReview();applyTheme();
  await loadNotifPrefs();loadNotifs();subscribeNotifs();syncPushSub();
  enter(user);handleDeepLink();setTimeout(joinFromLink,400);
@@ -1805,4 +1808,4 @@ function netState(first){const bar=$('netBar');if(!bar)return;if(!navigator.onLi
 window.addEventListener('online',()=>netState(false));window.addEventListener('offline',()=>netState(false));netState(true);
 registerSW();
 pullReviews();
-(async()=>{try{if(!sb)return;const {data}=await sb.auth.getSession();if(data&&data.session)await afterLogin(data.session.user);sb.auth.onAuthStateChange(ev=>{if(ev==='SIGNED_OUT'&&cloudOn)location.reload()})}catch(e){console.warn(e)}})();
+(async()=>{try{if(!sb)return;const {data}=await sb.auth.getSession();if(data&&data.session)await afterLogin(data.session.user);sb.auth.onAuthStateChange(ev=>{if(ev==='SIGNED_OUT'&&cloudOn)location.reload()})}catch(e){console.warn(e)}finally{authReady()}})();
