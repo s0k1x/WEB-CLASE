@@ -2324,3 +2324,9 @@ input[readonly]{opacity:.85;cursor:default}
 
 /* foco de teclado: siempre visible en botones y enlaces (ningún componente puede anularlo) */
 button:focus-visible,a:focus-visible,[role=button]:focus-visible,summary:focus-visible,label.fup:focus-within{outline:2px solid var(--accent)!important;outline-offset:2px!important}
+
+/* iconos de línea en Ajustes → Notificaciones, Editar y Fijar */
+.np-l .ui-i{width:16px;height:16px;margin-right:7px;color:var(--accent);vertical-align:-3px}
+.setrow span .ui-i{width:16px;height:16px;margin-right:7px;color:var(--accent);vertical-align:-3px}
+.np-st.on::before,.np-st.denied::before,.np-st.ios-install::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:1px}
+.np-st.on::before{background:var(--ok)}.np-st.denied::before{background:var(--err)}.np-st.ios-install::before{background:var(--warn)}
