@@ -9,7 +9,10 @@ self.addEventListener('push', e => {
   e.waitUntil(self.registration.showNotification(title, {
     body: d.body || '',
     icon: 'icon-192.png',
-    badge: 'icon-192.png',
+    badge: 'badge-96.png',
+    lang: 'es',
+    timestamp: Date.now(),
+    vibrate: [90, 50, 90],
     tag: d.tag || undefined,
     renotify: !!d.tag,
     data: { url: d.url || '/' }
