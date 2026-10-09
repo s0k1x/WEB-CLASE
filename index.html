@@ -2228,6 +2228,49 @@ button:disabled{cursor:not-allowed}
 /* movimiento reducido: sin animaciones en toda la app */
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;animation-iteration-count:1!important;transition-duration:1ms!important;scroll-behavior:auto!important}}
 html.calm *,html.calm *::before,html.calm *::after{animation-duration:1ms!important;animation-iteration-count:1!important;transition-duration:1ms!important}
+
+/* ===== Trabajo y entregas ===== */
+.tocorrect{margin:2px 0 14px;padding:12px;border-radius:var(--r-md);border:1px solid rgba(245,158,11,.35);background:rgba(245,158,11,.08)}
+.tc-h{display:flex;align-items:center;justify-content:space-between;margin:0 2px 6px}.tc-h b{font-size:13.5px}
+.tc-n{min-width:24px;height:24px;padding:0 8px;border-radius:var(--r-pill);display:grid;place-items:center;font-size:12px;font-weight:800;background:var(--warn);color:#1f1300}
+.tc-row{display:flex;align-items:center;gap:10px;width:100%;padding:10px 8px;border:0;border-top:1px solid rgba(245,158,11,.18);background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;border-radius:8px;transition:background var(--dur-2) var(--ease-out)}
+.tc-row:hover{background:rgba(245,158,11,.10)}
+.tc-t{flex:1;min-width:0;font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tc-c{font-size:12px;color:#fbbf24;white-space:nowrap}.tc-go{font-size:18px;opacity:.6}
+html.light .tc-c{color:#a15c00}
+.wk-filt{margin:0 0 12px}
+.wv-state{display:flex;flex-direction:column;gap:2px;margin:10px 0 4px;padding:10px 12px;border-radius:var(--r-sm);background:rgba(var(--accent-rgb),.10);border:1px solid rgba(var(--accent-rgb),.3)}
+.wv-state b{font-size:13.5px}.wv-state span{font-size:12px;opacity:.85}
+.wv-state.ok{background:rgba(16,185,129,.10);border-color:rgba(16,185,129,.35)}
+.wv-state.late{background:rgba(239,68,68,.10);border-color:rgba(239,68,68,.35)}
+input.bad{border-color:var(--err)!important;box-shadow:0 0 0 3px rgba(239,68,68,.25)!important}
+.gr-cell{width:100%;min-height:34px;border:0;background:none;color:inherit;font:inherit;font-weight:700;cursor:pointer;border-radius:8px;transition:background var(--dur-2) var(--ease-out)}
+.gr-cell:hover{background:rgba(var(--accent-rgb),.14)}
+.gr td.sub .gr-cell{color:var(--accent)}
+.g1-who{display:flex;align-items:center;gap:12px;margin-bottom:6px}.g1-who b{display:block}.g1-who small{display:block;font-size:12px;opacity:.75}
+
+/* ===== archivos adjuntos y tablón ===== */
+.fchips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
+.fchip{display:inline-flex;align-items:center;max-width:100%;border-radius:var(--r-pill);border:1px solid rgba(var(--accent-rgb),.35);background:rgba(var(--accent-rgb),.10)}
+.fchip a{display:inline-flex;align-items:center;gap:6px;min-width:0;padding:6px 6px 6px 10px;color:inherit;text-decoration:none;font-size:12.5px}
+.fchip a .ui-i{width:14px;height:14px;color:var(--accent)}
+.fchip .fn{min-width:0;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.fchip small{opacity:.65;font-size:11px;padding-right:4px}
+.fchip .fx{width:28px;height:28px;margin-right:2px;border:0;border-radius:50%;background:none;color:inherit;font-size:16px;cursor:pointer;opacity:.7}
+.fchip .fx:hover{opacity:1;background:rgba(239,68,68,.18)}
+.fup{display:inline-flex;align-items:center;gap:8px;margin-top:6px;padding:10px 14px;border-radius:var(--r-sm);border:1.5px dashed rgba(var(--accent-rgb),.55);color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;position:relative}
+.fup input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.fup:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.fprog{display:grid;gap:6px;margin-top:6px}
+.fp-row{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:6px 10px;border-radius:var(--r-sm);background:rgba(255,255,255,.05)}
+.fp-row .fn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fp-row.err{background:rgba(239,68,68,.12);color:#ff9b9b}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(var(--accent-rgb),.3);border-top-color:var(--accent);animation:uvSpin .8s linear infinite;flex:none}
+@keyframes uvSpin{to{transform:rotate(360deg)}}
+.pin-pill{display:inline-block;margin-left:4px;padding:1px 8px;border-radius:var(--r-pill);background:rgba(var(--accent-rgb),.16);color:var(--accent);font-size:10.5px;font-weight:800;vertical-align:1px}
+.pcard.pinned{box-shadow:inset 3px 0 0 var(--accent)}
+.st-empty .add{margin-top:12px}
+html.light .fp-row{background:rgba(15,23,42,.05)}html.light .fp-row.err{color:#c81e1e}
 </style>
 </head>
 <body>
@@ -2835,6 +2878,7 @@ window.addEventListener('resize',()=>closePopups());
 $('countryPop').innerHTML=bsel('country-code','Prefijo del país',COUNTRIES.map(([v,l])=>({v,l})),'34','2.3em');
 /* Menú de acciones — From Uiverse.io by nazar-gavrylyk */
 const NZ={
+ edit:'<path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>',
  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>',
  star:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>',
  pencil:'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path>',
@@ -3062,12 +3106,13 @@ function renderStream(){
  const posts=[...data.posts].sort((a,b)=>(settings.sortPosts==='recent'?0:(b.pin?1:0)-(a.pin?1:0))||b.ts-a.ts).filter(p=>match(p.t+' '+p.n));
  el.innerHTML=`<div class="stream-h"><h3>Tablón</h3>${meet?`<a class="meet-btn" href="${esc(meet)}" target="_blank" rel="noopener noreferrer">📹 Unirse a Meet</a>`:''}</div>`
  +(canPost?`<div class="post-box" onclick="modal('post')"><div class="pb-av">${avOf(user)}</div><span>Anuncia algo a tu clase…</span></div>`:'')
- +(posts.length?posts.map(p=>`<div class="pcard${p.pin?' pinned':''}"><div class="pc-h">${avOf(p.n)}<div class="pc-i"><b>${esc(p.n)}</b><small>${when(p.ts)}${p.pin?' · 📌 Fijado':''}</small></div>${(isStaff()||p.n===user)?`<button type="button" class="del" aria-label="Opciones" onclick="postMenu('${p.id}')">⋯</button>`:''}</div><div class="pc-t">${esc(p.t)}</div>${p.img?`<img class="pc-img" src="${p.img}" alt="" onclick="viewImg(this.src)">`:''}<div class="pc-cm">${(p.comments||[]).map(k=>`<div class="cm"><div class="cm-av">${avOf(k.n)}</div><div class="cm-b"><b>${esc(k.n)}</b> <small>${when(k.ts)}</small><div>${esc(k.t)}</div></div></div>`).join('')}${canCom?`<div class="cm-new"><input placeholder="Añadir comentario a la clase…" maxlength="300" onkeydown="if(event.key==='Enter'){addComment('${p.id}',this)}"><button type="button" aria-label="Enviar comentario" onclick="addComment('${p.id}',this.previousElementSibling)">➤</button></div>`:''}</div></div>`).join(''):`<div class="empty">${searchQ?'Sin resultados.':(canPost?'Aún no hay anuncios. Publica el primero.':'Aún no hay anuncios.')}</div>`);
+ +(posts.length?posts.map(p=>`<div class="pcard${p.pin?' pinned':''}"><div class="pc-h">${avOf(p.n)}<div class="pc-i"><b>${esc(p.n)}</b><small>${when(p.ts)}${p.pin?' <span class="pin-pill">Fijado</span>':''}</small></div>${(isStaff()||p.n===user)?`<button type="button" class="del" aria-label="Opciones" onclick="postMenu('${p.id}')">⋯</button>`:''}</div><div class="pc-t">${esc(p.t)}</div>${p.img?`<img class="pc-img" src="${p.img}" alt="" onclick="viewImg(this.src)">`:''}<div class="pc-cm">${(p.comments||[]).map(k=>`<div class="cm"><div class="cm-av">${avOf(k.n)}</div><div class="cm-b"><b>${esc(k.n)}</b> <small>${when(k.ts)}</small><div>${esc(k.t)}</div></div></div>`).join('')}${canCom?`<div class="cm-new"><input placeholder="Añadir comentario a la clase…" maxlength="300" onkeydown="if(event.key==='Enter'){addComment('${p.id}',this)}"><button type="button" aria-label="Enviar comentario" onclick="addComment('${p.id}',this.previousElementSibling)">➤</button></div>`:''}</div></div>`).join(''):`<div class="empty st-empty">${searchQ?'Sin resultados.':(canPost?'Aún no hay anuncios.<br><button type="button" class="add" onclick="modal(\'post\')">Publicar el primero</button>':'Aún no hay anuncios. Cuando tu profesor publique algo, aparecerá aquí.')}</div>`);
 }
 function addComment(id,inp){const t=inp.value.trim(),p=data.posts.find(x=>x.id===id);if(!t||!p)return;(p.comments=p.comments||[]).push({id:uid(),n:user,t,ts:Date.now()});saveState();renderStream()}
 function postMenu(id){
  const p=data.posts.find(x=>x.id===id);if(!p)return;const it=[];
  if(isStaff())it.push({k:'act',label:p.pin?'Quitar de fijados':'Fijar arriba',icon:'star',fn:()=>{p.pin=!p.pin;saveState();renderStream()}});
+ if(isStaff()||p.au===authUid||p.n===user)it.push({k:'act',label:'Editar',icon:'edit',fn:()=>{modalArg=id;modal('postedit')}});
  it.push({k:'act',label:'Copiar texto',icon:'copy',fn:()=>copyText(p.t).then(ok=>toast(ok?'Copiado':'No se pudo copiar'))},{k:'sep'},{k:'hold',label:'Eliminar anuncio',icon:'trash',fn:()=>{data.posts=data.posts.filter(x=>x.id!==id);saveState();renderStream();toast('Anuncio eliminado')}});
  openMenu(it);
 }
@@ -3075,8 +3120,9 @@ function postMenu(id){
 function createMenu(){
  openMenu([{k:'act',label:'Tarea',icon:'pencil',fn:()=>newWork('tarea')},{k:'act',label:'Pregunta',icon:'eye',fn:()=>newWork('pregunta')},{k:'act',label:'Material',icon:'copy',fn:()=>newWork('material')},{k:'sep'},{k:'act',label:'Tema',icon:'tag',fn:()=>modal('topic')}]);
 }
-function newWork(t){workEditId=null;workType=t;modal('work')}
-function workForm(){
+function newWork(t){workEditId=null;workType=t;workDraft={id:uid(),files:[],orig:[]};modal('work')}
+function workForm(){return workForm0()+'<div class="fl">Archivos adjuntos</div><div id="workFiles">'+fileChips(workDraft&&workDraft.files,true,'delWorkFile')+'</div>'+uploaderHTML('work')}
+function workForm0(){
  const w=workEditId?data.work.find(x=>x.id===workEditId):null,t=workType;
  const tp=[{v:'',l:'Sin tema'},...(data.topics||[]).map(x=>({v:x,l:x}))];
  return '<input id="f1" placeholder="Título" maxlength="80" value="'+esc(w?w.title:'')+'"><textarea id="f6" rows="4" placeholder="Instrucciones (opcional)">'+esc(w?w.desc:'')+'</textarea><div class="fl">Tema</div>'+bsel('f2','Tema',tp,w?w.topic:'')
@@ -3095,8 +3141,17 @@ function renderWork(){
  const el=$('workList');if(!el)return;
  const tops=data.topics||[];
  $('wkChips').innerHTML=tops.length?['Todos',...tops].map((t,i)=>`<button type="button" class="chip${(i===0&&!wkTopic)||(i>0&&tops[i-1]===wkTopic)?' on':''}" onclick="setWkTopic(${i-1})">${esc(t)}</button>`).join(''):'';
- const list=data.work.filter(w=>(!wkTopic||w.topic===wkTopic)&&match(w.title+' '+(w.desc||'')));
- const pend=data.work.filter(w=>w.type!=='material'&&!subOf(w,user)&&!isStaff()).length;
+ const doneBy=(w,n)=>{const x=subOf(w,n);return !!(x&&x.st!=='pendiente')};
+ const list=data.work.filter(w=>(!wkTopic||w.topic===wkTopic)&&match(w.title+' '+(w.desc||''))&&(isStaff()||wkFilt==='todo'||(w.type!=='material'&&(wkFilt==='pend'?!doneBy(w,user):doneBy(w,user)))));
+ let top='';
+ if(isStaff()){const tc=data.work.filter(w=>w.type!=='material').map(w=>({w,n:students().filter(m=>{const x=subOf(w,m.n);return x&&x.st!=='pendiente'&&x.grade==null}).length})).filter(x=>x.n);
+  const tot=tc.reduce((a,x)=>a+x.n,0);
+  if(tot)top=`<div class="tocorrect"><div class="tc-h"><b>Pendiente de corregir</b><span class="tc-n">${tot}</span></div>${tc.map(x=>`<button type="button" class="tc-row" onclick="openWork('${x.w.id}')"><span class="tc-t">${esc(x.w.title)}</span><span class="tc-c">${x.n} ${x.n===1?'entrega sin nota':'entregas sin nota'}</span><span class="tc-go" aria-hidden="true">›</span></button>`).join('')}</div>`;
+ }else{
+  const cnt=k=>data.work.filter(w=>w.type!=='material'&&(k==='pend'?!doneBy(w,user):doneBy(w,user))).length;
+  top=`<div class="seg wk-filt" aria-label="Filtrar trabajo"><button type="button" class="${wkFilt==='todo'?'on':''}" onclick="setWkFilt('todo')">Todo</button><button type="button" class="${wkFilt==='pend'?'on':''}" onclick="setWkFilt('pend')">Pendientes (${cnt('pend')})</button><button type="button" class="${wkFilt==='done'?'on':''}" onclick="setWkFilt('done')">Entregadas (${cnt('done')})</button></div>`;
+ }
+ const pend=isStaff()?0:data.work.filter(w=>w.type!=='material'&&!(subOf(w,user)&&subOf(w,user).st!=='pendiente')).length;
  $('workInfo').textContent=isStaff()?data.work.length+(data.work.length===1?' elemento':' elementos'):(pend?pend+(pend===1?' pendiente':' pendientes'):'Todo al día');
  const row=w=>{
   const meta=WN[w.type]+(w.due?' · Entrega: '+fmt(w.due):'')+(w.pts!=null?' · '+w.pts+' pts':'');
@@ -3106,24 +3161,30 @@ function renderWork(){
   return `<div class="wk-item" onclick="openWork('${w.id}')"><div class="wk-ic">${WI[w.type]}</div><div class="wk-b"><b>${esc(w.title)}</b><small>${esc(meta)}${due}</small></div>${rt}</div>`;
  };
  const groups=['',...tops].map(t=>({t,l:list.filter(w=>(w.topic||'')===t)})).filter(g=>g.l.length);
- el.innerHTML=groups.length?groups.map(g=>(g.t?`<div class="side-title wk-t">${esc(g.t)}</div>`:(groups.length>1?'<div class="side-title wk-t">SIN TEMA</div>':''))+g.l.sort((a,b)=>{if(!isStaff()){const da=!!(subOf(a,user)&&subOf(a,user).st!=='pendiente'),db=!!(subOf(b,user)&&subOf(b,user).st!=='pendiente');if(da!==db)return da?1:-1}return (a.due||'9')>(b.due||'9')?1:-1}).map(row).join('')).join(''):'<div class="empty">'+(searchQ?'Sin resultados.':(isStaff()?'Crea la primera tarea, pregunta o material con "+ Crear".':'Aún no hay trabajo en esta clase.'))+'</div>';
+ el.innerHTML=top+(groups.length?groups.map(g=>(g.t?`<div class="side-title wk-t">${esc(g.t)}</div>`:(groups.length>1?'<div class="side-title wk-t">SIN TEMA</div>':''))+g.l.sort((a,b)=>{if(!isStaff()){const da=!!(subOf(a,user)&&subOf(a,user).st!=='pendiente'),db=!!(subOf(b,user)&&subOf(b,user).st!=='pendiente');if(da!==db)return da?1:-1}return (a.due||'9')>(b.due||'9')?1:-1}).map(row).join('')).join(''):'<div class="empty">'+(searchQ?'Sin resultados.':(isStaff()?'Crea la primera tarea, pregunta o material con "+ Crear".':'Aún no hay trabajo en esta clase.'))+'</div>');
 }
+let wkFilt='todo';
+function setWkFilt(k){wkFilt=k;renderWork()}
 function openWork(id){modalArg=id;modal('workview')}
 function workViewHTML(id){
  const w=data.work.find(x=>x.id===id);if(!w)return '<div class="empty">No encontrado.</div>';
- let h=`<div class="wv-meta">${WI[w.type]} ${WN[w.type]}${w.topic?' · '+esc(w.topic):''}${w.due?' · Entrega: '+fmt(w.due):''}${w.pts!=null?' · '+w.pts+' puntos':''}</div>`+(w.desc?`<div class="wv-d">${esc(w.desc)}</div>`:'')+(safeUrl(w.link)?`<a class="meet-btn" href="${esc(w.link)}" target="_blank" rel="noopener noreferrer">🔗 Abrir enlace</a>`:'');
+ let h=`<div class="wv-meta">${WI[w.type]} ${WN[w.type]}${w.topic?' · '+esc(w.topic):''}${w.due?' · Entrega: '+fmt(w.due):''}${w.pts!=null?' · '+w.pts+' puntos':''}</div>`+(w.desc?`<div class="wv-d">${esc(w.desc)}</div>`:'')+(safeUrl(w.link)?`<a class="meet-btn" href="${esc(w.link)}" target="_blank" rel="noopener noreferrer">🔗 Abrir enlace</a>`:'')+(w.files&&w.files.length?'<div class="fl">Archivos</div>'+fileChips(w.files,false):'');
  if(isStaff()){
   if(w.type!=='material'){
    h+='<div class="fl">Entregas</div>'+(students().length?students().map(m=>{
     const s=subOf(w,m.n),i=data.members.indexOf(m),done=s&&s.st!=='pendiente';
-    return `<div class="sg-row"><div class="sg-n">${mAv(m)}<div><b>${esc(m.n)}</b><small>${s?(s.st==='tarde'?'Con retraso':done?'Entregada':'Pendiente'):'Pendiente'}${s&&s.comment?' · "'+esc(s.comment)+'"':''}</small></div></div><div class="sg-in"><input class="sg-g" id="g_${i}" type="number" min="0" step="any" placeholder="Nota${w.pts!=null?' /'+w.pts:''}" value="${s&&s.grade!=null?s.grade:''}"><input class="sg-f" id="f_${i}" placeholder="Comentario" maxlength="120" value="${esc(s?s.fb||'':'')}"><button type="button" class="mini-btn" onclick="toggleSub('${w.id}',${i})">${done?'↩ Anular':'✓ Entregada'}</button></div></div>`;
+    return `<div class="sg-row"><div class="sg-n">${mAv(m)}<div><b>${esc(m.n)}</b><small>${s?(s.st==='tarde'?'Con retraso':done?'Entregada':'Pendiente'):'Pendiente'}${s&&s.comment?' · "'+esc(s.comment)+'"':''}</small>${s&&s.files&&s.files.length?fileChips(s.files,false):''}</div></div><div class="sg-in"><input class="sg-g" id="g_${i}" type="text" inputmode="decimal" autocomplete="off" placeholder="Nota${w.pts!=null?' /'+w.pts:''}" value="${s&&s.grade!=null?s.grade:''}"><input class="sg-f" id="f_${i}" placeholder="Comentario" maxlength="120" value="${esc(s?s.fb||'':'')}"><button type="button" class="mini-btn" onclick="toggleSub('${w.id}',${i})">${done?'↩ Anular':'✓ Entregada'}</button></div></div>`;
    }).join('')+`<button type="button" class="gl-btn" onclick="saveGrades('${w.id}')">Guardar calificaciones</button>`:'<div class="empty">Aún no hay alumnos.</div>');
   }
   h+=`<div class="wv-act"><button type="button" class="secondary" onclick="editWork('${w.id}')">✏️ Editar</button><button type="button" class="secondary danger" onclick="delWork('${w.id}')">Eliminar</button></div>`;
  }else if(w.type!=='material'){
-  const s=subOf(w,user);
+  const s=subOf(w,user),done=s&&s.st!=='pendiente',td=iso(new Date());
+  if(done)h+=`<div class="wv-state ok"><b>${s.st==='tarde'?'Entregada con retraso':'Entregada'}</b>${s.ts?'<span>'+new Date(s.ts).toLocaleString('es-ES',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</span>':''}</div>`;
+  else if(w.due&&w.due<td)h+=`<div class="wv-state late"><b>El plazo terminó el ${fmt(w.due)}</b><span>Si entregas ahora, quedará marcada como entrega con retraso.</span></div>`;
+  else if(w.due){const r=relDay(w.due);h+=`<div class="wv-state"><b>Pendiente</b><span>Entrega ${r?r.toLowerCase():'el '+fmt(w.due)}</span></div>`}
   if(s&&s.grade!=null)h+=`<div class="wv-grade"><b>${s.grade}${w.pts!=null?' / '+w.pts:''}</b><span>${esc(s.fb||'Calificada')}</span></div>`;
   h+='<div class="fl">Tu trabajo</div>'+(w.type==='pregunta'?'<textarea id="sbA" rows="3" placeholder="Tu respuesta">'+esc(s?s.answer||'':'')+'</textarea>':'')+'<input id="sbC" placeholder="Comentario privado para el profesor (opcional)" maxlength="200" value="'+esc(s?s.comment||'':'')+'">'
+  +'<div class="fl">Tus archivos</div><div id="subFiles">'+fileChips(s&&s.files,!(s&&s.grade!=null),'delSubFile')+'</div>'+((s&&s.grade!=null)?'':uploaderHTML('sub'))
   +`<button type="button" class="gl-btn" onclick="submitWork('${w.id}')">${s&&s.st!=='pendiente'?'Actualizar entrega':'Entregar'}</button>`+(s&&s.st!=='pendiente'?`<button type="button" class="gl-btn danger" onclick="unsubmitWork('${w.id}')">Anular entrega</button>`:'');
  }
  return h;
@@ -3134,23 +3195,78 @@ function submitWork(id){
  w.subs[user]=Object.assign(old,{st:late?'tarde':'entregada',ts:Date.now(),comment:$('sbC').value.trim(),answer:$('sbA')?$('sbA').value.trim():''});
  saveState();renderAll();$('modalFields').innerHTML=workViewHTML(id);toast(late?'Entregada con retraso':'¡Entregada!');if(!late)confetti();
 }
-function unsubmitWork(id){const w=data.work.find(x=>x.id===id);if(!w||!w.subs)return;if(w.subs[user])w.subs[user].st='pendiente';saveState();renderAll();$('modalFields').innerHTML=workViewHTML(id);toast('Entrega anulada')}
+async function unsubmitWork(id){const w=data.work.find(x=>x.id===id);if(!w||!w.subs)return;if(!await ask({icon:'↺',title:'¿Anular la entrega?',text:'Tu trabajo volverá a quedar pendiente. Podrás entregarlo otra vez.',ok:'Anular entrega',danger:true}))return;if(w.subs[user])w.subs[user].st='pendiente';saveState();renderAll();$('modalFields').innerHTML=workViewHTML(id);toast('Entrega anulada')}
 function toggleSub(id,i){
  const w=data.work.find(x=>x.id===id),m=data.members[i];if(!w||!m)return;
  if(!w.subs)w.subs={};const s=w.subs[m.n]||(w.subs[m.n]={st:'pendiente'});
  s.st=s.st==='pendiente'?'entregada':'pendiente';saveState();renderAll();$('modalFields').innerHTML=workViewHTML(id);
 }
+
+/* ===================== ARCHIVOS ADJUNTOS (tareas del profesor y entregas del alumno) ===================== */
+let FILES_OK=null,workDraft=null;
+async function checkFilesCol(){try{const {error}=await sb.from('work').select('files').limit(1);FILES_OK=!error}catch(e){FILES_OK=false}}
+const FMAX=10*1024*1024,ACCEPT='.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp,.txt,.zip,image/*,video/*,audio/*';
+const fsize=n=>n<1024?n+' B':n<1048576?Math.round(n/1024)+' KB':(n/1048576).toFixed(1).replace('.',',')+' MB';
+const safeName=n=>(n||'archivo').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9._-]+/g,'_').slice(-60);
+function fileChips(list,canDel,delFn){if(!list||!list.length)return '';return '<div class="fchips">'+list.map((f,i)=>{const u=urlOf(CF,f.p);return `<span class="fchip"><a ${u?`href="${esc(u)}" target="_blank" rel="noopener"`:`href="#" onclick="openFileP(event,'${esc(f.p)}')"`}>${svgI('clip')}<span class="fn">${esc(f.n)}</span><small>${fsize(f.s||0)}</small></a>${canDel?`<button type="button" class="fx" aria-label="Quitar ${esc(f.n)}" onclick="${delFn}(${i})">×</button>`:''}</span>`}).join('')+'</div>'}
+function openFileP(ev,p){ev.preventDefault();const win=window.open('','_blank');sb.storage.from(CF).createSignedUrl(p,3600).then(({data,error})=>{if(error||!data){if(win)win.close();toastErr('No se pudo abrir el archivo');return}urlCache.set(CF+'/'+p,{url:data.signedUrl,exp:Date.now()+3600e3});if(win)win.location=data.signedUrl;else location.href=data.signedUrl}).catch(()=>{if(win)win.close();toastErr('No se pudo abrir el archivo')})}
+function uploaderHTML(kind){
+ if(FILES_OK===false)return '<div class="gl-sub">Los archivos aún no están activados: el administrador debe ejecutar el SQL 08 en Supabase.</div>';
+ return `<label class="fup">${svgI('clip')}<span>Adjuntar archivo</span><input type="file" multiple accept="${ACCEPT}" onchange="pickFiles(this,'${kind}')"></label><div class="fprog" id="fprog_${kind}" aria-live="polite"></div><div class="gl-sub">Hasta 10 MB por archivo: PDF, Word, Excel, PowerPoint, fotos, audio o vídeo.</div>`;
+}
+function uploadErr(e){const m=((e&&(e.message||e.error))||'').toLowerCase();if(m.includes('mime')||m.includes('type'))return 'Tipo de archivo no permitido';if(m.includes('size')||m.includes('large')||m.includes('exceed'))return 'Pesa demasiado (máx. 10 MB)';if(m.includes('policy')||m.includes('row-level')||m.includes('unauthorized'))return 'Sin permiso para subirlo';return 'No se pudo subir. Inténtalo otra vez'}
+async function pickFiles(inp,kind){
+ const files=[...inp.files];inp.value='';if(!files.length)return;
+ if(!sb||!navigator.onLine){toastErr('Necesitas conexión para subir archivos');return}
+ const c=classes[cur];if(!c)return;
+ const w=kind==='sub'?data.work.find(x=>x.id===modalArg):null,wid=kind==='sub'?(w&&w.id):(workDraft&&workDraft.id);if(!wid)return;
+ const prog=$('fprog_'+kind);
+ for(const f of files){
+  if(f.size>FMAX){toastErr(f.name+': pesa más de 10 MB');continue}
+  const row=document.createElement('div');row.className='fp-row';row.innerHTML=`<span class="spin" aria-hidden="true"></span><span class="fn">${esc(f.name)}</span><small>Subiendo…</small>`;if(prog)prog.appendChild(row);
+  const path=(kind==='sub'?`${c.id}/subs/${wid}/${authUid}/`:`${c.id}/work/${wid}/`)+uid().slice(0,8)+'-'+safeName(f.name);
+  try{
+   const {error}=await sb.storage.from(CF).upload(path,f,{contentType:f.type||'application/octet-stream',upsert:false});if(error)throw error;
+   try{await signUrls(CF,[path])}catch(e){}
+   const meta={p:path,n:String(f.name).slice(0,120),s:f.size,t:f.type||''};
+   if(kind==='sub'){if(!w.subs)w.subs={};const sb2=w.subs[user]||(w.subs[user]={st:'pendiente'});(sb2.files=sb2.files||[]).push(meta);saveState()}
+   else workDraft.files.push(meta);
+   row.remove();
+  }catch(e){row.classList.add('err');const sp=row.querySelector('.spin');if(sp)sp.remove();row.querySelector('small').textContent=uploadErr(e)}
+ }
+ refreshFiles(kind);
+}
+function refreshFiles(kind){
+ if(kind==='sub'){const box=$('subFiles');if(box){const w=data.work.find(x=>x.id===modalArg),x=w&&subOf(w,user);box.innerHTML=fileChips(x&&x.files,true,'delSubFile')}}
+ else{const box=$('workFiles');if(box)box.innerHTML=fileChips(workDraft&&workDraft.files,true,'delWorkFile')}
+}
+async function delSubFile(i){const w=data.work.find(x=>x.id===modalArg),x=w&&subOf(w,user);if(!x||!x.files||!x.files[i])return;const f=x.files.splice(i,1)[0];saveState();refreshFiles('sub');try{await sb.storage.from(CF).remove([f.p])}catch(e){}}
+function delWorkFile(i){if(!workDraft)return;workDraft.files.splice(i,1);refreshFiles('work')}
+
+/* Calificar una sola entrega desde la tabla de Calificaciones */
+let gradeArg=null;
+function gradeCell(wid,i){if(!isStaff())return;const w=data.work.find(x=>x.id===wid),m=data.members[i];if(!w||!m)return;gradeArg={wid,i};modal('grade1');setTimeout(()=>$('gr1')?.focus(),60)}
+function grade1HTML(){
+ if(!gradeArg)return '';const w=data.work.find(x=>x.id===gradeArg.wid),m=data.members[gradeArg.i];if(!w||!m)return '<div class="empty">No encontrado.</div>';
+ const s=subOf(w,m.n),st=!s||s.st==='pendiente'?'Pendiente':s.st==='tarde'?'Entregada con retraso':'Entregada';
+ return `<div class="g1-who">${mAv(m)}<div><b>${esc(m.n)}</b><small>${esc(w.title)} · ${st}${s&&s.ts&&s.st!=='pendiente'?' · '+new Date(s.ts).toLocaleDateString('es-ES',{day:'numeric',month:'short'}):''}</small></div></div>`
+  +(s&&s.answer?`<div class="fl">Respuesta</div><div class="wv-d">${esc(s.answer)}</div>`:'')+(s&&s.comment?`<div class="fl">Comentario del alumno</div><div class="wv-d">${esc(s.comment)}</div>`:'')+(s&&s.files&&s.files.length?'<div class="fl">Archivos entregados</div>'+fileChips(s.files,false):'')
+  +`<div class="fl">Nota${w.pts!=null?' (de 0 a '+w.pts+')':''}</div><input id="gr1" type="text" inputmode="decimal" autocomplete="off" value="${s&&s.grade!=null?s.grade:''}" placeholder="Sin nota">`
+  +`<div class="fl">Comentario para ${esc(m.n)}</div><input id="gr1f" maxlength="120" value="${esc(s&&s.fb||'')}" placeholder="Opcional">`;
+}
 function saveGrades(id){
  const w=data.work.find(x=>x.id===id);if(!w)return;if(!w.subs)w.subs={};
+const bad=[];data.members.forEach((m,i)=>{const g=$('g_'+i);if(!g)return;g.classList.remove('bad');const v=g.value.trim();if(v==='')return;const n=+v.replace(',','.');if(!isFinite(n)||n<0||(w.pts!=null&&n>w.pts)){g.classList.add('bad');bad.push(m.n)}});
+ if(bad.length){toastErr('Revisa la nota de '+bad.join(', ')+(w.pts!=null?': debe estar entre 0 y '+w.pts+'.':': debe ser un número de 0 en adelante.'));return}
  data.members.forEach((m,i)=>{
   const g=$('g_'+i),f=$('f_'+i);if(!g)return;
   const s=w.subs[m.n]||(w.subs[m.n]={st:'pendiente'});
-  s.grade=g.value===''?null:+g.value;s.fb=f.value.trim();
+  s.grade=g.value.trim()===''?null:+g.value.trim().replace(',','.');s.fb=f.value.trim();
   if(s.grade!=null&&s.st==='pendiente')s.st='entregada';
  });
- saveState();renderAll();$('modalFields').innerHTML=workViewHTML(id);toast('Calificaciones guardadas');confetti();
+ saveState();renderAll();$('modalFields').innerHTML=workViewHTML(id);toast('Calificaciones guardadas','ok');confetti();
 }
-function editWork(id){const w=data.work.find(x=>x.id===id);if(!w)return;workEditId=id;workType=w.type;modal('work')}
+function editWork(id){const w=data.work.find(x=>x.id===id);if(!w)return;workEditId=id;workType=w.type;workDraft={id,files:[...(w.files||[])],orig:(w.files||[]).map(f=>f.p)};modal('work')}
 async function delWork(id){if(!await ask({icon:'🗑️',title:'¿Eliminar este elemento?',text:'Se borrarán también todas sus entregas.',ok:'Eliminar',danger:true}))return;data.work=data.work.filter(x=>x.id!==id);saveState();closeModal();renderAll()}
 /* --- Personas --- */
 function renderPeople(){
@@ -3162,6 +3278,7 @@ function renderPeople(){
  el.innerHTML=`<div class="cp-row pp-code"><span>Código de clase · <b>${esc(classes[cur].code)}</b></span>${CP('classes[cur].code','Copiar código')}</div>`+sec('Profesores',st)+sec('Alumnos',sd);
 }
 /* --- Calificaciones --- */
+function stBadge(w,s){const td=iso(new Date());if(s&&s.grade!=null)return '<span class="due-b b-ok">Calificada</span> ';if(s&&s.st==='tarde')return '<span class="due-b b-pronto">Con retraso</span> ';if(s&&s.st!=='pendiente')return '<span class="due-b">Entregada · sin nota</span> ';if(w.due&&w.due<td)return '<span class="due-b b-late">Vencida</span> ';return '<span class="due-b">Pendiente</span> '}
 function pctOf(works,n){let g=0,p=0;works.forEach(w=>{const s=subOf(w,n);if(s&&s.grade!=null&&w.pts){g+=s.grade;p+=w.pts}});return p?Math.round(g/p*100):null}
 function renderGrades(){
  const el=$('gradeBody');if(!el)return;
@@ -3169,10 +3286,10 @@ function renderGrades(){
  if(!works.length){el.innerHTML='<div class="empty">Aún no hay tareas calificables.</div>';$('gradeInfo').textContent='';$('gradeAct').innerHTML='';return}
  if(isStaff()){
   $('gradeInfo').textContent=works.length+' trabajos · '+stu.length+' alumnos';$('gradeAct').innerHTML=DL('Exportar','Notas · .csv','exportGrades()');
-  el.innerHTML='<div class="gr-wrap"><table class="gr"><thead><tr><th>Alumno</th>'+works.map(w=>`<th title="${esc(w.title)}">${esc(w.title.slice(0,12))}<small>${w.pts!=null?'/'+w.pts:''}</small></th>`).join('')+'<th>Media</th></tr></thead><tbody>'+(stu.length?stu.map(m=>{const pc=pctOf(works,m.n);return '<tr><td>'+esc(m.n)+'</td>'+works.map(w=>{const s=subOf(w,m.n);return '<td class="'+(s&&s.grade!=null?'g':s&&s.st==='tarde'?'late':'')+'">'+(s&&s.grade!=null?s.grade:(s&&s.st!=='pendiente'?'✓':'–'))+'</td>'}).join('')+'<td><b>'+(pc==null?'–':pc+'%')+'</b></td></tr>'}).join(''):'<tr><td colspan="'+(works.length+2)+'">Sin alumnos</td></tr>')+'</tbody></table></div>';
+  el.innerHTML='<div class="gr-wrap"><table class="gr"><thead><tr><th>Alumno</th>'+works.map(w=>`<th title="${esc(w.title)}">${esc(w.title.slice(0,12))}<small>${w.pts!=null?'/'+w.pts:''}</small></th>`).join('')+'<th>Media</th></tr></thead><tbody>'+(stu.length?stu.map(m=>{const pc=pctOf(works,m.n);return '<tr><td>'+esc(m.n)+'</td>'+works.map(w=>{const s=subOf(w,m.n),k=s&&s.grade!=null?'g':s&&s.st==='tarde'?'late':s&&s.st!=='pendiente'?'sub':'';const v=s&&s.grade!=null?s.grade:(s&&s.st!=='pendiente'?'✓':'–');return '<td class="'+k+'"><button type="button" class="gr-cell" onclick="gradeCell(\''+w.id+'\','+data.members.indexOf(m)+')" aria-label="Calificar '+esc(w.title)+' de '+esc(m.n)+'">'+v+'</button></td>'}).join('')+'<td><b>'+(pc==null?'–':pc+'%')+'</b></td></tr>'}).join(''):'<tr><td colspan="'+(works.length+2)+'">Sin alumnos</td></tr>')+'</tbody></table></div>';
  }else{
   const pc=pctOf(works,user);$('gradeAct').innerHTML='';$('gradeInfo').textContent=pc==null?'Sin notas todavía':'Media: '+pc+'%';
-  el.innerHTML=works.map(w=>{const s=subOf(w,user);return `<div class="wk-item" onclick="openWork('${w.id}')"><div class="wk-ic">${WI[w.type]}</div><div class="wk-b"><b>${esc(w.title)}</b><small>${s&&s.fb?esc(s.fb):(w.due?'Entrega: '+fmt(w.due):WN[w.type])}</small></div>${stOf(w,user)}</div>`}).join('');
+  el.innerHTML=works.map(w=>{const s=subOf(w,user);return `<div class="wk-item" onclick="openWork('${w.id}')"><div class="wk-ic">${WI[w.type]}</div><div class="wk-b"><b>${esc(w.title)}</b><small>${stBadge(w,s)}${s&&s.fb?esc(s.fb):(w.due?'Entrega: '+fmt(w.due):WN[w.type])}</small></div>${stOf(w,user)}</div>`}).join('');
  }
 }
 function exportGrades(){
@@ -3395,6 +3512,8 @@ function modal(t){
   invite:['Invitar a la clase','Pásale este código para que se una desde “Añadir o unirse → Unirme con código”.','<div class="cp-row pp-code"><span>Código · <b>'+esc((classes[cur]||{}).code||'')+'</b></span>'+CP('classes[cur].code','Copiar código')+'</div>'],
   role:['Cambiar rol','Elige qué puede hacer en esta clase.',roleHTML()],
   notifs:['Avisos','Lo último de tus clases.',notifsHTML()],
+  postedit:['Editar anuncio','Los cambios los verá toda la clase.',t==='postedit'?(()=>{const p=data.posts.find(x=>x.id===modalArg);return p?'<textarea id="f1" rows="5" maxlength="1500">'+esc(p.t)+'</textarea>':''})():''],
+  grade1:['Calificar','La nota solo la verá este alumno.',t==='grade1'?grade1HTML():''],
   workview:['Trabajo','',''],
   archived:['Clases archivadas','Restáuralas cuando quieras.',''],
   add:['Añadir o unirse a clase','¿Qué quieres hacer?','<div class="ib-bar ib-add"><button class="ib-btn" type="button" onclick="modal(\'class\')"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg><span>Crear clase</span></button><button class="ib-btn" type="button" onclick="modal(\'join\')"><svg class="ib-ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"></path></svg><span>Unirme con código</span></button></div>'],
@@ -3431,6 +3550,18 @@ function saveModal(){
  }else if(mType==='sched'){
   if(!v('f1')){toastErr('Escribe la asignatura.');return}
   data.sched.push({id:uid(),t:v('f1'),day:+v('f2'),h:v('f3')||'08:00',r:v('f4')});renderAll();goTab('Horario');
+ }else if(mType==='postedit'){
+  const p=data.posts.find(x=>x.id===modalArg);if(!p)return;
+  if(!(isStaff()||p.au===authUid||p.n===user)){toastErr('Solo el autor o un profesor puede editarlo');return}
+  const t=$('f1').value.trim();if(!t&&!p.img){toastErr('El anuncio no puede quedar vacío.');return}
+  p.t=t;renderAll();toast('Anuncio actualizado','ok');
+ }else if(mType==='grade1'){
+  if(!isStaff()||!gradeArg){toastErr('Solo los profesores pueden calificar');return}
+  const w=data.work.find(x=>x.id===gradeArg.wid),m=data.members[gradeArg.i];if(!w||!m)return;
+  const g=$('gr1'),v=g.value.trim(),n=v===''?null:+v.replace(',','.');
+  if(n!=null&&(!isFinite(n)||n<0||(w.pts!=null&&n>w.pts))){g.classList.add('bad');toastErr(w.pts!=null?'La nota debe estar entre 0 y '+w.pts+'.':'La nota debe ser un número de 0 en adelante.');return}
+  if(!w.subs)w.subs={};const s=w.subs[m.n]||(w.subs[m.n]={st:'pendiente'});s.grade=n;s.fb=$('gr1f').value.trim();if(n!=null&&s.st==='pendiente')s.st='entregada';
+  renderAll();toast(n==null?'Nota quitada':'Nota guardada','ok');
  }else if(mType==='timetable'){
   if(!isStaff()){toast('Solo los profesores pueden editar el horario');return}
   ttCollect();
@@ -3463,8 +3594,10 @@ function saveModal(){
   return;
  }else if(mType==='work'){
   if(!v('f1')){toastErr('Escribe un título.');return}
-  const o={title:v('f1'),desc:$('f6')?$('f6').value.trim():'',topic:v('f2'),due:v('f3'),pts:v('f7')===''?null:+v('f7'),link:safeUrl(v('f8'))};
-  if(workEditId){Object.assign(data.work.find(x=>x.id===workEditId),o)}else data.work.push(Object.assign({id:uid(),type:workType,ts:Date.now(),subs:{}},o));
+  const _pt=v('f7')===''?null:+String(v('f7')).replace(',','.');if(_pt!=null&&(!isFinite(_pt)||_pt<=0)){toastErr('Los puntos deben ser un número mayor que 0.');return}
+  const o={title:v('f1'),desc:$('f6')?$('f6').value.trim():'',topic:v('f2'),due:v('f3'),pts:_pt,link:safeUrl(v('f8'))};
+  const _wd=workDraft||{id:uid(),files:[],orig:[]};o.files=_wd.files.slice();const _rm=(_wd.orig||[]).filter(p=>!o.files.some(f=>f.p===p));if(_rm.length&&sb)sb.storage.from(CF).remove(_rm).catch(()=>{});
+  if(workEditId){Object.assign(data.work.find(x=>x.id===workEditId),o)}else data.work.push(Object.assign({id:_wd.id,type:workType,ts:Date.now(),subs:{}},o));
   renderAll();goTab('Trabajo');
  }else if(mType==='topic'){
   const n=v('f1');if(!n){toastErr('Escribe el nombre del tema.');return}
@@ -3518,13 +3651,13 @@ function rowsOf(c){
  R.favs=mk(d.photos.filter(p=>p.fav),p=>({id:p.id,photo_id:p.id,user_id:me}));
  R.posts=mk(d.posts,p=>({id:p.id,class_id:cid,author_id:p.au||me,body:p.t||'',image_path:p.img?(p._p||null):null,pinned:!!p.pin,...(p.ts?{created_at:new Date(p.ts).toISOString()}:{})}));
  R.comments={};d.posts.forEach(p=>(p.comments||[]).forEach(k=>{R.comments[k.id]={id:k.id,post_id:p.id,class_id:cid,author_id:k.au||me,body:k.t,...(k.ts?{created_at:new Date(k.ts).toISOString()}:{})}}));
- R.work=mk(d.work,w=>({id:w.id,class_id:cid,type:w.type,title:w.title,description:w.desc||'',topic_id:w.topic?(tp[w.topic]||null):null,due:w.due||null,points:w.pts==null?null:w.pts,link:w.link||'',created_by:w.by||me}));
+ R.work=mk(d.work,w=>({id:w.id,class_id:cid,type:w.type,title:w.title,description:w.desc||'',topic_id:w.topic?(tp[w.topic]||null):null,due:w.due||null,points:w.pts==null?null:w.pts,link:w.link||'',created_by:w.by||me,...(FILES_OK?{files:w.files||[]}:{})}));
  R.submissions={};const uidOf={};d.members.forEach(m=>{uidOf[m.n]=m.u});
  d.work.forEach(w=>Object.entries(w.subs||{}).forEach(([n,s])=>{
   const su=uidOf[n];if(!su||!s)return;
-  if(!s.id&&(s.st||'pendiente')==='pendiente'&&s.grade==null&&!s.comment&&!s.answer&&!s.fb)return;
+  if(!s.id&&(s.st||'pendiente')==='pendiente'&&s.grade==null&&!s.comment&&!s.answer&&!s.fb&&!(s.files&&s.files.length))return;
   if(!s.id)s.id=uid();
-  R.submissions[s.id]={id:s.id,work_id:w.id,class_id:cid,student_id:su,status:s.st||'pendiente',comment:s.comment||'',answer:s.answer||'',grade:s.grade==null?null:s.grade,feedback:s.fb||null};
+  R.submissions[s.id]={id:s.id,work_id:w.id,class_id:cid,student_id:su,status:s.st||'pendiente',comment:s.comment||'',answer:s.answer||'',grade:s.grade==null?null:s.grade,feedback:s.fb||null,...(FILES_OK?{files:s.files||[]}:{})};
  }));
  R.messages=mk(d.messages,m=>({id:m.id,class_id:cid,author_id:m.au||me,type:m.type||'text',body:m.t||'',file_path:m.src?(m._p||null):null,duration:m.dur==null?null:Math.round(m.dur),reply_to:(m.reply&&m.reply.id)||null,...(m.ts?{created_at:new Date(m.ts).toISOString()}:{})}));
  R.my_tasks=mk(d.tasks,t=>({id:t.id,user_id:me,class_id:cid,title:t.t,due:t.d||null,done:!!t.done}));
@@ -3604,7 +3737,7 @@ async function buildFromServer(force){
   const uids=[...new Set(L(mm).map(m=>m.user_id))];
   const pr=await sb.from('profiles').select('id,name,emoji,color,bio,photo_path').in('id',uids);
   const P={};L(pr).forEach(p=>{P[p.id]=p});
-  await signUrls(CF,[...L(ms).map(m=>m.file_path),...L(po).map(p=>p.image_path),...L(ph).map(p=>p.image_path),...L(cl).flatMap(c=>[c.icon_path,c.banner_path])]);
+  await signUrls(CF,[...L(wk).flatMap(w=>Array.isArray(w.files)?w.files.map(f=>f.p):[]),...L(su).flatMap(x=>Array.isArray(x.files)?x.files.map(f=>f.p):[]),...L(ms).map(m=>m.file_path),...L(po).map(p=>p.image_path),...L(ph).map(p=>p.image_path),...L(cl).flatMap(c=>[c.icon_path,c.banner_path])]);
   await signUrls(AV,Object.values(P).map(p=>p.photo_path));
   const favs=new Set(L(fv).map(f=>f.photo_id));
   out=L(cl).map(row=>{
@@ -3618,8 +3751,8 @@ async function buildFromServer(force){
    const tname={};Object.entries(_tp).forEach(([n,id])=>{tname[id]=n});
    const comments={};L(co).filter(mine).sort((a,b)=>String(a.created_at).localeCompare(String(b.created_at))).forEach(k=>{(comments[k.post_id]=comments[k.post_id]||[]).push({id:k.id,n:nm(k.author_id),au:k.author_id,t:k.body,ts:Date.parse(k.created_at)})});
    const posts=L(po).filter(mine).map(p=>({id:p.id,n:nm(p.author_id),au:p.author_id,t:p.body,ts:Date.parse(p.created_at),pin:!!p.pinned,img:urlOf(CF,p.image_path),_p:p.image_path||null,comments:comments[p.id]||[]}));
-   const subs={};L(su).filter(mine).forEach(s=>{(subs[s.work_id]=subs[s.work_id]||{})[nm(s.student_id)]={id:s.id,st:s.status,ts:Date.parse(s.submitted_at),comment:s.comment||'',answer:s.answer||'',grade:s.grade==null?null:+s.grade,fb:s.feedback||''}});
-   const work=L(wk).filter(mine).map(w=>({id:w.id,type:w.type,title:w.title,desc:w.description||'',topic:w.topic_id?(tname[w.topic_id]||''):'',due:w.due||'',pts:w.points==null?null:+w.points,link:w.link||'',ts:Date.parse(w.created_at),by:w.created_by,subs:subs[w.id]||{}}));
+   const subs={};L(su).filter(mine).forEach(s=>{(subs[s.work_id]=subs[s.work_id]||{})[nm(s.student_id)]={files:Array.isArray(s.files)?s.files:[],id:s.id,st:s.status,ts:Date.parse(s.submitted_at),comment:s.comment||'',answer:s.answer||'',grade:s.grade==null?null:+s.grade,fb:s.feedback||''}});
+   const work=L(wk).filter(mine).map(w=>({files:Array.isArray(w.files)?w.files:[],id:w.id,type:w.type,title:w.title,desc:w.description||'',topic:w.topic_id?(tname[w.topic_id]||''):'',due:w.due||'',pts:w.points==null?null:+w.points,link:w.link||'',ts:Date.parse(w.created_at),by:w.created_by,subs:subs[w.id]||{}}));
    const mmap={};const msgsAll=L(ms).filter(mine).slice().reverse();msgsAll.forEach(m=>{mmap[m.id]=m});
    const messages=msgsAll.map(m=>{const q=m.reply_to&&mmap[m.reply_to];return {id:m.id,n:nm(m.author_id),au:m.author_id,me:m.author_id===authUid?1:0,ts:Date.parse(m.created_at),type:m.type,t:m.body||'',src:urlOf(CF,m.file_path),_p:m.file_path||null,dur:m.duration||0,...(q?{reply:{id:q.id,n:q.author_id===authUid?'Tú':nm(q.author_id),t:q.type==='audio'?'🎤 Nota de voz':q.type==='image'?'📷 Foto':(q.body||'').slice(0,70)}}:{})}});
    const photos=L(ph).filter(mine).sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at))).map(p=>({id:p.id,au:p.author_id,i:p.icon||'📷',t:p.title,s:p.subtitle,g:p.tag,img:urlOf(CF,p.image_path),_p:p.image_path||null,fav:favs.has(p.id)}));
@@ -3831,6 +3964,7 @@ async function afterLogin(u){
   settings.photo=urlOf(AV,p.photo_path);settings._pp=p.photo_path||null;settings._ppUp=settings.photo;
   settings.banner=urlOf(AV,p.banner_path);settings._pbn=p.banner_path||null;settings._pbUp=settings.banner;
   profSnap=JSON.stringify({name:user,emoji:settings.emoji,color:settings.avatar||'#008cff',bio:settings.bio,photo_path:settings._pp,banner_path:settings._pbn})}
+ await checkFilesCol();
  await pullAll(true);cloudOn=true;subscribe();flushReview();applyTheme();
  await loadNotifPrefs();loadNotifs();subscribeNotifs();syncPushSub();
  enter(user);handleDeepLink();
