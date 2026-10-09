@@ -320,7 +320,7 @@ function paintBanner(){
 window.addEventListener('resize',()=>{clearTimeout(paintBanner.t);paintBanner.t=setTimeout(paintBanner,250)});
 function renderAll(){applyRole();renderEvents();renderTasks();renderSched();renderFeed();renderChat();renderStream();renderWork();renderPeople();renderGrades();renderClass();requestAnimationFrame(paintBanner);updateFab()}
 function switchClass(v){if(v==='new'){renderClass();modal('add');return}setCur(+v);renderAll();saveState()}
-function showLogin(){$('welcome').classList.add('hidden');$('login').classList.remove('hidden');window.scrollTo(0,0);$('emailInput')?.focus()}
+function showLogin(){$('welcome').classList.add('hidden');$('login').classList.remove('hidden');window.scrollTo(0,0);$('emailInput')?.focus({preventScroll:true})}
 function launchApp(b){
  if(!canStore()){showCookies();return}
  b.classList.add('go');const r=b.getBoundingClientRect(),fx=document.createElement('div');fx.className='fx';
@@ -1702,12 +1702,12 @@ function clearOtpInputs(){
   document.querySelectorAll('.otp-input').forEach(i=>i.classList.remove('filled','pop'));
   ['otp-input1','otp-input2','otp-input3','otp-input4','otp-input5','otp-input6']
     .forEach(id=>{ if($(id)) $(id).value=''; });
-  $('otp-input1')?.focus();
+  $('otp-input1')?.focus({preventScroll:true});
 }
 
 /* ===== Paso del código: la tarjeta del correo sale y entra la del código (con Nuvia y su sobre) ===== */
 function showOtpStep(){const card=document.querySelector('.login-card'),f=$('authForm'),box=$('otpBox');if(!card||!box)return;
- const go=()=>{f&&f.classList.remove('leaving');card.classList.add('otp-mode');$('login')&&$('login').classList.add('otp-on');box.classList.remove('hidden');box.classList.remove('ok');const c=$('otpBoxes');if(c)c.classList.remove('ok');setTimeout(()=>$('otp-input1')?.focus(),380)};
+ const go=()=>{f&&f.classList.remove('leaving');card.classList.add('otp-mode');$('login')&&$('login').classList.add('otp-on');box.classList.remove('hidden');box.classList.remove('ok');const c=$('otpBoxes');if(c)c.classList.remove('ok');setTimeout(()=>$('otp-input1')?.focus({preventScroll:true}),380)};
  if(card.classList.contains('otp-mode')){go();return}
  if(f&&!document.documentElement.classList.contains('calm')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){f.classList.add('leaving');setTimeout(go,260)}else go()}
 function resetOtpStep(){const card=document.querySelector('.login-card');if(card)card.classList.remove('otp-mode');$('login')&&$('login').classList.remove('otp-on');$('otpBox')?.classList.add('hidden');$('otpBoxes')?.classList.remove('ok')}
@@ -1757,7 +1757,7 @@ document.querySelectorAll('.p.line').forEach(e=>e.textContent='o continúa con')
 const otpIds=['otp-input1','otp-input2','otp-input3','otp-input4','otp-input5','otp-input6'];
 let otpCdT=null;
 function otpClearErr(){const e=$('otpErr');if(e){e.textContent='';e.classList.remove('show')}}
-function otpShowErr(msg){const e=$('otpErr');if(e){e.textContent=msg;e.classList.add('show')}const c=$('otpBoxes');if(c){c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')}clearOtpInputs();$('otp-input1')?.focus()}
+function otpShowErr(msg){const e=$('otpErr');if(e){e.textContent=msg;e.classList.add('show')}const c=$('otpBoxes');if(c){c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')}clearOtpInputs();$('otp-input1')?.focus({preventScroll:true})}
 function otpFill(start,digits){digits=(digits||'').replace(/\D/g,'').slice(0,6-start);if(!digits)return;digits.split('').forEach((c,j)=>{const el=$(otpIds[start+j]);if(el)el.value=c});$(otpIds[Math.min(start+digits.length,5)])?.focus();otpClearErr();if(getOtpCode().length===6)setTimeout(verifyOtp,60)}
 function otpCooldown(sec){const b=$('resendOtp');if(!b)return;clearInterval(otpCdT);let n=sec;const tick=()=>{if(n<=0){clearInterval(otpCdT);b.disabled=false;b.textContent='Reenviar código';return}b.disabled=true;b.textContent='Reenviar en '+n+' s';n--};tick();otpCdT=setInterval(tick,1000)}
 otpIds.forEach((id,i)=>{
@@ -1786,7 +1786,7 @@ $('otpForm')?.addEventListener('submit',e=>{
 });
 $('otpClose')?.addEventListener('click',()=>{
   hideOtpStep();
-  clearOtpInputs();setTimeout(()=>$('emailInput')?.focus(),300);
+  clearOtpInputs();setTimeout(()=>$('emailInput')?.focus({preventScroll:true}),300);
 });
 $('resendOtp')?.addEventListener('click',()=>{
   if(!otpMethod||$('resendOtp').disabled){ return; }

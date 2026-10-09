@@ -646,7 +646,7 @@ html,body{touch-action:manipulation;-webkit-text-size-adjust:100%}
 @keyframes fxRing{0%{opacity:0;transform:scale(.3)}20%{opacity:.7}100%{opacity:0;transform:scale(22)}}
 @keyframes fxFlash{0%{opacity:0;transform:scale(.2)}40%{opacity:.8}100%{opacity:0;transform:scale(1)}}
 .logout{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#c9d1de;border-radius:9px;padding:7px 11px;font-size:11px}.logout:hover{background:rgba(var(--accent-rgb),.2);color:#fff}
-.login:not(.hidden){animation:softIn .8s ease both}
+.login:not(.hidden){animation:softIn .8s ease backwards}
 @keyframes softIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 /* Reseñas — estrellas From Uiverse.io by SelfMadeSystem */
 .reviews{margin-top:38px;display:grid;justify-items:center;gap:10px}
@@ -2372,17 +2372,17 @@ html:not(.light) #bgFill{background:#000}
 @keyframes otpOut{to{opacity:0;transform:translateX(-36px) scale(.97);filter:blur(2px)}}
 @keyframes otpBack{from{opacity:0;transform:translateX(-30px) scale(.97)}to{opacity:1;transform:none}}
 .login-card.otp-mode #authForm{display:none}
-.login-card.otp-mode #otpBox{margin-top:0!important;animation:otpIn .55s cubic-bezier(.2,1.25,.4,1) both}
+.login-card.otp-mode #otpBox{margin-top:0!important;animation:otpIn .55s cubic-bezier(.2,1.25,.4,1) backwards}
 @keyframes otpIn{from{opacity:0;transform:translateX(42px) scale(.95)}to{opacity:1;transform:none}}
 .otp-nuvia{position:relative;width:74px;height:84px;margin:2px auto 6px}
 .otp-ulm{width:68px;height:78px;display:block;margin:0 auto;filter:drop-shadow(0 8px 18px rgba(0,140,255,.35));animation:otpBob 2.8s ease-in-out infinite}
 @keyframes otpBob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(-3deg)}}
-.otp-env{position:absolute;right:-14px;bottom:4px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#1aa0ff,#0066ff);box-shadow:0 6px 16px rgba(0,102,255,.45),0 0 0 3px var(--card-bg,#fff);animation:envIn .7s .35s cubic-bezier(.2,1.6,.4,1) both,envWig 3.2s 1.2s ease-in-out infinite}
+.otp-env{position:absolute;right:-14px;bottom:4px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#1aa0ff,#0066ff);box-shadow:0 6px 16px rgba(0,102,255,.45),0 0 0 3px var(--card-bg,#fff);animation:envIn .7s .35s cubic-bezier(.2,1.6,.4,1) backwards,envWig 3.2s 1.2s ease-in-out infinite}
 .otp-env svg{width:18px;height:18px}
 html:not(.light) .otp-env{box-shadow:0 6px 16px rgba(0,102,255,.45),0 0 0 3px #1c1f27}
 @keyframes envIn{0%{opacity:0;transform:translate(-30px,20px) scale(.2) rotate(-40deg)}100%{opacity:1;transform:none}}
 @keyframes envWig{0%,86%,100%{transform:none}89%{transform:rotate(-14deg) scale(1.08)}92%{transform:rotate(12deg) scale(1.08)}95%{transform:rotate(-6deg)}}
-.otp-mode .otp-input{animation:digIn .42s cubic-bezier(.2,1.5,.4,1) both}
+.otp-mode .otp-input{animation:digIn .42s cubic-bezier(.2,1.5,.4,1) backwards}
 .otp-mode .otp-input:nth-child(1){animation-delay:.18s}.otp-mode .otp-input:nth-child(2){animation-delay:.23s}.otp-mode .otp-input:nth-child(3){animation-delay:.28s}
 .otp-mode .otp-input:nth-child(4){animation-delay:.33s}.otp-mode .otp-input:nth-child(5){animation-delay:.38s}.otp-mode .otp-input:nth-child(6){animation-delay:.43s}
 @keyframes digIn{from{opacity:0;transform:translateY(14px) scale(.7)}to{opacity:1;transform:none}}
@@ -2572,3 +2572,16 @@ html.guide-lock,html.guide-lock body{overflow:hidden!important;overscroll-behavi
 .pb-t{flex:1;min-width:0}.pb-t b{display:block;font-size:15px}.pb-t small{display:block;font-size:12.5px;opacity:.7;margin-top:3px;line-height:1.4}
 .pb-b{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
 .pb-x{border:0;background:none;color:inherit;opacity:.6;font:inherit;font-size:13px;font-weight:600;padding:8px 6px;cursor:pointer}
+
+/* ===== pantalla del código sin "vibración" en iPhone =====
+   El iPhone recomponía la tarjeta (que desenfocaba lo que tenía detrás) cada vez que se movía algo del fondo
+   (aurora, burbujas, estrellas, brillo del título), y la tarjeta saltaba ~1,6 px unas 20 veces por segundo.
+   Ahora, mientras está el código: el fondo se queda quieto, la tarjeta es opaca (sin desenfoque) y Nuvia no usa filtros animados. */
+#login.otp-on .aurora,#login.otp-on .aurora *,#login.otp-on .login-title h2,#login.otp-on .login-title h2 span,#login.otp-on .login-title p{animation-play-state:paused!important}
+.login-card.otp-mode #otpBox{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background-color:rgba(255,255,255,.97)!important}
+html:not(.light) .login-card.otp-mode #otpBox{background-color:rgb(17,22,31)!important}
+.otp-ulm{filter:none!important}
+.otp-nuvia::before{content:"";position:absolute;left:50%;top:52%;width:104px;height:104px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(0,140,255,.26),rgba(0,140,255,0) 68%);pointer-events:none}
+.otp-ulm{position:relative}
+
+#login.otp-on .aurora::before,#login.otp-on .aurora::after,#login.otp-on .aurora *::before,#login.otp-on .aurora *::after{animation-play-state:paused!important}
