@@ -1108,16 +1108,16 @@ async function liveAnswer(j){if(LV.sent||!LV.game)return;LV.sent=true;livePlayPa
 /* ===================== HERRAMIENTAS DE CLASE (SQL 18 para las compartidas) ===================== */
 let T18_OK=null,TOOL='',TL={poll:null};
 async function checkT18(){try{const {error}=await sb.from('suggestions').select('id').limit(1);T18_OK=!error}catch(e){T18_OK=false}}
-const TOOLS={ruleta:['Ruleta de nombres','Elige a un alumno al azar.','sparkles',1],timer:['Temporizador','Cuenta atrás para la clase.','clock',0],study:['Modo estudio','Concéntrate 25 minutos con Nuvia.','alarm',0],
+const TOOLS={points:['Puntos de clase','Premia el buen comportamiento (y avisa de lo que hay que mejorar).','trophy',0],exams:['Exámenes','Se corrigen solos y la nota va a Calificaciones.','pencil',0],ruleta:['Ruleta de nombres','Elige a un alumno al azar.','sparkles',1],timer:['Temporizador','Cuenta atrás para la clase.','clock',0],study:['Modo estudio','Concéntrate 25 minutos con Nuvia.','alarm',0],
  groups:['Grupos','Grupos de trabajo y su chat.','users',0],dm:['Mensajes','Mensajes privados con tus profesores.','chat',0],buzon:['Buzón anónimo','Sugerencias y dudas sin nombre.','mail',0],
  lib:['Biblioteca','Apuntes, vídeos y enlaces de la clase.','file',0],cards:['Tarjetas','Repasa con tarjetas de estudio.','sparkles',0],shop:['Tienda de Nuvia','Gasta tus puntos en Nuvia.','star',0],school:['Centro educativo','Todas las clases de tu colegio o instituto.','users',0]};
 const NEED18=['groups','dm','buzon','lib','cards'];
-function toolsCardHTML(){if(!classes[cur]||!FEAT('tools'))return '';const st=isStaff(),ks=(st?['ruleta','timer','groups','lib','cards','buzon','dm']:['study','cards','lib','groups','dm','buzon','shop']).filter(k=>k!=='shop'||FEAT('shop'));
+function toolsCardHTML(){if(!classes[cur]||!FEAT('tools'))return '';const st=isStaff(),ks=(st?['points','exams','ruleta','timer','groups','lib','cards','buzon','dm']:['exams','points','study','cards','lib','groups','dm','buzon','shop']).filter(k=>k!=='shop'||FEAT('shop'));
  return `<div class="tl-card"><div class="tl-h"><b>Herramientas</b>${st&&T18_OK?`<button type="button" class="tl-flt${classes[cur].filterBad?' on':''}" onclick="toggleFilter()">${svgI('lock')}Filtro de palabrotas: ${classes[cur].filterBad?'activado':'desactivado'}</button>`:''}</div><div class="tl-grid">${ks.map(k=>`<button type="button" class="tl-b" onclick="toolOpen('${k}')"><span>${svgI(TOOLS[k][2])}</span><b>${TOOLS[k][0]}</b></button>`).join('')}</div></div>`}
-function toolOpen(k){TOOL=k;modal('tool');toolPaint()}
-function toolHTML(){if(NEED18.includes(TOOL)&&T18_OK===false)return '<div class="empty">Esta herramienta se activa ejecutando el SQL 18 en Supabase.</div>';const f={ruleta:ruletaHTML,timer:timerHTML,study:studyHTML,groups:()=>'<div class="tl-load">Cargando…</div>',dm:()=>'<div class="tl-load">Cargando…</div>',buzon:buzonHTML,lib:()=>'<div class="tl-load">Cargando…</div>',cards:()=>'<div class="tl-load">Cargando…</div>',shop:shopHTML,school:schoolHTML}[TOOL];return f?f():''}
+function toolOpen(k){TOOL=k;if(k==='exams'){EX.view='list';EX.ed=null}if(k==='points'){PT.who=null;PT.edit=false;PT.multi=false;PT.sel.clear()}if(k==='shop')ptSync().then(()=>{if(toolAlive('shop'))toolPaint()});modal('tool');toolPaint()}
+function toolHTML(){if(NEED18.includes(TOOL)&&T18_OK===false)return '<div class="empty">Esta herramienta se activa ejecutando el SQL 18 en Supabase.</div>';const f={ruleta:ruletaHTML,timer:timerHTML,study:studyHTML,groups:()=>'<div class="tl-load">Cargando…</div>',dm:()=>'<div class="tl-load">Cargando…</div>',buzon:buzonHTML,lib:()=>'<div class="tl-load">Cargando…</div>',cards:()=>'<div class="tl-load">Cargando…</div>',shop:shopHTML,school:schoolHTML,points:pointsHTML,exams:examsHTML}[TOOL];return f?f():''}
 function toolPaint(){$('modalTitle').textContent=(TOOLS[TOOL]||[''])[0];const d=document.querySelector('#modal .modal-desc,#modalDesc');if(d)d.textContent=(TOOLS[TOOL]||['',''])[1];$('modalFields').innerHTML=toolHTML();
- if(TOOL==='groups')groupsLoad();if(TOOL==='dm')dmLoad();if(TOOL==='lib')libLoad();if(TOOL==='cards')cardsLoad();if(TOOL==='buzon'&&isStaff())buzonLoad();if(TOOL==='school'&&SC_OK!==false)schoolLoad()}
+ if(TOOL==='groups')groupsLoad();if(TOOL==='dm')dmLoad();if(TOOL==='lib')libLoad();if(TOOL==='cards')cardsLoad();if(TOOL==='buzon'&&isStaff())buzonLoad();if(TOOL==='school'&&SC_OK!==false)schoolLoad();if(TOOL==='points')ptLoad();if(TOOL==='exams')exLoad()}
 const toolAlive=k=>$('modal').classList.contains('show')&&mType==='tool'&&TOOL===k;
 /* ---------- filtro de palabrotas ---------- */
 const BADW=['mierda','joder','puta','puto','putas','putos','gilipollas','cabron','cabrón','cabrona','coño','polla','pollas','hostia','capullo','imbecil','imbécil','idiota','subnormal','zorra','follar','pajilla','paja','maricon','maricón','retrasado','mamon','mamón','chupapollas','hijoputa','hdp','cojones','huevon','pendejo','verga','culo'];
@@ -1224,11 +1224,11 @@ function nuviaMine(sz){return nvSVG(nvOutfit(),sz)}
 function applyNuvia(){const L=nvLayers(nvOutfit());document.documentElement.style.setProperty('--nv-blue',L.c);
  const b=$('nv-back'),f=$('nv-front'),g=$('nv-bodyg');if(b&&b.innerHTML!==L.b)b.innerHTML=L.b;if(f&&f.innerHTML!==L.f)f.innerHTML=L.f;if(g){if(L.m)g.setAttribute('mask','url(#nvNoCap)');else g.removeAttribute('mask')}
  try{localStorage.setItem('unuvia_nv',JSON.stringify(L))}catch(e){}}
-function shopPoints(){const works=data.work?data.work.filter(w=>w.type!=='material'&&visibleWork(w)):[],badges=badgeList(works).filter(b=>b.ok).length,stud=Object.values(settings.study||{}).reduce((a,b)=>a+b,0),earned=badges*50+stud*10+(settings.visits||[]).length*5,spent=(settings.shop||{}).spent||0;return {earned,spent,left:earned-spent}}
+function shopPoints(){const works=data.work?data.work.filter(w=>w.type!=='material'&&visibleWork(w)):[],badges=badgeList(works).filter(b=>b.ok).length,stud=Object.values(settings.study||{}).reduce((a,b)=>a+b,0),earned=badges*50+stud*10+(settings.visits||[]).length*5+(settings.ptSum||0)*10,spent=(settings.shop||{}).spent||0;return {earned,spent,left:earned-spent}}
 let SHOP_TAB='head';
 function shopHTML(){const P=shopPoints(),S=nvState(),o=nvOutfit();
  const list=SHOP.filter(x=>x.k===SHOP_TAB);
- return `<div class="sh2"><div class="sh2-hero"><div class="sh2-nv">${nvSVG(o,118)}</div><div class="sh2-pts"><b>${P.left}</b><span>puntos</span><small>Logros +50 · estudio +10 · cada día +5</small></div></div>
+ return `<div class="sh2"><div class="sh2-hero"><div class="sh2-nv">${nvSVG(o,118)}</div><div class="sh2-pts"><b>${P.left}</b><span>puntos</span><small>Logros +50 · estudio +10 · cada día +5 · cada punto de clase +10</small></div></div>
   <div class="sh2-tabs" role="tablist">${NV_SLOTS.map(([k,l])=>`<button type="button" role="tab" class="${SHOP_TAB===k?'on':''}" onclick="SHOP_TAB='${k}';toolPaint()">${l}</button>`).join('')}</div>
   <div class="sh2-grid">${list.map(it=>{const own=S.own.includes(it.id),on=S[it.k]===it.id,pv=nvSVG(Object.assign(nvOutfit(),{[it.k]:it.id}),64);
    return `<button type="button" class="sh2-it${on?' on':''}${own?' own':''}" onclick="shopBuy('${it.id}')"><span class="sh2-pv">${pv}</span><b>${esc(it.t)}</b><small>${on?'✓ Puesto':own?'Ponérselo':'<i>★</i> '+it.c}</small></button>`}).join('')}</div>
@@ -1395,6 +1395,176 @@ function confirmMaint(){return true}
 function admFeat(k,v){const f=Object.assign({live:true,tools:true,shop:true},CFG.features||{});f[k]=v;admSet('features',f)}
 
 setTimeout(()=>{try{applySeason((CFG.theme||{}).name||'normal')}catch(e){}try{cfgLoad()}catch(e){}},60);
+/* ===================== PUNTOS DE CLASE (SQL 21) ===================== */
+let P21_OK=null;const PT={rows:[],rank:[],sel:new Set(),multi:false,who:null,edit:false,mine:[]};
+async function checkP21(){try{const {error}=await sb.from('class_points').select('id').limit(1);P21_OK=!error}catch(e){P21_OK=false}}
+const PT_DEF=[['⭐','Participar',1],['🤝','Ayudar a un compañero',2],['💪','Esforzarse',1],['📚','Hacer los deberes',1],['🎯','Buen trabajo',2],['💡','Buena idea',1],['🗣️','Hablar en clase',-1],['📵','Usar el móvil',-1],['⏰','Llegar tarde',-1],['🎒','No traer material',-1],['😤','Faltar al respeto',-2],['❌','No hacer los deberes',-1]];
+const ptReasons=()=>{const c=classes[cur]||{},x=Array.isArray(c.ptReasons)?c.ptReasons:[];return [...PT_DEF,...x.map(r=>[r.e||'⭐',r.t,Number(r.v)||1])]};
+const ptStudents=()=>data.members.filter(m=>m.r==='Alumno'||m.r==='Delegado');
+const weekStart=()=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return d.getTime()};
+async function ptLoad(){const c=classes[cur];if(!c)return;if(P21_OK===null)await checkP21();if(!P21_OK){if(toolAlive('points'))toolPaint();return}
+ try{const q=sb.from('class_points').select('id,user_id,delta,reason,emoji,created_at').eq('class_id',c.id).order('created_at',{ascending:false}).limit(500);const [r,k]=await Promise.all([q,sb.rpc('points_ranking',{cid:c.id})]);PT.rows=r.data||[];PT.rank=(k&&k.data)||[];if(!isStaff())ptSyncFrom(PT.rows)}catch(e){}
+ if(toolAlive('points'))ptPaint()}
+function ptSyncFrom(rows){/* total de este alumno para la tienda */ptSync()}
+async function ptSync(){if(!sb||!authUid||P21_OK===false)return;try{const {data:d,error}=await sb.from('class_points').select('delta').eq('user_id',authUid);if(error)return;const s=(d||[]).reduce((a,b)=>a+(b.delta||0),0);if(settings.ptSum!==s){settings.ptSum=s;saveState()}}catch(e){}}
+function ptTot(u,since){return PT.rows.filter(r=>r.user_id===u&&(!since||Date.parse(r.created_at)>=since)).reduce((a,b)=>a+b.delta,0)}
+function pointsHTML(){if(P21_OK===false)return '<div class="empty">Los puntos de clase se activan ejecutando el SQL 21 en Supabase.</div>';return '<div class="tl-load">Cargando…</div>'}
+function ptPaint(){const el=$('modalFields');if(!el)return;el.innerHTML=isStaff()?ptStaffHTML():ptStudentHTML()}
+function ptRankHTML(){if(!PT.rank.length)return '<div class="gl-sub">Esta semana todavía nadie tiene puntos.</div>';return `<div class="pt-rank">${PT.rank.map((r,i)=>`<div class="pt-rk${r.user_id===authUid?' me':''}"><span class="pt-pos">${['🥇','🥈','🥉'][i]||i+1}</span><b>${esc(r.name)}</b><em>+${r.pts}</em></div>`).join('')}</div>`}
+function ptStaffHTML(){const S=ptStudents(),wk=weekStart();
+ if(PT.edit)return ptEditHTML();
+ if(PT.who)return ptGiveHTML();
+ return `<div class="pt"><div class="pt-bar"><button type="button" class="lv-chip2${PT.multi?' on':''}" onclick="PT.multi=!PT.multi;PT.sel.clear();ptPaint()">${PT.multi?'Cancelar selección':'Seleccionar varios'}</button>${PT.multi?`<button type="button" class="lv-chip2" onclick="ptStudents().forEach(m=>PT.sel.add(m.u));ptPaint()">Toda la clase</button>`:''}<span class="lv-sp"></span><button type="button" class="lv-chip2" onclick="PT.edit=true;ptPaint()">Motivos</button></div>
+  ${S.length?`<div class="pt-grid">${S.map(m=>{const t=ptTot(m.u),w=ptTot(m.u,wk),on=PT.sel.has(m.u);return `<button type="button" class="pt-st${on?' on':''}" data-u="${m.u}" onclick="ptTap('${m.u}')">${mAv(m)}<b>${esc(m.n)}</b><span class="pt-tot ${t<0?'neg':''}">${t>0?'+':''}${t}</span><small>${w?(w>0?'+':'')+w+' esta semana':'—'}</small>${on?'<i class="pt-ck">✓</i>':''}</button>`}).join('')}</div>`:'<div class="empty">Aún no hay alumnos en la clase.</div>'}
+  ${PT.multi&&PT.sel.size?`<button type="button" class="add pt-go" onclick="PT.who='multi';ptPaint()">Dar puntos a ${PT.sel.size} alumno${PT.sel.size>1?'s':''}</button>`:''}
+  <h4 class="pt-h">🏆 Ranking de la semana</h4>${ptRankHTML()}
+  <h4 class="pt-h">Últimos puntos</h4>${PT.rows.length?`<div class="pt-hist">${PT.rows.slice(0,20).map(r=>{const m=data.members.find(x=>x.u===r.user_id);return `<div class="pt-hi"><span class="pt-e">${esc(r.emoji||'⭐')}</span><div><b>${esc(m?m.n:'Alumno')}</b><small>${esc(r.reason||'')} · ${when(Date.parse(r.created_at))}</small></div><em class="${r.delta<0?'neg':''}">${r.delta>0?'+':''}${r.delta}</em><button type="button" class="pt-un" onclick="ptUndo('${r.id}')">Deshacer</button></div>`}).join('')}</div>`:'<div class="gl-sub">Todavía no has dado puntos.</div>'}</div>`}
+function ptTap(u){if(PT.multi){PT.sel.has(u)?PT.sel.delete(u):PT.sel.add(u);ptPaint();return}PT.who=u;ptPaint()}
+function ptGiveHTML(){const R=ptReasons(),multi=PT.who==='multi',m=multi?null:data.members.find(x=>x.u===PT.who);
+ if(!multi&&!m){PT.who=null;return ptStaffHTML()}
+ const btn=(r,i)=>`<button type="button" class="pt-r ${r[2]>0?'pos':'neg'}" onclick="ptGive(${i})"><span>${esc(r[0])}</span><b>${esc(r[1])}</b><em>${r[2]>0?'+':''}${r[2]}</em></button>`;
+ return `<div class="pt"><button type="button" class="pt-back" onclick="PT.who=null;ptPaint()">‹ Volver</button><div class="pt-who">${m?mAv(m):'<span class="pt-many">👥</span>'}<div><b>${multi?PT.sel.size+' alumnos':esc(m.n)}</b><small>${multi?'Se les dará a todos a la vez':'Total: '+ptTot(m.u)+' · esta semana: '+ptTot(m.u,weekStart())}</small></div></div>
+  <h4 class="pt-h pos">Positivos</h4><div class="pt-rs">${R.map((r,i)=>r[2]>0?btn(r,i):'').join('')}</div>
+  <h4 class="pt-h neg">A mejorar</h4><div class="pt-rs">${R.map((r,i)=>r[2]<0?btn(r,i):'').join('')}</div></div>`}
+async function ptGive(i){if(offGuard())return;const r=ptReasons()[i],c=classes[cur];if(!r||!c)return;const us=PT.who==='multi'?[...PT.sel]:[PT.who];
+ try{const {error}=await sb.from('class_points').insert(us.map(u=>({class_id:c.id,user_id:u,delta:r[2],reason:r[1],emoji:r[0],given_by:authUid})));if(error)throw error;
+  r[2]>0?(SFX.good&&SFX.good()):(SFX.bad&&SFX.bad());toast((r[2]>0?'+':'')+r[2]+' · '+r[1]+(us.length>1?' ('+us.length+' alumnos)':''),r[2]>0?'ok':'');
+  PT.who=null;PT.multi=false;PT.sel.clear();await ptLoad();us.forEach(u=>{const b=document.querySelector(`.pt-st[data-u="${u}"]`);if(b){const f=document.createElement('i');f.className='pt-fly '+(r[2]<0?'neg':'');f.textContent=(r[2]>0?'+':'')+r[2];b.appendChild(f);setTimeout(()=>f.remove(),1200)}})}
+ catch(e){toastErr('No se pudieron dar los puntos.')}}
+async function ptUndo(id){if(offGuard())return;try{const {error}=await sb.from('class_points').delete().eq('id',id);if(error)throw error;toast('Deshecho','ok');ptLoad()}catch(e){toastErr('No se pudo deshacer.')}}
+function ptEditHTML(){const c=classes[cur]||{},x=Array.isArray(c.ptReasons)?c.ptReasons:[];
+ return `<div class="pt"><button type="button" class="pt-back" onclick="PT.edit=false;ptPaint()">‹ Volver</button><h4 class="pt-h">Tus motivos</h4><p class="gl-sub">Además de los de siempre, añade los tuyos.</p>
+  ${x.map((r,i)=>`<div class="pt-hi"><span class="pt-e">${esc(r.e)}</span><div><b>${esc(r.t)}</b></div><em class="${r.v<0?'neg':''}">${r.v>0?'+':''}${r.v}</em><button type="button" class="pt-un" onclick="ptDelReason(${i})">Quitar</button></div>`).join('')||'<div class="gl-sub">Aún no has añadido ninguno.</div>'}
+  <div class="pt-new"><input id="ptE" maxlength="2" value="⭐" aria-label="Emoji"><input id="ptT" maxlength="40" placeholder="Ej: Leer en voz alta"><select id="ptV">${[3,2,1,-1,-2,-3].map(v=>`<option value="${v}"${v===1?' selected':''}>${v>0?'+':''}${v}</option>`).join('')}</select></div><button type="button" class="add" onclick="ptAddReason()">Añadir motivo</button></div>`}
+async function ptSaveReasons(x){const c=classes[cur];try{const {error}=await sb.from('classes').update({pt_reasons:x}).eq('id',c.id);if(error)throw error;c.ptReasons=x;ptPaint()}catch(e){toastErr('No se pudo guardar.')}}
+function ptAddReason(){const t=$('ptT').value.trim();if(!t){toastErr('Escribe el motivo.');return}const c=classes[cur],x=[...(Array.isArray(c.ptReasons)?c.ptReasons:[]),{e:$('ptE').value.trim()||'⭐',t:t.slice(0,40),v:Number($('ptV').value)}];ptSaveReasons(x)}
+function ptDelReason(i){const c=classes[cur],x=(c.ptReasons||[]).filter((_,k)=>k!==i);ptSaveReasons(x)}
+function ptStudentHTML(){const me=PT.rows.filter(r=>r.user_id===authUid),t=me.reduce((a,b)=>a+b.delta,0),w=me.filter(r=>Date.parse(r.created_at)>=weekStart()).reduce((a,b)=>a+b.delta,0);
+ return `<div class="pt"><div class="pt-me"><span class="sz-cnv">${nuviaMine(64)}</span><div><b class="${t<0?'neg':''}">${t>0?'+':''}${t}</b><span>puntos de clase</span><small>${w?(w>0?'+':'')+w+' esta semana':'Esta semana aún no tienes puntos'} · cada punto vale 10 en la tienda de Nuvia</small></div></div>
+  <h4 class="pt-h">🏆 Ranking de la semana</h4>${ptRankHTML()}
+  <h4 class="pt-h">Tu historial</h4>${me.length?`<div class="pt-hist">${me.slice(0,40).map(r=>`<div class="pt-hi"><span class="pt-e">${esc(r.emoji||'⭐')}</span><div><b>${esc(r.reason||'Puntos')}</b><small>${when(Date.parse(r.created_at))}</small></div><em class="${r.delta<0?'neg':''}">${r.delta>0?'+':''}${r.delta}</em></div>`).join('')}</div>`:'<div class="gl-sub">Cuando tu profesor te dé puntos aparecerán aquí.</div>'}</div>`}
+
+/* ===================== EXÁMENES (SQL 21) ===================== */
+const EX={list:[],att:{},mine:{},view:'list',ed:null,cur:null,res:null,rev:null};
+const QT={test:'Tipo test',vf:'Verdadero / falso',short:'Respuesta corta',open:'Pregunta abierta'};
+async function exLoad(){const c=classes[cur];if(!c)return;if(P21_OK===null)await checkP21();if(!P21_OK){if(toolAlive('exams'))toolPaint();return}
+ try{const {data:z}=await sb.from('quizzes').select('*').eq('class_id',c.id).order('created_at',{ascending:false});EX.list=z||[];
+  const {data:a}=await sb.from('quiz_attempts').select('*').eq('class_id',c.id);EX.att={};(a||[]).forEach(t=>{(EX.att[t.quiz_id]=EX.att[t.quiz_id]||[]).push(t)})}catch(e){}
+ if(toolAlive('exams'))exPaint()}
+function examsHTML(){if(P21_OK===false)return '<div class="empty">Los exámenes se activan ejecutando el SQL 21 en Supabase.</div>';return '<div class="tl-load">Cargando…</div>'}
+function exPaint(){const el=$('modalFields');if(!el)return;el.innerHTML=isStaff()?(EX.view==='edit'?exEditHTML():EX.view==='res'?exResHTML():EX.view==='rev'?exRevHTML():exListStaff()):exListStudent()}
+const exState=z=>{const n=Date.now();if(!z.published)return ['Borrador','draft'];if(z.opens_at&&n<Date.parse(z.opens_at))return ['Abre '+fmtDT(z.opens_at),'soon'];if(z.closes_at&&n>Date.parse(z.closes_at))return ['Cerrado','closed'];return ['Abierto','open']};
+const fmtDT=s=>{try{return new Date(s).toLocaleString('es-ES',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}catch(e){return ''}};
+const nota=v=>v==null?'—':String(Math.round(v*100)/100).replace('.',',');
+function exListStaff(){const S=ptStudents().length;
+ return `<div class="ex"><button type="button" class="add ex-new" onclick="exNew()">＋ Nuevo examen</button>${EX.list.length?EX.list.map(z=>{const st=exState(z),A=(EX.att[z.id]||[]).filter(t=>t.submitted_at),pend=A.filter(t=>t.pending).length,G=A.filter(t=>!t.pending),avg=G.length?G.reduce((a,b)=>a+(+b.score||0),0)/G.length:null;
+  return `<div class="ex-it"><div class="ex-ic">📝</div><div class="ex-b"><b>${esc(z.title)}</b><small><span class="ex-st ${st[1]}">${st[0]}</span> · ${(z.questions||[]).length} preguntas${z.minutes?' · '+z.minutes+' min':''}</small>${z.published?`<small>${A.length} de ${S} entregados${avg!=null?' · media '+nota(avg):''}${pend?` · <b class="ex-pend">${pend} por corregir</b>`:''}</small>`:''}</div><div class="ex-acts">${z.published?`<button type="button" class="lv-chip2 on" onclick="exOpenRes('${z.id}')">Resultados</button>`:''}<button type="button" class="lv-chip2" onclick="exEdit('${z.id}')">Editar</button></div></div>`}).join(''):'<div class="empty">Crea tu primer examen: se corrige solo y la nota pasa a Calificaciones.</div>'}</div>`}
+const qNew=t=>({id:uid().slice(0,8),type:t||'test',text:'',opts:t==='vf'?['Verdadero','Falso']:['',''],ok:0,acc:'',pts:1});
+function exNew(){EX.ed={id:null,title:'',descr:'',minutes:20,opens:'',closes:'',shuffle:true,show:true,published:false,qs:[qNew('test')]};EX.view='edit';exPaint()}
+async function exEdit(id){const z=EX.list.find(x=>x.id===id);if(!z)return;let K={};try{const {data:k}=await sb.from('quiz_keys').select('keys').eq('quiz_id',id).maybeSingle();K=(k&&k.keys)||{}}catch(e){}
+ const loc=s=>{if(!s)return '';const d=new Date(s);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)};
+ EX.ed={id,title:z.title,descr:z.descr||'',minutes:z.minutes||0,opens:loc(z.opens_at),closes:loc(z.closes_at),shuffle:z.shuffle,show:z.show_results,published:z.published,
+  qs:(z.questions||[]).map(q=>({id:q.id,type:q.type,text:q.text,opts:q.opts||[],pts:q.pts||1,ok:q.type==='test'||q.type==='vf'?Number(K[q.id]||0):0,acc:q.type==='short'?(K[q.id]||[]).join(', '):''}))};EX.view='edit';exPaint()}
+function exSync(){const E=EX.ed;if(!E)return;const g=id=>{const e=$(id);return e?e.value:''};E.title=g('exT');E.descr=g('exD');E.minutes=Number(g('exM'))||0;E.opens=g('exO');E.closes=g('exC');E.shuffle=!!($('exS')||{}).checked;E.show=!!($('exR')||{}).checked;
+ E.qs.forEach((q,i)=>{q.text=g('qT'+i);q.pts=Math.max(1,Math.min(10,Number(g('qP'+i))||1));if(q.type==='test')q.opts=q.opts.map((o,j)=>g('qO'+i+'_'+j));if(q.type==='short')q.acc=g('qA'+i)})}
+function exQ(fn){exSync();fn(EX.ed);exPaint()}
+function exEditHTML(){const E=EX.ed;
+ return `<div class="ex"><button type="button" class="pt-back" onclick="EX.view='list';EX.ed=null;exPaint()">‹ Volver</button>
+  <label class="ex-l">Título<input id="exT" maxlength="80" value="${esc(E.title)}" placeholder="Ej: Examen tema 3 — Fracciones"></label>
+  <label class="ex-l">Instrucciones (opcional)<textarea id="exD" rows="2" maxlength="400" placeholder="Ej: Lee bien cada pregunta. Tienes 20 minutos.">${esc(E.descr)}</textarea></label>
+  <div class="ex-row"><label class="ex-l">Tiempo (min, 0 = sin límite)<input id="exM" type="number" min="0" max="240" value="${E.minutes}"></label></div>
+  <div class="ex-row"><label class="ex-l">Abre (opcional)<input id="exO" type="datetime-local" value="${E.opens}"></label><label class="ex-l">Cierra (opcional)<input id="exC" type="datetime-local" value="${E.closes}"></label></div>
+  <label class="adm-sw"><span>Desordenar preguntas para cada alumno</span><input id="exS" type="checkbox" ${E.shuffle?'checked':''}></label>
+  <label class="adm-sw"><span>Al terminar, el alumno ve las respuestas correctas</span><input id="exR" type="checkbox" ${E.show?'checked':''}></label>
+  ${E.qs.map((q,i)=>`<div class="ex-q"><div class="ex-qh"><b>${i+1}</b><select onchange="exQ(E=>{const n=qNew(this.value);n.id=E.qs[${i}].id;n.text=E.qs[${i}].text;n.pts=E.qs[${i}].pts;E.qs[${i}]=n})">${Object.entries(QT).map(([k,l])=>`<option value="${k}"${q.type===k?' selected':''}>${l}</option>`).join('')}</select><label class="ex-pts"><input id="qP${i}" type="number" min="1" max="10" value="${q.pts}"> pts</label><span class="lv-sp"></span>${i?`<button type="button" class="ex-ib" aria-label="Subir" onclick="exQ(E=>{[E.qs[${i-1}],E.qs[${i}]]=[E.qs[${i}],E.qs[${i-1}]]})">↑</button>`:''}<button type="button" class="ex-ib" aria-label="Quitar" onclick="exQ(E=>{E.qs.splice(${i},1)})">✕</button></div>
+   <textarea id="qT${i}" rows="2" maxlength="500" placeholder="Escribe la pregunta">${esc(q.text)}</textarea>
+   ${q.type==='test'?`<div class="ex-opts">${q.opts.map((o,j)=>`<div class="ex-o${q.ok===j?' ok':''}"><button type="button" class="ex-rad" aria-label="Marcar como correcta" onclick="exQ(E=>{E.qs[${i}].ok=${j}})">${q.ok===j?'✓':''}</button><input id="qO${i}_${j}" maxlength="160" value="${esc(o)}" placeholder="Opción ${j+1}">${q.opts.length>2?`<button type="button" class="ex-ib" onclick="exQ(E=>{const Q=E.qs[${i}];Q.opts.splice(${j},1);if(Q.ok>=Q.opts.length)Q.ok=0})">✕</button>`:''}</div>`).join('')}${q.opts.length<6?`<button type="button" class="mini-btn" onclick="exQ(E=>{E.qs[${i}].opts.push('')})">＋ Opción</button>`:''}<small class="gl-sub">Toca el círculo de la respuesta correcta.</small></div>`:''}
+   ${q.type==='vf'?`<div class="ex-opts">${['Verdadero','Falso'].map((o,j)=>`<div class="ex-o${q.ok===j?' ok':''}"><button type="button" class="ex-rad" onclick="exQ(E=>{E.qs[${i}].ok=${j}})">${q.ok===j?'✓':''}</button><span>${o}</span></div>`).join('')}</div>`:''}
+   ${q.type==='short'?`<input id="qA${i}" maxlength="300" value="${esc(q.acc)}" placeholder="Respuestas válidas separadas por comas (ej: París, paris)"><small class="gl-sub">No importan mayúsculas ni espacios.</small>`:''}
+   ${q.type==='open'?'<small class="gl-sub">La corriges tú al ver los resultados.</small>':''}</div>`).join('')}
+  <div class="ex-addq">${Object.entries(QT).map(([k,l])=>`<button type="button" class="lv-chip2" onclick="exQ(E=>{E.qs.push(qNew('${k}'))})">＋ ${l}</button>`).join('')}</div>
+  <div class="lv-btns col"><button type="button" class="add" onclick="exSave(true)">${E.published?'Guardar cambios':'Publicar examen'}</button>${E.published?'':`<button type="button" class="secondary" onclick="exSave(false)">Guardar borrador</button>`}${E.id?`<button type="button" class="mini-btn danger" onclick="exDel()">Borrar examen</button>`:''}</div></div>`}
+async function exSave(pub){if(offGuard())return;exSync();const E=EX.ed,c=classes[cur];
+ if(!E.title.trim()){toastErr('Ponle un título al examen.');return}if(!E.qs.length){toastErr('Añade al menos una pregunta.');return}
+ for(const [i,q] of E.qs.entries()){if(!q.text.trim()){toastErr('La pregunta '+(i+1)+' está vacía.');return}if(q.type==='test'&&q.opts.some(o=>!o.trim())){toastErr('Rellena todas las opciones de la pregunta '+(i+1)+'.');return}if(q.type==='short'&&!q.acc.trim()){toastErr('Escribe la respuesta válida de la pregunta '+(i+1)+'.');return}}
+ const questions=E.qs.map(q=>({id:q.id,type:q.type,text:q.text.trim(),pts:q.pts,...(q.type==='test'||q.type==='vf'?{opts:q.type==='vf'?['Verdadero','Falso']:q.opts.map(o=>o.trim())}:{})}));
+ const keys={};E.qs.forEach(q=>{if(q.type==='test'||q.type==='vf')keys[q.id]=String(q.ok);if(q.type==='short')keys[q.id]=q.acc.split(',').map(s=>s.trim()).filter(Boolean)});
+ const row={class_id:c.id,title:E.title.trim().slice(0,80),descr:E.descr.trim(),minutes:E.minutes||null,opens_at:E.opens?new Date(E.opens).toISOString():null,closes_at:E.closes?new Date(E.closes).toISOString():null,shuffle:E.shuffle,show_results:E.show,questions,published:pub||E.published};
+ try{let id=E.id;if(id){const {error}=await sb.from('quizzes').update(row).eq('id',id);if(error)throw error}else{const {data:d,error}=await sb.from('quizzes').insert({...row,created_by:authUid}).select().single();if(error)throw error;id=d.id}
+  const {error:e2}=await sb.from('quiz_keys').upsert({quiz_id:id,keys},{onConflict:'quiz_id'});if(e2)throw e2;
+  toast(row.published&&!E.published?'¡Examen publicado! Les llega un aviso a los alumnos':'Guardado','ok');EX.view='list';EX.ed=null;exLoad()}catch(e){toastErr('No se pudo guardar el examen.')}}
+async function exDel(){const E=EX.ed;if(!E||!E.id)return;if(!confirm('¿Borrar el examen y todas sus notas?'))return;try{await sb.from('quizzes').delete().eq('id',E.id);EX.view='list';EX.ed=null;toast('Examen borrado','ok');exLoad()}catch(e){toastErr('No se pudo borrar.')}}
+/* resultados (profesor) */
+async function exOpenRes(id){EX.res=id;EX.view='res';EX.keys=null;exPaint();try{const {data:k}=await sb.from('quiz_keys').select('keys').eq('quiz_id',id).maybeSingle();EX.keys=(k&&k.keys)||{}}catch(e){}}
+function exResHTML(){const z=EX.list.find(x=>x.id===EX.res);if(!z)return '';const A=EX.att[z.id]||[],S=ptStudents();
+ const rows=S.map(m=>({m,t:A.find(t=>t.user_id===m.u)})),done=rows.filter(r=>r.t&&r.t.submitted_at),gr=done.filter(r=>!r.t.pending),avg=gr.length?gr.reduce((a,b)=>a+(+b.t.score||0),0)/gr.length:null,pass=gr.filter(r=>+r.t.score>=5).length;
+ return `<div class="ex"><button type="button" class="pt-back" onclick="EX.view='list';exPaint()">‹ Volver</button><h4 class="pt-h">${esc(z.title)}</h4>
+  <div class="adm-kpi"><span><b>${done.length}/${S.length}</b><small>entregados</small></span><span><b>${nota(avg)}</b><small>nota media</small></span><span><b>${gr.length?Math.round(pass/gr.length*100)+'%':'—'}</b><small>aprobados</small></span></div>
+  <div class="ex-res">${rows.map(({m,t})=>{const st=!t?['Sin empezar','draft']:!t.submitted_at?['Haciéndolo…','soon']:t.pending?['Por corregir','pend']:[nota(t.score),+t.score>=5?'open':'closed'];
+   return `<button type="button" class="ex-rr" ${t&&t.submitted_at?`onclick="exOpenRev('${t.id}')"`:'disabled'}>${mAv(m)}<b>${esc(m.n)}</b>${t&&t.leaves?`<span class="ex-warn" title="Salió de la app durante el examen">⚠️ ${t.leaves}</span>`:''}${t&&t.late?'<span class="ex-warn">Tarde</span>':''}<span class="ex-st ${st[1]}">${st[0]}</span></button>`}).join('')}</div>
+  ${done.length?`<button type="button" class="add" onclick="exToGrades()">Pasar notas a Calificaciones</button>`:''}</div>`}
+async function exOpenRev(aid){EX.rev=aid;EX.view='rev';if(!EX.keys){try{const {data:k}=await sb.from('quiz_keys').select('keys').eq('quiz_id',EX.res).maybeSingle();EX.keys=(k&&k.keys)||{}}catch(e){EX.keys={}}}exPaint()}
+function qCorrect(q,a,K){if(a==null||a==='')return false;if(q.type==='short')return (K[q.id]||[]).some(s=>String(s).trim().toLowerCase()===String(a).trim().toLowerCase());return String(K[q.id])===String(a)}
+function exAnsHTML(q,a,K,t,staff){const has=a!=null&&a!=='';
+ if(q.type==='open'){const g=t.manual&&t.manual[q.id];return `<div class="ex-ans open">${has?esc(a):'<i>Sin responder</i>'}</div>${staff?`<div class="ex-grade"><span>Nota:</span><input id="mg_${q.id}" type="number" min="0" max="${q.pts}" step="0.25" value="${g!=null?g:''}" placeholder="0–${q.pts}"><span>/ ${q.pts}</span></div>`:(g!=null?`<div class="ex-ok">${nota(g)} / ${q.pts}</div>`:'<div class="ex-pendt">Pendiente de corregir</div>')}`}
+ const ok=K?qCorrect(q,a,K):null;
+ if(q.type==='short')return `<div class="ex-ans ${ok===true?'good':ok===false?'bad':''}">${has?esc(a):'<i>Sin responder</i>'}</div>${K&&!ok?`<div class="ex-ok">Válida: ${esc((K[q.id]||[]).join(' / '))}</div>`:''}`;
+ return `<div class="ex-ch">${(q.opts||[]).map((o,j)=>{const mine=String(a)===String(j),right=K&&String(K[q.id])===String(j);return `<div class="ex-c${mine?' mine':''}${right?' right':''}${mine&&K&&!right?' wrong':''}">${esc(o)}${right?' ✓':''}${mine&&K&&!right?' ✕':''}</div>`}).join('')}${!has?'<i class="gl-sub">Sin responder</i>':''}</div>`}
+function exRevHTML(){const z=EX.list.find(x=>x.id===EX.res),t=(EX.att[EX.res]||[]).find(x=>x.id===EX.rev);if(!z||!t)return '';const m=data.members.find(x=>x.u===t.user_id),K=EX.keys||{},hasOpen=(z.questions||[]).some(q=>q.type==='open');
+ return `<div class="ex"><button type="button" class="pt-back" onclick="EX.view='res';exPaint()">‹ Resultados</button><div class="pt-who">${m?mAv(m):''}<div><b>${esc(m?m.n:'Alumno')}</b><small>Nota: <strong>${t.pending?'pendiente':nota(t.score)}</strong>${t.leaves?' · ⚠️ salió '+t.leaves+' vez'+(t.leaves>1?'es':'')+' de la app':''}${t.late?' · entregado tarde':''}</small></div></div>
+  ${(z.questions||[]).map((q,i)=>`<div class="ex-q rv"><div class="ex-qh"><b>${i+1}</b><span class="gl-sub">${QT[q.type]} · ${q.pts} pts</span></div><p class="ex-qt">${esc(q.text)}</p>${exAnsHTML(q,(t.answers||{})[q.id],K,t,true)}</div>`).join('')}
+  <div class="lv-btns col">${hasOpen?`<button type="button" class="add" onclick="exSaveManual()">Guardar corrección</button>`:''}<button type="button" class="mini-btn danger" onclick="exRetake()">Dejar que lo repita</button></div></div>`}
+async function exSaveManual(){if(offGuard())return;const z=EX.list.find(x=>x.id===EX.res),t=(EX.att[EX.res]||[]).find(x=>x.id===EX.rev);const man={...(t.manual||{})};
+ for(const q of z.questions.filter(q=>q.type==='open')){const v=($('mg_'+q.id)||{}).value;if(v!==''&&v!=null){man[q.id]=Math.max(0,Math.min(q.pts,Number(v)))}}
+ try{const {error}=await sb.from('quiz_attempts').update({manual:man}).eq('id',t.id);if(error)throw error;toast('Corrección guardada','ok');await exLoad();EX.view='res';exPaint()}catch(e){toastErr('No se pudo guardar.')}}
+async function exRetake(){const t=(EX.att[EX.res]||[]).find(x=>x.id===EX.rev);if(!t||!confirm('Se borrará su intento y podrá hacerlo de nuevo.'))return;try{await sb.from('quiz_attempts').delete().eq('id',t.id);toast('Ya puede repetirlo','ok');await exLoad();EX.view='res';exPaint()}catch(e){toastErr('No se pudo.')}}
+function exToGrades(){const z=EX.list.find(x=>x.id===EX.res),A=(EX.att[z.id]||[]).filter(t=>t.submitted_at&&!t.pending);if(!A.length){toastErr('No hay exámenes corregidos todavía.');return}
+ let w=data.work.find(x=>x.quizId===z.id||x.title==='Examen: '+z.title);if(!w){w={id:uid(),type:'tarea',title:'Examen: '+z.title,desc:'Nota del examen de Unuvia (sobre 10).',topic:'',due:iso(new Date()),pts:10,link:'',ts:Date.now(),subs:{},files:[],opts:[],assg:[],rub:[],quizId:z.id};data.work.push(w)}
+ A.forEach(t=>{const m=data.members.find(x=>x.u===t.user_id);if(!m)return;w.subs[m.n]={st:'entregada',ts:Date.parse(t.submitted_at)||Date.now(),grade:Math.round(+t.score*100)/100,ret:true,fb:'Examen: '+nota(t.score)+' / 10'+(t.leaves?' · salió '+t.leaves+' vez/veces de la app':'')}});
+ saveState();renderAll();toast(A.length+' nota'+(A.length>1?'s':'')+' en Calificaciones','ok')}
+/* lista del alumno */
+function exListStudent(){const L=EX.list.filter(z=>z.published);if(!L.length)return '<div class="empty">No hay exámenes por ahora. Cuando tu profe publique uno te llegará un aviso.</div>';
+ return `<div class="ex">${L.map(z=>{const st=exState(z),t=(EX.att[z.id]||[]).find(x=>x.user_id===authUid),done=t&&t.submitted_at;
+  let r;if(done)r=t.pending?'<span class="ex-st pend">Pendiente de corregir</span>':`<span class="ex-st ${+t.score>=5?'open':'closed'}">${nota(t.score)} / 10</span>`;else if(st[1]==='open')r=`<button type="button" class="add" onclick="exStart('${z.id}')">${t?'Continuar':'Empezar'}</button>`;else r=`<span class="ex-st ${st[1]}">${st[0]}</span>`;
+  return `<div class="ex-it"><div class="ex-ic">📝</div><div class="ex-b"><b>${esc(z.title)}</b><small>${(z.questions||[]).length} preguntas${z.minutes?' · '+z.minutes+' min':''}${z.closes_at&&!done?' · hasta '+fmtDT(z.closes_at):''}</small></div><div class="ex-acts">${r}${done?`<button type="button" class="lv-chip2" onclick="exMyReview('${z.id}')">Ver</button>`:''}</div></div>`}).join('')}</div>`}
+/* hacer el examen (pantalla completa) */
+let EXR=null;
+function seeded(s){let h=2166136261;for(const ch of s)h=Math.imul(h^ch.charCodeAt(0),16777619);return ()=>{h=Math.imul(h^(h>>>15),2246822507);h=Math.imul(h^(h>>>13),3266489909);return ((h^=h>>>16)>>>0)/4294967296}}
+function exStart(id){const z=EX.list.find(x=>x.id===id);if(!z)return;const t=(EX.att[id]||[]).find(x=>x.user_id===authUid);
+ if(t){exRun(z,t);return}
+ closeModal();lvShellEx(`<div class="exr-intro"><span class="sz-cnv">${nuviaMine(80)}</span><h2>${esc(z.title)}</h2>${z.descr?`<p>${esc(z.descr)}</p>`:''}<div class="exr-facts"><span>📋 ${(z.questions||[]).length} preguntas</span><span>⏱️ ${z.minutes?z.minutes+' minutos':'Sin límite de tiempo'}</span></div><p class="exr-warn">⚠️ Si sales de la app durante el examen, tu profesor lo verá. Tus respuestas se guardan solas.</p><button type="button" class="add" onclick="exBegin('${id}')">Empezar examen</button><button type="button" class="secondary" onclick="exClose()">Ahora no</button></div>`)}
+async function exBegin(id){if(offGuard())return;const z=EX.list.find(x=>x.id===id);try{const {data:t,error}=await sb.from('quiz_attempts').insert({quiz_id:id,class_id:z.class_id,user_id:authUid}).select().single();if(error)throw error;(EX.att[id]=EX.att[id]||[]).push(t);exRun(z,t)}catch(e){toastErr((e&&e.message)||'No se pudo empezar el examen.')}}
+function exRun(z,t){const qs=[...(z.questions||[])];if(z.shuffle){const r=seeded(t.id);for(let i=qs.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[qs[i],qs[j]]=[qs[j],qs[i]]}}
+ EXR={z,t,qs,i:0,ans:{...(t.answers||{})},leaves:t.leaves||0,end:z.minutes?Date.parse(t.started_at)+z.minutes*60000:null,save:null};
+ if(z.closes_at){const c=Date.parse(z.closes_at);EXR.end=EXR.end?Math.min(EXR.end,c):c}
+ closeModal();exRunPaint();clearInterval(exRun.iv);exRun.iv=setInterval(exTick,1000);document.addEventListener('visibilitychange',exVis)}
+function exVis(){if(!EXR||EXR.done)return;if(document.visibilityState==='hidden'){EXR.leaves++;exPersist(true)}else toast('Has salido del examen: tu profesor lo verá','')}
+function exTick(){if(!EXR||EXR.done)return;const el=$('exTime');if(!EXR.end){return}const s=Math.max(0,Math.round((EXR.end-Date.now())/1000));if(el){el.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');el.classList.toggle('low',s<=60)}if(s<=0){toast('¡Se acabó el tiempo! Entregando…','');exSubmit(true)}}
+function exPersist(now){clearTimeout(EXR.save);const go=async()=>{try{await sb.from('quiz_attempts').update({answers:EXR.ans,leaves:EXR.leaves}).eq('id',EXR.t.id)}catch(e){}};if(now)go();else EXR.save=setTimeout(go,700)}
+function exSet(v){const q=EXR.qs[EXR.i];EXR.ans[q.id]=v;exPersist();exRunPaint(true)}
+function exRunPaint(keep){const R=EXR,q=R.qs[R.i],a=R.ans[q.id],n=R.qs.length,answered=R.qs.filter(x=>R.ans[x.id]!=null&&R.ans[x.id]!=='').length;
+ const body=q.type==='open'||q.type==='short'?`<textarea class="exr-txt" rows="${q.type==='open'?6:2}" maxlength="${q.type==='open'?2000:200}" placeholder="${q.type==='open'?'Escribe tu respuesta…':'Tu respuesta'}" oninput="EXR.ans['${q.id}']=this.value;exPersist();exDots()">${esc(a||'')}</textarea>`
+  :`<div class="exr-ch">${(q.opts||[]).map((o,j)=>`<button type="button" class="exr-o${String(a)===String(j)?' on':''}" onclick="exSet('${j}')"><span>${String.fromCharCode(65+j)}</span>${esc(o)}</button>`).join('')}</div>`;
+ const h=`<div class="exr-top"><b>${esc(R.z.title)}</b><span class="lv-sp"></span>${R.end?`<span class="exr-time" id="exTime">--:--</span>`:''}</div><div class="exr-dots" id="exDots">${exDotsHTML()}</div>
+  <div class="exr-q"><small>Pregunta ${R.i+1} de ${n} · ${q.pts} pt${q.pts>1?'s':''}</small><h3>${esc(q.text)}</h3>${body}</div>
+  <div class="exr-nav"><button type="button" class="secondary" ${R.i?'':'disabled'} onclick="EXR.i--;exRunPaint()">‹ Anterior</button>${R.i<n-1?`<button type="button" class="add" onclick="EXR.i++;exRunPaint()">Siguiente ›</button>`:`<button type="button" class="add exr-send" onclick="exAskSubmit()">Entregar (${answered}/${n})</button>`}</div>`;
+ if(keep&&q.type!=='open'&&q.type!=='short'){const el=document.querySelector('#exam .exr-ch');if(el){el.outerHTML=body;exDots();return}}
+ lvShellEx(h);exTick()}
+function exDotsHTML(){const R=EXR;return R.qs.map((x,k)=>`<button type="button" class="${k===R.i?'cur ':''}${R.ans[x.id]!=null&&R.ans[x.id]!==''?'done':''}" aria-label="Pregunta ${k+1}" onclick="EXR.i=${k};exRunPaint()">${k+1}</button>`).join('')}
+function exDots(){const d=$('exDots');if(d)d.innerHTML=exDotsHTML()}
+function exAskSubmit(){const R=EXR,left=R.qs.filter(x=>R.ans[x.id]==null||R.ans[x.id]==='').length;if(confirm(left?`Te quedan ${left} pregunta${left>1?'s':''} sin responder. ¿Entregar igualmente?`:'¿Entregar el examen? Ya no podrás cambiar las respuestas.'))exSubmit()}
+async function exSubmit(auto){const R=EXR;if(!R||R.done)return;R.done=true;clearInterval(exRun.iv);document.removeEventListener('visibilitychange',exVis);clearTimeout(R.save);lvShellEx('<div class="lv-load">Entregando…</div>');
+ try{const {error}=await sb.from('quiz_attempts').update({answers:R.ans,leaves:R.leaves,submitted_at:new Date().toISOString()}).eq('id',R.t.id);if(error)throw error;
+  const {data:t}=await sb.from('quiz_attempts').select('*').eq('id',R.t.id).single();const L=EX.att[R.z.id]||[];const k=L.findIndex(x=>x.id===t.id);if(k>=0)L[k]=t;else L.push(t);exResult(R.z,t)}
+ catch(e){R.done=false;toastErr('No se pudo entregar. Revisa tu conexión y vuelve a intentarlo.');exRunPaint()}}
+async function exResult(z,t){const good=!t.pending&&+t.score>=5;
+ lvShellEx(`<div class="exr-intro"><span class="sz-cnv">${nuviaMine(86)}</span><h2>${t.pending?'¡Examen entregado!':good?'¡Muy bien!':'Examen entregado'}</h2>${t.pending?'<p>Tiene preguntas abiertas: tu profesor lo corregirá y te llegará un aviso con la nota.</p>':`<div class="exr-score ${good?'ok':'ko'}">${nota(t.score)}<small>/ 10</small></div>`}${z.show_results?`<button type="button" class="secondary" onclick="exMyReview('${z.id}')">Ver respuestas</button>`:''}<button type="button" class="add" onclick="exClose()">Volver a la clase</button></div>`);
+ if(good){try{SFX.fanfare()}catch(e){}try{confetti()}catch(e){}}}
+async function exMyReview(id){const z=EX.list.find(x=>x.id===id),t=(EX.att[id]||[]).find(x=>x.user_id===authUid);if(!z||!t)return;let K=null;try{const {data:k}=await sb.rpc('quiz_review',{qid:id});K=k||null}catch(e){}
+ closeModal();lvShellEx(`<div class="exr-top"><b>${esc(z.title)}</b><span class="lv-sp"></span><button type="button" class="lv-x" onclick="exClose()" aria-label="Cerrar">✕</button></div><div class="exr-rev"><div class="exr-score sm ${!t.pending&&+t.score>=5?'ok':'ko'}">${t.pending?'Pendiente':nota(t.score)}${t.pending?'':'<small>/ 10</small>'}</div>${!K?'<p class="gl-sub">Tu profesor no ha activado ver las respuestas correctas.</p>':''}${(z.questions||[]).map((q,i)=>`<div class="ex-q rv"><div class="ex-qh"><b>${i+1}</b><span class="gl-sub">${q.pts} pts</span></div><p class="ex-qt">${esc(q.text)}</p>${exAnsHTML(q,(t.answers||{})[q.id],K,t,false)}</div>`).join('')}</div>`)}
+function lvShellEx(h){let el=$('exam');if(!el){el=document.createElement('div');el.id='exam';el.className='exam';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');document.body.appendChild(el);document.documentElement.classList.add('guide-lock')}el.innerHTML='<div class="exr-in">'+h+'</div>'}
+function exClose(){if(EXR&&!EXR.done&&!confirm('Si sales, el tiempo sigue corriendo. ¿Salir?'))return;if(EXR&&!EXR.done){exPersist(true);clearInterval(exRun.iv);document.removeEventListener('visibilitychange',exVis)}EXR=null;const el=$('exam');if(el)el.remove();document.documentElement.classList.remove('guide-lock');toolOpen('exams')}
+
 function renderPeople(){
  const el=$('peopleBody');if(!el||!classes[cur])return;
  const all=data.members.map((m,i)=>({m,i})).filter(o=>match(o.m.n)),st=all.filter(o=>STAFFR.includes(o.m.r)),sd=all.filter(o=>!STAFFR.includes(o.m.r));
@@ -2021,7 +2191,7 @@ async function buildFromServer(force){
    const messages=msgsAll.map(m=>{const q=m.reply_to&&mmap[m.reply_to];return {id:m.id,n:nm(m.author_id),au:m.author_id,me:m.author_id===authUid?1:0,ts:Date.parse(m.created_at),type:m.type,t:m.body||'',src:urlOf(CF,m.file_path),_p:m.file_path||null,dur:m.duration||0,...(q?{reply:{id:q.id,n:q.author_id===authUid?'Tú':nm(q.author_id),t:q.type==='audio'?'🎤 Nota de voz':q.type==='image'?'📷 Foto':(q.body||'').slice(0,70)}}:{})}});
    const photos=L(ph).filter(mine).sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at))).map(p=>({id:p.id,au:p.author_id,i:p.icon||'📷',t:p.title,s:p.subtitle,g:p.tag,img:urlOf(CF,p.image_path),_p:p.image_path||null,fav:favs.has(p.id)}));
    return {id:cid,owner:row.owner_id,name:row.name,code:row.code,role:RL[myRole[cid]]||'Alumno',emoji:row.emoji||'📚',color:row.color||'#008cff',desc:row.description||'',meet:row.meet_url||'',archived:!!row.archived,
-    perm:{post:!!row.perm_post,comment:row.perm_comment!==false,chat:row.perm_chat!==false},filterBad:!!row.filter_bad,schoolId:row.school_id||null,icon:urlOf(CF,row.icon_path),banner:urlOf(CF,row.banner_path),_pi:row.icon_path||null,_pb:row.banner_path||null,_tp,
+    perm:{post:!!row.perm_post,comment:row.perm_comment!==false,chat:row.perm_chat!==false},filterBad:!!row.filter_bad,ptReasons:Array.isArray(row.pt_reasons)?row.pt_reasons:[],schoolId:row.school_id||null,icon:urlOf(CF,row.icon_path),banner:urlOf(CF,row.banner_path),_pi:row.icon_path||null,_pb:row.banner_path||null,_tp,
     data:{members,topics,events:L(ev).filter(mine).map(e=>({id:e.id,i:e.icon||'📄',t:e.title,s:e.detail||'Sin detalle',d:e.date,by:e.created_by})),sched:L(sc).filter(mine).map(x=>({id:x.id,t:x.subject,day:x.day,h:String(x.time||'08:00').slice(0,5),r:x.room||''})),
      photos,posts,work,messages,tasks:L(tk).filter(mine).map(t=>({id:t.id,t:t.title,d:t.due||'',done:!!t.done}))}};
   });
@@ -2305,7 +2475,7 @@ async function afterLogin(u){
  await Promise.all([checkFilesCol(),checkCr2(),checkT7(),checkAtt(),checkPoll(),checkLive(),checkT18(),checkSchool()]);
  await pullAll(true);cloudOn=true;subscribe();setTimeout(refreshPushBanner,1500);flushReview();applyTheme();
  await loadNotifPrefs();loadNotifs();subscribeNotifs();syncPushSub();
- trackVisit();applyNuvia();cfgLoad();enter(user);handleDeepLink();setTimeout(joinFromLink,400);offSave();
+ trackVisit();applyNuvia();cfgLoad();setTimeout(ptSync,2500);enter(user);handleDeepLink();setTimeout(joinFromLink,400);offSave();
 }
 /* Esta versión solo entra con correo + código */
 const ap=$('appleLogin');if(ap)ap.style.display='none';
