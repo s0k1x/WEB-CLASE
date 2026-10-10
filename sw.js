@@ -2,7 +2,7 @@
    - Avisos al móvil.
    - Sin conexión: guarda una copia de la web (red primero; si no hay internet, usa la copia).
      Así siempre ves la última versión cuando hay conexión. */
-const CACHE = 'unuvia-v3';
+const CACHE = 'unuvia-v2';
 self.addEventListener('install', e => {
   self.skipWaiting();
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/', '/manifest.webmanifest', '/icon-192.png', '/badge-96.png']).catch(() => {})));
