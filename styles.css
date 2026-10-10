@@ -2887,7 +2887,7 @@ html:not(.light) .tm-ring b{background:#171b25}
 .sh2-it{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border:1.5px solid rgba(127,127,127,.15);border-radius:14px;background:rgba(127,127,127,.05);color:inherit;font:inherit;cursor:pointer}.sh2-it.on{border-color:var(--accent);background:rgba(var(--accent-rgb),.1)}
 .sh2-pv{display:grid;place-items:center;width:44px;height:48px;font-size:30px}.sh2-pv .ulm{width:40px;height:46px}.sh2-it b{font-size:12px}.sh2-it small{font-size:11px;opacity:.7}
 .nv-me{position:relative;display:inline-block}.nv-me i{position:absolute;left:50%;top:-14%;transform:translateX(-50%);font-style:normal;line-height:1}
-html.nv-tint .ulm:not(.sh2-pv .ulm){filter:hue-rotate(var(--nv-hue,0deg))}
+
 .ru-o input,.gr-pick input,.dm-p input{width:auto!important;margin:0!important;flex:none}
 /* idiomas y centro educativo */
 .lang-pick{display:flex;gap:6px;flex-wrap:wrap}
@@ -2954,49 +2954,6 @@ html.nv-tint .ulm:not(.sh2-pv .ulm){filter:hue-rotate(var(--nv-hue,0deg))}
 .maint{position:fixed;inset:0;z-index:400;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:30px;text-align:center;background:radial-gradient(120% 80% at 50% 0%,#1e293b,#0b1220);color:#fff}
 .maint-n{width:96px;height:110px;animation:otpBob 2.8s ease-in-out infinite}.maint b{font-size:24px}.maint p{max-width:360px;opacity:.85;line-height:1.5}
 html.maint-admin .brand::after{content:"MANTENIMIENTO";margin-left:8px;padding:2px 7px;border-radius:6px;background:#f59e0b;color:#111;font-size:10px;font-weight:900;letter-spacing:.05em;vertical-align:middle}
-/* ===================== Temáticas ===================== */
-.sz{position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden}
-.sz-glow{position:absolute;inset:0}
-html[data-season="navidad"] .sz-glow{background:radial-gradient(40% 30% at 10% 15%,rgba(239,68,68,.10),transparent 70%),radial-gradient(40% 30% at 90% 20%,rgba(34,197,94,.10),transparent 70%),radial-gradient(50% 30% at 50% 100%,rgba(250,204,21,.07),transparent 70%)}
-html[data-season="halloween"] .sz-glow{background:radial-gradient(40% 30% at 12% 18%,rgba(249,115,22,.13),transparent 70%),radial-gradient(45% 35% at 88% 25%,rgba(139,92,246,.14),transparent 70%)}
-#snowCv{position:absolute;inset:0}
-.sz-garland{position:absolute;left:0;right:0;top:var(--sat,0px);width:100%;height:34px}
-.sz-bulbs{position:absolute;left:0;right:0;top:calc(var(--sat,0px) + 2px);display:flex;justify-content:space-around;padding:0 2%}
-.sz-bulbs i{width:9px;height:13px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:var(--c);box-shadow:0 0 10px var(--c);animation:szTw 1.4s ease-in-out infinite alternate;animation-delay:var(--d)}
-.sz-bulbs i:nth-child(odd){margin-top:14px}.sz-bulbs i:nth-child(4n+2){margin-top:8px}
-@keyframes szTw{from{opacity:.35}to{opacity:1}}
-.sz-pill{position:absolute;left:50%;top:calc(var(--sat,0px) + 46px);transform:translateX(-50%);padding:7px 16px;border-radius:99px;background:linear-gradient(135deg,#dc2626,#16a34a);color:#fff;font-weight:900;font-size:13px;box-shadow:0 8px 20px rgba(0,0,0,.25);display:none;white-space:nowrap}
-.sz-pill.hw{background:linear-gradient(135deg,#ea580c,#7c3aed)}
-body:has(#welcome:not(.hidden)) .sz-pill{display:block;animation:lvPop .6s cubic-bezier(.2,1.6,.4,1) .6s backwards}
-/* gorro / sombrero en el logo de la cabecera */
-.brand{position:relative}
-html[data-season="navidad"] .brand::before,html[data-season="halloween"] .brand::before{content:"";position:absolute;left:-6px;top:-13px;width:30px;height:24px;background:var(--hat) center/contain no-repeat;transform:rotate(-14deg);pointer-events:none;z-index:2}
-html[data-season="halloween"] .brand::before{left:-5px;top:-16px;width:30px;height:27px;transform:rotate(-8deg)}
-/* nieve sobre las tarjetas */
-html[data-season="navidad"] .card.content,html[data-season="navidad"] .sidecard,html[data-season="navidad"] .card.pcard{position:relative}
-html[data-season="navidad"] .card.content::before,html[data-season="navidad"] .sidecard::before{content:"";position:absolute;left:14px;right:14px;top:-1px;height:9px;background:radial-gradient(circle at 9px -2px,#fff 7px,transparent 7.5px) 0 0/22px 9px repeat-x;opacity:.9;pointer-events:none;border-radius:0 0 8px 8px}
-html:not(.light)[data-season="navidad"] .card.content::before,html:not(.light)[data-season="navidad"] .sidecard::before{opacity:.75}
-/* Halloween */
-.sz-bat{position:absolute;width:56px;height:28px;left:-80px;opacity:.9;will-change:transform;animation:szBat 18s linear infinite}
-.sz-bat.b1{top:18%}.sz-bat.b2{top:34%;width:40px;animation-duration:24s;animation-delay:-8s}.sz-bat.b3{top:58%;width:48px;animation-duration:21s;animation-delay:-15s}
-.sz-bat path{transform-origin:32px 12px;animation:szFlap .28s ease-in-out infinite alternate}
-@keyframes szBat{0%{transform:translate(0,0)}25%{transform:translate(30vw,-30px)}50%{transform:translate(60vw,20px)}75%{transform:translate(90vw,-20px)}100%{transform:translate(calc(100vw + 120px),10px)}}
-@keyframes szFlap{to{transform:scaleY(.55)}}
-html:not(.light) .sz-bat path{fill:#000}
-.sz-web{position:absolute;right:0;top:var(--sat,0px);width:130px;height:130px}
-html.light .sz-web g{stroke:rgba(30,20,50,.35)}
-.sz-spider{position:absolute;right:46px;top:var(--sat,0px);width:26px;animation:szSpider 6s ease-in-out infinite;transform-origin:top}
-.sz-spider i{display:block;width:1px;height:90px;margin:0 auto;background:rgba(160,160,160,.7)}
-.sz-spider svg{display:block;width:26px;height:26px}
-@keyframes szSpider{0%,100%{transform:translateY(-40px)}50%{transform:translateY(30px)}}
-.sz-pk{position:absolute;bottom:calc(var(--sab,0px) + 8px);width:54px;height:48px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
-.sz-pk.p1{left:8px}.sz-pk.p2{left:56px;width:40px;height:36px}
-.sz-pk svg{width:100%;height:100%}.pk-eyes{animation:szPk 2.2s ease-in-out infinite alternate}
-@keyframes szPk{from{opacity:.55}to{opacity:1}}
-.sz-fog{position:absolute;left:-20%;right:-20%;bottom:0;height:110px;background:radial-gradient(40% 60% at 30% 100%,rgba(200,200,220,.18),transparent 70%),radial-gradient(40% 60% at 75% 100%,rgba(200,190,230,.16),transparent 70%);animation:szFog 14s ease-in-out infinite alternate}
-@keyframes szFog{to{transform:translateX(8%)}}
-@media (max-width:600px){.sz-pk,.sz-web{transform:scale(.8);transform-origin:bottom left}.sz-web{transform-origin:top right}}
-@media (prefers-reduced-motion:reduce){.sz-bat,.sz-fog,.sz-spider,.sz-bulbs i{animation:none!important}.sz-bat{display:none}}
 /* ===================== Panel de Unuvia ===================== */
 .adm{position:fixed;inset:0;z-index:340;display:flex;flex-direction:column;background:var(--bg,#0b1220);color:inherit;padding-top:var(--sat,0px);padding-bottom:var(--sab,0px)}
 html.light .adm{background:#f5f7fb}
@@ -3021,5 +2978,134 @@ html.light .adm{background:#f5f7fb}
 .adm-warn{padding:10px 12px;border-radius:12px;background:rgba(245,158,11,.14);color:#b45309;font-size:13px;margin-bottom:12px}html:not(.light) .adm-warn{color:#fcd34d}
 @media (max-width:640px){.adm-ths{grid-template-columns:1fr}.adm-th{flex-direction:row;justify-content:flex-start;text-align:left;gap:12px}.adm-th small{text-align:left}.adm-2{grid-template-columns:1fr}}
 
-.sz-web{top:calc(var(--sat,0px) + 62px)!important}.sz-spider{top:calc(var(--sat,0px) + 62px)!important}
-html:not(.light) .sz-bat path{fill:#3b1a6b!important}
+
+/* ===================== NUVIA con accesorios ===================== */
+.ulm{overflow:visible}
+.nv-one{display:block;overflow:visible}
+/* ===================== Cabecera: una sola cápsula ===================== */
+header.top .lg-btn{display:none!important}
+#profile.on{gap:4px;padding:4px;border-radius:999px;background:rgba(255,255,255,.62);border:1px solid rgba(15,23,42,.08);box-shadow:0 6px 18px rgba(15,23,42,.08),inset 0 1px 0 rgba(255,255,255,.7)}
+html:not(.light) #profile.on{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);box-shadow:0 6px 18px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06)}
+#profile .classsel,#profile div.classsel{background:transparent!important;border:0!important;box-shadow:none!important}
+#profile div.classsel .burger{background:transparent!important;width:34px;height:34px}
+#profile #topAvatar{width:34px;height:34px;border-radius:50%!important;color:#fff!important;font-weight:800;box-shadow:0 0 0 2px rgba(255,255,255,.9),0 2px 8px rgba(15,23,42,.18)}
+html:not(.light) #profile #topAvatar{box-shadow:0 0 0 2px rgba(255,255,255,.18),0 2px 8px rgba(0,0,0,.4)}
+#profile #topName{padding:0 6px 0 4px;font-weight:700;font-size:13px}
+#profile .divi{width:1px;height:20px;background:rgba(127,127,127,.25)}
+/* ===================== Tienda de Nuvia ===================== */
+.sh2-hero{display:flex;align-items:center;gap:16px;padding:14px;border-radius:20px;background:radial-gradient(120% 120% at 0% 0%,rgba(var(--accent-rgb),.18),transparent 60%),rgba(127,127,127,.06);margin-bottom:12px}
+.sh2-hero .sh2-nv{flex:none;width:118px;display:grid;place-items:center;padding:14px 0 4px}
+.sh2-hero .nv-one{animation:otpBob 3s ease-in-out infinite}
+.sh2-pts b{display:block;font-size:34px;line-height:1}.sh2-pts span{font-weight:700;opacity:.8}.sh2-pts small{display:block;margin-top:6px;font-size:12px;opacity:.65}
+.sh2-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;scrollbar-width:none}.sh2-tabs::-webkit-scrollbar{display:none}
+.sh2-tabs button{flex:none;border:0;border-radius:99px;padding:8px 14px;font:inherit;font-size:13px;font-weight:700;background:rgba(127,127,127,.1);color:inherit;cursor:pointer}
+.sh2-tabs button.on{background:var(--accent);color:#fff}
+.sh2 .sh2-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+.sh2 .sh2-it{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 6px 10px;border-radius:16px;border:2px solid transparent;background:rgba(127,127,127,.07);color:inherit;font:inherit;cursor:pointer;transition:transform var(--dur-1) var(--ease-out)}
+.sh2 .sh2-it:active{transform:scale(.96)}.sh2 .sh2-it.on{border-color:var(--accent);background:rgba(var(--accent-rgb),.1)}
+.sh2 .sh2-pv{height:84px;display:grid;place-items:end center;padding-top:10px}
+.sh2 .sh2-it b{font-size:12.5px;text-align:center;line-height:1.2}.sh2 .sh2-it small{font-size:11.5px;font-weight:700;opacity:.75}.sh2 .sh2-it small i{font-style:normal;color:#f59e0b}
+.sh2 .sh2-it.on small{color:var(--accent);opacity:1}
+.sh2-note{font-size:12.5px;opacity:.75;margin:10px 2px 0}
+/* ===================== TEMÁTICAS (detrás del contenido) ===================== */
+.szb{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.szb-sky{position:absolute;inset:0}
+.szb-land{position:absolute;left:0;right:0;bottom:0;height:min(34vh,250px)}
+.sz-h1,.sz-h2{position:absolute;left:0;width:100%;bottom:0}.sz-h1{height:62%}.sz-h2{height:34%}
+.szb-o{position:absolute;filter:drop-shadow(0 4px 8px rgba(0,0,0,.12))}
+#snowCv{position:absolute;inset:0}
+.szb-moon{position:absolute;right:9%;top:calc(var(--sat,0px) + 92px);width:74px;height:74px;border-radius:50%;background:radial-gradient(circle at 38% 36%,#fff,#e2e8f0 60%,#cbd5e1);box-shadow:0 0 40px 12px rgba(226,232,240,.25),0 0 120px 40px rgba(226,232,240,.08)}
+.szb-stars i{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;animation:szTw 2.6s ease-in-out infinite alternate;animation-delay:var(--d)}
+@keyframes szTw{from{opacity:.15}to{opacity:.9}}
+html.light .szb-stars{display:none}
+/* Navidad */
+.sz-navidad{--h1:#1e3a5f;--h2:#e2e8f0;--tree:#14532d;--tree2:#0f3d22;--trunk:#5b3a1e;--snowc:#f1f5f9;--wall:#7c2d12;--wall2:#451a03;--roof:#3f1d0b;--sil:rgba(15,23,42,.85)}
+html:not(.light) .sz-navidad{--h1:#132238;--h2:#9fb3c8;--snowc:#cbd5e1;--tree:#0f3d22;--tree2:#0a2a17;--sil:rgba(2,6,23,.9)}
+html.light .sz-navidad{--h1:#c7d7ea;--h2:#ffffff}
+html:not(.light) .sz-navidad .szb-sky{background:radial-gradient(60% 40% at 80% 10%,rgba(56,189,248,.10),transparent 70%),radial-gradient(50% 30% at 10% 0%,rgba(239,68,68,.08),transparent 70%),linear-gradient(180deg,#020617 0%,rgba(2,6,23,0) 70%)}
+html.light .sz-navidad .szb-sky{background:radial-gradient(60% 40% at 80% 5%,rgba(186,230,253,.6),transparent 70%),radial-gradient(40% 30% at 10% 10%,rgba(254,202,202,.35),transparent 70%)}
+html.light .sz-navidad .szb-moon{opacity:.0}
+.sz-win{fill:#fcd34d;animation:szWin 3s ease-in-out infinite alternate}
+@keyframes szWin{from{opacity:.75}to{opacity:1}}
+.sz-smoke circle{fill:rgba(226,232,240,.55);animation:szSmoke 4s ease-in infinite;transform-box:fill-box;transform-origin:center}
+.sz-smoke circle:nth-child(2){animation-delay:1.3s}.sz-smoke circle:nth-child(3){animation-delay:2.6s}
+@keyframes szSmoke{0%{transform:translate(0,14px) scale(.5);opacity:0}30%{opacity:.8}100%{transform:translate(10px,-30px) scale(1.4);opacity:0}}
+.sz-li{animation:szLi 1.6s ease-in-out infinite alternate;animation-delay:calc(var(--i)*.18s)}
+@keyframes szLi{from{opacity:.35}to{opacity:1}}
+.sz-star{transform-box:fill-box;transform-origin:center;animation:szStar 2.4s ease-in-out infinite}
+@keyframes szStar{50%{transform:scale(1.2);opacity:.85}}
+.szb-sleigh{position:absolute;top:calc(var(--sat,0px) + 120px);left:0;opacity:.85;will-change:transform;animation:szSleigh 46s linear infinite}
+@keyframes szSleigh{0%{transform:translate(-260px,30px) rotate(-4deg)}28%{transform:translate(calc(100vw + 40px),-40px) rotate(-4deg)}100%{transform:translate(calc(100vw + 40px),-40px)}}
+html.light .szb-sleigh{opacity:.35}
+/* guirnalda dentro de la cabecera */
+header.top{position:relative}
+html[data-season="navidad"] header.top{margin-top:30px}
+#szHdr{position:absolute;left:0;right:0;top:0;height:60px;pointer-events:none;z-index:0;overflow:visible}
+#szHdr .sz-garl{position:absolute;left:-10px;top:-34px;max-width:none}
+header.top>*:not(#szHdr){position:relative;z-index:1}
+.sz-gl{animation:szGl 2s ease-in-out infinite;animation-delay:calc(var(--i)*.2s)}
+@keyframes szGl{0%,100%{opacity:.35}50%{opacity:1}}
+.sz-orn{animation:szOrn 3.2s ease-in-out infinite;animation-delay:var(--d)}
+@keyframes szOrn{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+/* nieve sobre las tarjetas */
+html[data-season="navidad"] .card.content,html[data-season="navidad"] .sidecard{position:relative}
+html[data-season="navidad"] .card.content::before,html[data-season="navidad"] .sidecard::before{content:"";position:absolute;left:18px;right:18px;top:-3px;height:12px;pointer-events:none;background:radial-gradient(ellipse 14px 8px at 12px 2px,#fff 96%,transparent) 0 0/34px 12px repeat-x,radial-gradient(ellipse 9px 6px at 28px 3px,#fff 96%,transparent) 0 0/34px 12px repeat-x;filter:drop-shadow(0 2px 2px rgba(15,23,42,.12));opacity:.95}
+html:not(.light)[data-season="navidad"] .card.content::before,html:not(.light)[data-season="navidad"] .sidecard::before{opacity:.8}
+/* Halloween */
+.sz-halloween{--h1:#2e1065;--h2:#1a0b2e;--sil:#14061f;--sil2:#2e1065;--stone:#4b5563;--ghost:#f8fafc;--web:rgba(255,255,255,.4);--spider:#0f0a18}
+html.light .sz-halloween{--h1:#a78bfa;--h2:#6d28d9;--sil:#3b0764;--sil2:#581c87;--stone:#7c6f99;--ghost:#ffffff}
+html:not(.light) .sz-halloween .szb-sky{background:radial-gradient(50% 40% at 85% 12%,rgba(249,115,22,.16),transparent 70%),radial-gradient(60% 40% at 0% 0%,rgba(139,92,246,.18),transparent 70%),linear-gradient(0deg,rgba(76,29,149,.25),transparent 40%)}
+html.light .sz-halloween .szb-sky{background:radial-gradient(50% 40% at 85% 10%,rgba(253,186,116,.45),transparent 70%),radial-gradient(60% 40% at 0% 0%,rgba(196,181,253,.45),transparent 70%),linear-gradient(0deg,rgba(196,181,253,.35),transparent 45%)}
+.szb-moon.hm{width:110px;height:110px;right:7%;background:radial-gradient(circle at 40% 38%,#fff7ed,#fed7aa 55%,#fdba74);box-shadow:0 0 60px 16px rgba(251,146,60,.28),0 0 160px 60px rgba(251,146,60,.1)}
+.szb-moon.hm b{position:absolute;border-radius:50%;background:rgba(234,88,12,.18)}.szb-moon.hm b:nth-child(2){width:22px;height:22px;left:24px;top:30px}.szb-moon.hm b:nth-child(3){width:14px;height:14px;left:62px;top:58px}.szb-moon.hm b:nth-child(4){width:10px;height:10px;left:44px;top:74px}
+.szb-flock{position:absolute;right:calc(7% + 20px);top:calc(var(--sat,0px) + 112px);width:70px;height:70px}
+.szb-flock span{position:absolute;left:0;top:0;width:30px;animation:szCircle 9s linear infinite;animation-delay:calc(var(--i)*-1.8s)}
+.szb-flock span:nth-child(2n){width:22px}
+.sz-b{width:100%;display:block}.sz-b path{transform-origin:32px 12px;animation:szFlap .26s ease-in-out infinite alternate}
+@keyframes szFlap{to{transform:scaleY(.5)}}
+@keyframes szCircle{0%{transform:rotate(0deg) translateX(70px) rotate(0deg)}100%{transform:rotate(360deg) translateX(70px) rotate(-360deg)}}
+.sz-hw{fill:#fb923c;animation:szHw 2.4s steps(1) infinite}.sz-hw.d2{animation-delay:.7s}.sz-hw.d3{animation-delay:1.3s}.sz-hw.d4{fill:#f59e0b;animation-delay:1.9s}
+@keyframes szHw{0%{opacity:1}40%{opacity:.55}45%{opacity:1}80%{opacity:.75}}
+.sz-swing{transform-origin:118px 116px;animation:szSwing 3s ease-in-out infinite}
+@keyframes szSwing{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+.pk-eyes{animation:szPk 1.8s ease-in-out infinite alternate}.sz-pkg{animation:szPk 1.8s ease-in-out infinite alternate}
+@keyframes szPk{from{opacity:.55}to{opacity:1}}
+.szb-ghost{position:absolute;top:calc(var(--sat,0px) + 210px);left:0;opacity:.9;animation:szGhost 34s linear infinite;will-change:transform}
+.szb-ghost svg{animation:szBob 2.4s ease-in-out infinite}
+@keyframes szGhost{0%{transform:translateX(-80px)}40%{transform:translateX(calc(100vw + 80px))}100%{transform:translateX(calc(100vw + 80px))}}
+@keyframes szBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.szb-peek{position:absolute;left:calc(33% + 6px);bottom:30px;width:34px;animation:szPeek 7s ease-in-out infinite;transform-origin:bottom}
+.szb-peek svg{width:34px}
+@keyframes szPeek{0%,60%,100%{transform:translateY(34px);opacity:0}70%,88%{transform:translateY(0);opacity:.95}}
+.szb-fog{position:absolute;left:-30%;width:160%;bottom:0;height:90px;background:radial-gradient(35% 60% at 25% 100%,rgba(216,207,236,.28),transparent 70%),radial-gradient(35% 60% at 70% 100%,rgba(216,207,236,.24),transparent 70%);animation:szFog 18s ease-in-out infinite alternate}
+.szb-fog.f2{bottom:-14px;height:70px;opacity:.8;animation-duration:24s;animation-direction:alternate-reverse}
+@keyframes szFog{to{transform:translateX(12%)}}
+/* telaraña y araña en la cabecera */
+.sz-hweb{position:absolute;right:0;top:0;width:96px;height:96px;transform:translate(10px,-8px)}
+.sz-hweb>svg{width:100%;height:100%}
+.sz-spi{position:absolute;right:28px;top:0;width:22px;animation:szSpi 7s ease-in-out infinite}
+.sz-spi i{display:block;width:1px;height:56px;margin:0 auto;background:var(--web,rgba(160,160,160,.7))}.sz-spi svg{display:block;width:22px;height:22px}
+@keyframes szSpi{0%,100%{transform:translateY(-34px)}45%,60%{transform:translateY(22px)}}
+html.light #szHdr{--web:rgba(46,16,101,.35);--spider:#1e1b4b}
+html[data-season="halloween"] #profile.on{margin-right:6px}
+/* tarjetas de Halloween: una telarañita en la esquina */
+html[data-season="halloween"] .card.content{position:relative}
+html[data-season="halloween"] .card.content::after{content:"";position:absolute;right:0;top:0;width:46px;height:46px;pointer-events:none;opacity:.55;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 46'%3E%3Cg fill='none' stroke='%23a78bfa' stroke-width='.8'%3E%3Cpath d='M46 0 4 42M46 0 22 46M46 0 0 22'/%3E%3Cpath d='M36 0q2 8 10 9M26 0q4 16 20 18M16 0q6 24 30 28'/%3E%3C/g%3E%3C/svg%3E") no-repeat;border-top-right-radius:inherit}
+/* tarjeta de cuenta atrás */
+.sz-card{display:flex;align-items:center;gap:12px;margin:2px 0 14px;padding:12px 12px 12px 10px;border-radius:18px;position:relative;overflow:hidden}
+.sz-c-navidad{background:linear-gradient(135deg,rgba(220,38,38,.14),rgba(22,163,74,.14));border:1px solid rgba(220,38,38,.25)}
+.sz-c-halloween{background:linear-gradient(135deg,rgba(234,88,12,.16),rgba(124,58,237,.16));border:1px solid rgba(234,88,12,.3)}
+.sz-cnv{flex:none;width:52px;display:grid;place-items:center;padding-top:8px}
+.sz-card b{display:block;font-size:15px}.sz-card small{display:block;font-size:12.5px;opacity:.8;line-height:1.35}
+.sz-card>div{flex:1;min-width:0}
+.sz-cx{flex:none;width:28px;height:28px;border:0;border-radius:50%;background:rgba(127,127,127,.15);color:inherit;cursor:pointer}
+/* felicitación en la portada */
+.welcome-box .sz-greet{display:none}
+html[data-season="navidad"] .welcome-tag::after{content:"🎄 ¡Felices fiestas!";display:block;margin:12px auto 0;width:fit-content;padding:7px 16px;border-radius:99px;background:linear-gradient(135deg,#dc2626,#16a34a);color:#fff;font-size:13px;font-weight:900;letter-spacing:0;text-transform:none;box-shadow:0 8px 22px rgba(220,38,38,.3)}
+html[data-season="halloween"] .welcome-tag::after{content:"🎃 ¡Feliz Halloween!";display:block;margin:12px auto 0;width:fit-content;padding:7px 16px;border-radius:99px;background:linear-gradient(135deg,#ea580c,#7c3aed);color:#fff;font-size:13px;font-weight:900;letter-spacing:0;text-transform:none;box-shadow:0 8px 22px rgba(234,88,12,.3)}
+@media (max-width:600px){.szb-o.w3{display:none}.szb-o{transform:scale(.82);transform-origin:bottom center}.szb-moon{width:56px;height:56px;top:calc(var(--sat,0px) + 140px)}.szb-moon.hm{width:80px;height:80px}.szb-flock{top:calc(var(--sat,0px) + 150px)}}
+@media (min-width:1100px){.szb-land{height:min(34vh,300px)}.szb-o{transform:scale(1.25);transform-origin:bottom center}}
+@media (prefers-reduced-motion:reduce){.szb *,#szHdr *{animation:none!important}.szb-sleigh,.szb-ghost{display:none}}
+
+html.light .szb-sleigh{display:none}
+body:has(#classShell.visible) .szb-moon,body:has(#classShell.visible) .szb-flock,body:has(#classShell.visible) .szb-ghost,body:has(#classShell.visible) .szb-sleigh{opacity:.35}
