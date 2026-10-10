@@ -1310,7 +1310,7 @@ async function cfgLoad(){if(!sb)return;try{const {data:d,error}=await sb.from('a
 setInterval(()=>{if(document.visibilityState==='visible')cfgLoad()},120000);
 function applyCfg(){applySeason((CFG.theme||{}).name||'normal');applyMaint();try{if(classes&&classes[cur])renderStream()}catch(e){}}
 function gBannerHTML(){const b=CFG.banner||{};if(!b.on||!b.text)return '';const k=b.kind||'info';return `<div class="g-ban g-${esc(k)}"><span class="g-ic">${svgI(k==='aviso'?'alarm':k==='fiesta'?'sparkles':'megaphone')}</span><div><b>${k==='aviso'?'Aviso importante':k==='fiesta'?'¡Novedades!':'Aviso de Unuvia'}</b><small>${esc(b.text)}</small></div></div>`}
-function applyMaint(){const m=CFG.maintenance||{},on=!!m.on&&!isAppAdmin();let el=$('maint');
+function applyMaint(){const m=CFG.maintenance||{},on=!!m.on&&!!authUid&&!isAppAdmin();let el=$('maint');
  if(on&&!el){el=document.createElement('div');el.id='maint';el.className='maint';el.setAttribute('role','alertdialog');document.body.appendChild(el)}
  if(el){if(!on){el.remove();return}el.innerHTML=`<svg class="ulm maint-n" viewBox="0 0 474 542" aria-hidden="true"><use href="#ul-mark" width="474" height="542"/></svg><b>Estamos mejorando Unuvia</b><p>${esc(m.text||'Vuelve en un ratito.')}</p><button type="button" class="add" onclick="cfgLoad()">Volver a intentarlo</button>`}
  document.documentElement.classList.toggle('maint-admin',!!m.on&&isAppAdmin())}
